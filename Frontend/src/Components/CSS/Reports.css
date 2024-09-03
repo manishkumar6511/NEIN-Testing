@@ -1,0 +1,67 @@
+/* .css-nxo287-MuiInputBase-input-MuiOutlinedInput-input {
+    height: 0.4375em !important;
+}
+.css-5rcoci-MuiStack-root>.MuiTextField-root, .css-5rcoci-MuiStack-root>.MuiPickersTextField-root {
+    min-width: 240px !important;
+}
+
+.css-5rcoci-MuiStack-root>:not(style):not(style) {
+    margin: 13px !important;
+} */
+:where(.css-dev-only-do-not-override-p8b6i).ant-transfer .ant-transfer-list-content-item-text {
+    flex: none !important;
+}
+.css-10o2lyd-MuiStack-root {
+    overflow: hidden !important;
+}
+
+:where(.css-dev-only-do-not-override-p8b6i).ant-transfer .ant-transfer-list-header {
+    color: #1a005d !important;
+}
+
+:where(.css-dev-only-do-not-override-p8b6i).ant-transfer {
+    color: #1a005d !important;
+}
+.css-md26zr-MuiInputBase-root-MuiOutlinedInput-root {
+    color: #1a005d !important;
+}
+.css-1jy569b-MuiFormLabel-root-MuiInputLabel-root {
+    color: #8EC400 !important;
+}
+
+/* .css-nxo287-MuiInputBase-input-MuiOutlinedInput-input {
+    padding: 21.5px 14px !important;
+} */
+
+.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+    color: #1a005d !important;
+}
+
+.css-1pysi21-MuiFormLabel-root-MuiInputLabel-root {
+    color: #1a005d !important;
+}
+
+:where(.css-dev-only-do-not-override-p8b6i).ant-checkbox-indeterminate .ant-checkbox-inner:after {
+background-color: #8EC400 !important;
+}
+:where(.css-dev-only-do-not-override-p8b6i).ant-transfer .ant-transfer-list-header {
+    background: #1a005d !important;
+    color: #fff !important;
+}
+
+:where(.css-dev-only-do-not-override-p8b6i).ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #8ec400 !important;
+    border-color: #8ec400 !important;
+}
+
+:where(.css-dev-only-do-not-override-p8b6i).ant-btn-primary {
+    background: #8ec400 !important;
+}
+.button{
+    color: #fff !important;
+    background-color: #1a005d !important;
+}
+.css-y8ay40-MuiTableCell-root 
+{
+    padding: 9px 17px 10px 0px !important;
+}

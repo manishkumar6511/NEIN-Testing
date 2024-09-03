@@ -1,0 +1,249 @@
+.card-title
+{   
+position: absolute;   
+top
+: -
+20px
+;   
+
+margin-top
+:
+-26px 
+; 
+
+;   
+padding
+:
+5px
+10px
+;   
+color
+:#1A005D;;   
+border-radius
+:
+3px
+; }
+
+
+
+
+.finance-card-name
+{   
+position: absolute;   
+top
+: -
+20px
+;   
+
+margin-top
+:
+-33px 
+; 
+background-color
+:
+#1A005D
+;  
+font-weight:700; 
+padding
+:
+5px
+10px
+;   
+color
+: white;   
+border-radius
+:
+3px
+; }
+
+
+
+.finance-card-remaining
+{   
+position: absolute;   
+top
+: -
+20px
+;   
+
+margin-top
+:
+-33px
+; 
+background-color
+:
+#1A005D
+;  
+font-weight:700; 
+padding
+:
+5px
+10px
+;   
+color
+: white;  
+font-weight:700;  
+border-radius
+:
+3px
+; }
+
+.custom-textfield .MuiInputLabel-root {
+    color: #1A005D;
+  }
+  
+  .custom-textfield .MuiInputLabel-root.Mui-focused {
+    color: #8EC400;
+  }
+  .main-card{
+    width: 100%;
+    margin: 40px 0;
+    margin-bottom: 5px;
+    padding: 4px;
+    background-color: #ffffff;
+    box-shadow: none !important;
+
+  }
+  .finance-card{
+    width: 100%;
+    margin: 40px 0;
+    margin-bottom: 5px;
+    padding: 4px;
+    background-color: #ffffff;
+    box-shadow: none !important;
+
+  }
+
+  .card {
+    width: 100%;
+    margin: 10px 0;
+    padding: 4px;
+    background-color: #ffffff;
+    box-shadow: none !important;
+  }
+
+  .card-remaining {
+    width: 100%;
+    margin: 31px 0;
+    padding: 4px;
+    background-color: #ffffff;
+    box-shadow: none !important;
+  }
+  .divider{
+    border-color: #8DC200 !important;
+  }
+
+  .disabled-textfield{
+    background-color: #ffffff;
+    color: #1A005D !important;
+    font-size: '14px';
+    font: -webkit-control !important;
+   
+  }
+
+  .disabled-textfield-default{
+    background-color: #efefef;
+    color: #1A005D !important;
+    font-size: '14px';
+    font: -webkit-control !important;
+   
+  }
+
+
+  
+  .disabled-textfield .MuiInputBase-input {
+    cursor: not-allowed; /* Show not-allowed cursor */
+  }
+  .auto-card-title{
+    position: absolute;   
+top
+: -
+20px
+;   
+
+margin-top
+:
+-1px 
+; 
+
+;   
+padding
+:
+5px
+10px
+;   
+color
+:#1A005D;;   
+border-radius
+:
+3px;
+  }
+  .toggle{
+    background-color: #1A005D !important;
+    color: #d4d3da !important;
+    margin-left: '10px';
+
+  }
+  .AirButton{
+    background-color: #1A005D !important;
+    color: #d4d3da !important;
+  }
+  :where(.css-dev-only-do-not-override-p8b6i).ant-picker-outlined {
+    border-color: #ada0a0;
+    background: #fff;
+  }
+  :where(.css-dev-only-do-not-override-p8b6i).ant-picker {
+    padding: 6px 28px 1px;
+    border-radius: 3px;
+  }
+
+  :where(.css-dev-only-do-not-override-p8b6i).ant-picker .ant-picker-input >input {
+    background: #fff;
+  }
+
+  :where(.css-dev-only-do-not-override-p8b6i).ant-picker-outlined:hover {
+    border-color: rgba(0, 0, 0, 0.87);
+  }
+  .css-1d1r5q-MuiFormHelperText-root,.css-1wc848c-MuiFormHelperText-root {
+    font-weight: 400 !important;
+    margin-top: -11px !important;
+    margin-bottom: -2px !important;
+    margin-left: 2px !important;
+    color: #1a005d !important;
+  }
+  .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+    height: 36px !important;
+  }
+  .css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+    top: -5px !important;
+    
+    font-size: small !important;
+  }
+  .css-1n4twyu-MuiInputBase-input-MuiOutlinedInput-input {
+    font: -webkit-control !important;
+
+  }
+  .css-1o6kl88-MuiInputBase-input-MuiOutlinedInput-input {
+    font: -webkit-control !important;
+  }
+  .css-1y8r37a-MuiAutocomplete-root .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
+    padding-bottom: 0px !important;
+
+  }
+
+  .css-1n4twyu-MuiInputBase-input-MuiOutlinedInput-input.Mui-disabled {
+    -webkit-text-fill-color: rgba(0, 0, 0, 0.87) !important;
+
+  }
+
+  .css-1o6kl88-MuiInputBase-input-MuiOutlinedInput-input.Mui-disabled {
+    -webkit-text-fill-color: rgba(0, 0, 0, 0.87) !important;
+
+
+  }
+
+  .css-nxo287-MuiInputBase-input-MuiOutlinedInput-input.Mui-disabled {
+    -webkit-text-fill-color: rgba(0, 0, 0, 0.87) !important;
+
+
+  }

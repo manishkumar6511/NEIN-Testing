@@ -1,0 +1,22 @@
+
+div .MuiTypography-root  {
+    /* Add your custom styles here */
+    font-family: "Arial";
+   
+    letter-spacing: 0.0px;
+    /* Other custom styles */
+}
+
+
+.menuname{
+
+     color: blue;
+     font-family: 'Arial';
+    font-weight: 600;
+}
+
+
+
+/* Override default styles for ListItemText */
+
+

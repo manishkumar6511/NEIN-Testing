@@ -1,0 +1,9 @@
+.custom-toast-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999; /* Ensure it's on top of other elements */
+    pointer-events: none; /* Ensure it doesn't block interactions */
+  }
+  
