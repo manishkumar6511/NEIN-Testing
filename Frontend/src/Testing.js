@@ -6,7 +6,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import './Components/CSS/Report.css';
+// import './Components/Reports/ScrollableTable.css';
+import AEFRegister from './Components/Reports/AEFReg';
+import DailyStatus from './Components/Reports/DailyStatus';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -50,8 +52,8 @@ export default function FullWidthTabs() {
   };
 
   return (
-    <Box sx={{ bgcolor: 'background.paper', width:'100%' }}>
-      <AppBar position="static">
+    <Box sx={{ bgcolor: 'background.paper'}}>
+      <AppBar position="static" >
         <Tabs
           value={value}
           onChange={handleChange}
@@ -60,23 +62,23 @@ export default function FullWidthTabs() {
           variant="fullWidth"
           aria-label="full width tabs example"
         >
-          <Tab label="Item One" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
-          <Tab label="Item Four" {...a11yProps(3)} />
-          <Tab label="Item Five" {...a11yProps(4)} />
-          <Tab label="Item Six" {...a11yProps(5)} />
-          <Tab label="Item Seven" {...a11yProps(6)} />
-          <Tab label="Item Eight" {...a11yProps(7)} />
-          <Tab label="Item Nine" {...a11yProps(8)} />
-          <Tab label="Item Ten" {...a11yProps(9)} />
+          <Tab label="AEF Register" {...a11yProps(0)} />
+          <Tab label="Daily Status" {...a11yProps(1)} />
+          <Tab label="2023 v 2024" {...a11yProps(2)} />
+          <Tab label="CHA" {...a11yProps(3)} />
+          <Tab label="AWR" {...a11yProps(4)} />
+          <Tab label="CWR" {...a11yProps(5)} />
+          <Tab label="Top 15" {...a11yProps(6)} />
+          <Tab label="Top Carrier" {...a11yProps(7)} />
+          <Tab label="Pic" {...a11yProps(8)} />
+          <Tab label="Custom Report" {...a11yProps(9)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0} dir={theme.direction}>
-        Item One
+    <AEFRegister/>
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
-        Item Two
+       <DailyStatus/>
       </TabPanel>
       <TabPanel value={value} index={2} dir={theme.direction}>
         Item Three

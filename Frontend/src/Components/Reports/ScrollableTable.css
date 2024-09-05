@@ -1,0 +1,75 @@
+.table-container {
+    width: 60% !important;
+    overflow-x: auto !important; /* Enables horizontal scrolling */
+}
+
+.scrollable-table {
+    width: max-content !important; /* Allows the table to take more space than the container */
+    border-collapse: collapse;
+}
+
+
+.fixed-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important; /* Ensures the fixed header stays above other content */
+    background-color: white !important;
+}
+
+.scrollable-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1 !important; /* Sits below the fixed header */
+    background-color: #3f51b5 !important; /* Background color of the scrollable section */
+    color: white !important; /* Font color of the scrollable section */
+}
+
+.table-header-cell {
+    padding:  9px 17px 10px 0px !important; /* Adjust padding */
+    font-size: 12px !important; /* Font size for headers */
+    line-height: 1.2 !important; /* Line height for headers */
+}
+
+
+
+.css-1ex1afd-MuiTableCell-root {
+    padding: 2px 0px 0px 0px !important;
+}
+
+.css-y8ay40-MuiTableCell-root {
+   
+    border-bottom: 1px solid rgba(224, 224, 224, 1) !important;
+   
+    margin-left: 10px !important;
+    color: rgb(249 238 238 / 87%) !important;
+   
+    background-color: #1a005d !important;
+}
+
+.css-1rk0fxb-MuiPaper-root-MuiTableContainer-root {
+    overflow-x: visible !important;
+}
+
+
+/* Higher specificity */
+.table .MuiTableCell-root.padding-column {
+    padding: 29px 29px 29px 29px !important;
+}
+
+
+.tableRowOdd {
+    background-color: #d3c9c9; /* Light gray background for odd rows */
+  }
+  
+  .tableRowEven {
+    background-color: #ffffff; /* White background for even rows */
+  }
+  
+  .css-15wwp11-MuiTableHead-root{
+  
+      background-color:rgba(25, 118, 210, 0.2);
+  }
+
+  .css-hip9hq-MuiPaper-root-MuiAppBar-root {
+width: min-content !important;
+  }

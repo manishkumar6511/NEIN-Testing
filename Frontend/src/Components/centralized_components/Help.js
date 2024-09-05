@@ -56,9 +56,9 @@ const HelpButton = () => {
         color="primary"
         aria-label="help"
         onClick={handleOpen}
-        style={{ position: 'fixed', bottom: 20, right: 20 }}
+        style={{ position: 'fixed', bottom: 20, right: 20 ,backgroundColor:'#1a005d'}}
       >
-        <IoIosChatbubbles />
+        <IoIosChatbubbles style={{fontSize:'37px'}} />
       </Fab>
       <Modal
         open={open}

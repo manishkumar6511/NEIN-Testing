@@ -353,7 +353,7 @@ const handleNavigationWithData = (event,row) => {
 
       </Grid>
       <Table stickyHeader aria-label="sticky table">
-        <TableHead>
+        <TableHead style={{backgroundColor:'#1a005d',color:'#fff'}}>
           <TableRow>
             {renderHeaders()}
           </TableRow>
