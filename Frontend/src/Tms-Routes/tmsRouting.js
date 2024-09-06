@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import OperationsDashboard from "../Components/OperationsDashboard";
 import AirExport from "../Components/FreightForwading/AirExport";
 import DashboardOR from "../Dashboard/Dashboard";
-import Reports from "../Components/Reports/Report";
+import Reports from "../Components/Reports/Reports";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Testing from "../Testing";

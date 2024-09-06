@@ -3,13 +3,23 @@ import {
     TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper,
     IconButton, Collapse, Box, Typography, TablePagination, Menu, MenuItem, Fade,TextField,Grid,Autocomplete
   } from '@mui/material';
-  import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
-import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+
 
 //import './ScrollableTable.css';
 function DailyStatus(){
+
+    const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value,10));
+    setPage(0);
+  };
 
     const rows = [
         {
@@ -153,37 +163,36 @@ function DailyStatus(){
             molexMargin: '9%', shahiNegative: 'Yes', marginPercentage: '16%'
         }
     ];
+
+    const displayedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
 return(
-<div className="table-container">
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['DateRangePicker']}>
-        <DateRangePicker localeText={{ start: 'Check-in', end: 'Check-out' }} />
-      </DemoContainer>
-    </LocalizationProvider>
-<TableContainer component={Paper}>
-                <Table stickyHeader aria-label="sticky table" className="scrollable-table" >
+<div>
+
+<TableContainer component={Paper}  style={{width:'900px'}}>
+                <Table stickyHeader aria-label="sticky table" style={{width:'max-content'}} >
                     <TableHead>
                         <TableRow>
         
-            <TableCell className="table-header-cell scrollable-header"><b>CUSTOM CLR DT</b></TableCell>
-            <TableCell className="table-header-cell scrollable-header">EXPORTER</TableCell>
-            <TableCell className="table-header-cell scrollable-header">MAWB NO</TableCell>
-            <TableCell className="table-header-cell scrollable-header">DEST</TableCell>
-            <TableCell className="table-header-cell scrollable-header">NOMINATION</TableCell>
-            <TableCell className="table-header-cell scrollable-header">CHA</TableCell>
-            <TableCell className="table-header-cell scrollable-header">PICK UP</TableCell>
-            <TableCell className="table-header-cell scrollable-header">DIFF/KG</TableCell>
-            <TableCell className="table-header-cell scrollable-header">PROFIT/LOSS</TableCell>
-            <TableCell className="table-header-cell scrollable-header">NEGATIVE MARGIN</TableCell>
-            <TableCell className="table-header-cell scrollable-header">MOLEX MARGIN</TableCell>
-            <TableCell className="table-header-cell scrollable-header">SHAHI NEGATIVE</TableCell>
-            <TableCell className="table-header-cell scrollable-header">MARGIN %</TableCell>
+            <TableCell  ><b>CUSTOM CLR DT</b></TableCell>
+            <TableCell  >EXPORTER</TableCell>
+            <TableCell  >MAWB NO</TableCell>
+            <TableCell  >DEST</TableCell>
+            <TableCell  >NOMINATION</TableCell>
+            <TableCell  >CHA</TableCell>
+            <TableCell  >PICK UP</TableCell>
+            <TableCell  >DIFF/KG</TableCell>
+            <TableCell  >PROFIT/LOSS</TableCell>
+            <TableCell  >NEGATIVE MARGIN</TableCell>
+            <TableCell  >MOLEX MARGIN</TableCell>
+            <TableCell  >SHAHI NEGATIVE</TableCell>
+            <TableCell  >MARGIN %</TableCell>
             
           
             </TableRow>
             </TableHead>
             <TableBody>
-                    {rows.map((row, index) => (
+            {displayedRows.map((row, index) => (
                         <TableRow key={index} className={index % 2 === 0 ? 'tableRowEven' : 'tableRowOdd'}>
                              <TableCell>{row.customClrDt}</TableCell>
                             <TableCell>{row.exporter}</TableCell>
@@ -202,7 +211,17 @@ return(
                     ))}
                 </TableBody>
             </Table>
+          
             </TableContainer>
+            <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={rows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
 
 
 </div>

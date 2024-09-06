@@ -53,6 +53,14 @@ export default function FullWidthTabs() {
 
   return (
     <Box sx={{ bgcolor: 'background.paper'}}>
+      {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={['DateRangePicker']}>
+        <DateRangePicker localeText={{ start: 'Check-in', end: 'Check-out' }} />
+      </DemoContainer>
+    </LocalizationProvider> */}
+
+
+    
       <AppBar position="static" >
         <Tabs
           value={value}

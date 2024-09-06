@@ -15,8 +15,8 @@ function AEFRegister(){
 return(
 <div className="table-container">
 
-<TableContainer component={Paper} style={{width:'700px'}}>
-                <Table stickyHeader aria-label="sticky table"  >
+<TableContainer component={Paper} style={{width:'900px'}}>
+                <Table stickyHeader aria-label="sticky table" style={{width:'max-content'}} >
                     <TableHead>
                         <TableRow>
         
