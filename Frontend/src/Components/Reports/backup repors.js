@@ -5,8 +5,17 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import Autocomplete from '@mui/material/Autocomplete';
+import Box from '@mui/material/Box';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
 import { Button } from "antd";
  import ExportDefaultToolbar from "./CWR";
+
+import AirplanemodeActiveIcon from '@mui/icons-material/AirplanemodeActive';
+import DirectionsBoatFilledIcon from '@mui/icons-material/DirectionsBoatFilled';
+import SailingIcon from '@mui/icons-material/Sailing';
+import {Tab,Tabs} from "@mui/material"; 
 import VerticalTabs from "./Tabs";
 import AEFRegister from "./AEFReg";
 import DailyStatus from "./DailyStatus";
@@ -15,98 +24,30 @@ import DailyStatus from "./DailyStatus";
 
  
 function Report() {
+  const [subBranch, setSubBranch] = useState('');
 
-const [validationErrors, setValidationErrors] = useState({});
-const [selectedComponent, setSelectedComponent] = useState(null);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  //for divison 
+  const [selectedModule, setSelectedModule] = useState('');
+  const [validationErrors, setValidationErrors] = useState({});
+  const [selectedComponent, setSelectedComponent] = useState(null); // For loading the selected component
 
-
-//****Centralize State **** */
-//********************************************************************************************************************************** */
-const [configState, setConfigState] = useState({
-  currentConfig: null,
-  selectedModule: '',
-  selectedSubDivision: '',
-  subBranch:'',
-  fromDate:'',
-  toDate:''
-});
+const[selectedSubDivision,setSelectedSubDivision]=useState('');
+const[currentConfig,setCurrentConfig]=useState(null);
 
 
-//******** optimise code  */
-//module cofig for reports header and api
+
+
 const moduleConfig = {
   ff: {
     AirImport: {
       report1: {
         headers: [
-          { field: 'sl_no', headerName: 'SL NO', width: 80 },
-          { field: 'dkt_no', headerName: 'DKT No', width: 150 },
-          { field: 'ref_no', headerName: 'REF NO', width: 150 },
-          { field: 'mawb_no', headerName: 'MAWB NO', width: 150 },
-          { field: 'mawb_dt', headerName: 'MAWB DT', width: 150 },
-          { field: 'mawb_g_weight', headerName: 'MAWB G.WEIGHT', width: 150 },
-          { field: 'mawb_c_weight', headerName: 'MAWB C.WEIGHT', width: 150 },
-          { field: 'hawb', headerName: 'HAWB', width: 150 },
-          { field: 'hawb_dt', headerName: 'HAWB DT', width: 150 },
-          { field: 'mawb_hawb_pices', headerName: 'MAWB/HAWB PICES', width: 150 },
-          { field: 'hawb_g_weight', headerName: 'HAWB G.WEIGHT', width: 150 },
-          { field: 'hawb_c_weight', headerName: 'HAWB C.WEIGHT', width: 150 },
-          { field: 'exporter', headerName: 'Exporter', width: 150 },
-          { field: 'commodity', headerName: 'Commodity', width: 150 },
-          { field: 'consignee', headerName: 'Consignee', width: 150 },
-          { field: 'dest', headerName: 'Dest', width: 100 },
-          { field: 'dest_country', headerName: 'Dest-Country', width: 150 },
-          { field: 'area', headerName: 'Area', width: 100 },
-          { field: 'airline', headerName: 'AIRLINE', width: 150 },
-          { field: 'inv_no_dt', headerName: 'INV NO DT', width: 150 },
-          { field: 'description', headerName: 'DESCRIPTION', width: 150 },
-          { field: 'pick_up_date', headerName: 'PICK UP DATE', width: 150 },
-          { field: 'customs_clr_dt', headerName: 'CUSTOMS CLR DT-', width: 150 },
-          { field: 'flight_details', headerName: 'Flight Details', width: 150 },
-          { field: 'first_flight', headerName: '1ST FLIGHT', width: 150 },
-          { field: 'second_flight', headerName: '2ND FLIGHT', width: 150 },
-          { field: 'mawb_pp_cc', headerName: 'MAWB pp/cc', width: 150 },
-          { field: 'mawb_net_ft_amt', headerName: 'MAWB Net Ft Amt', width: 150 },
-          { field: 'mawb_total_pp_amt', headerName: 'MAWB Total PP AMT', width: 150 },
-          { field: 'surcharges', headerName: 'Surcharges', width: 150 },
-          { field: 'hawb_pp_cc', headerName: 'HAWB pp/cc', width: 150 },
-          { field: 'hawb_currency', headerName: 'HAWB CURRENCY', width: 150 },
-          { field: 'hawb_amount', headerName: 'HAWB AMOUNT', width: 150 },
-          { field: 'sb_no_date', headerName: 'SB NO & DATE', width: 150 },
-          { field: 'fob_amt', headerName: 'FOB Amt', width: 150 },
-          { field: 'sb_copy_dispatch_dt', headerName: 'SB COPY DISPATCH DT', width: 150 },
-          { field: 'documents_waybill_no', headerName: 'DOCUMENTS COURIER WAYBILL NO', width: 150 },
-          { field: 'handling_amt', headerName: 'HANDLING AMOUNT', width: 150 },
-          { field: 'nippon_inv_dt', headerName: 'NIPPON INV # / DT', width: 150 },
-          { field: 'bills_dispatch_dt', headerName: 'BILLS DISPATCH DT', width: 150 },
-          { field: 'bills_courier_waybill_no', headerName: 'BILLS COURIER WAYBILL NO', width: 150 },
-          { field: 'ddu_ddp_inv_dt', headerName: 'DDU & DDP INV # & DT', width: 150 },
-          { field: 'ddu_ddp_inv_dispatch_dt', headerName: 'DDU / DDP INV DISPATCH DT', width: 150 },
-          { field: 'incoterm', headerName: 'INCOTERM', width: 100 },
-          { field: 'remark', headerName: 'REMARK', width: 150 },
-          { field: 'publish_rates', headerName: 'Publish Rates', width: 150 },
-          { field: 'buying_net_net_rates', headerName: 'Buying net net rates', width: 150 },
-          { field: 'fsc', headerName: 'FSC', width: 100 },
-          { field: 'scc', headerName: 'SCC', width: 100 },
-          { field: 'other_surcharges', headerName: 'OTHER SURCHARGES', width: 150 },
-          { field: 'service_type', headerName: 'Type of Service ( DG / Temp )', width: 150 },
-          { field: 'selling_net_net_rates', headerName: 'Selling net net rates', width: 150 },
-          { field: 'difference', headerName: 'Difference', width: 100 },
-          { field: 'profit_loss', headerName: 'Profit / Loss', width: 150 },
-          { field: 'total_all_freight_carrier', headerName: 'Total All in Freight need to pay to carrier', width: 150 },
-          { field: 'total_all_freight_customer', headerName: 'Total All in Freight billing to customer', width: 150 },
-          { field: 'prepared_by', headerName: 'Prepared by/reg/name', width: 150 },
-          { field: 'executive_name', headerName: 'EXECUTIVE/NAME', width: 150 },
-          { field: 'nomination', headerName: 'Nomination', width: 150 },
-          { field: 'cha', headerName: 'CHA', width: 100 },
-          { field: 'pick_up', headerName: 'Pick up', width: 100 },
-          { field: 'negative_margin', headerName: 'Negative Margin', width: 150 },
-          { field: 'molex_negative', headerName: 'Molex Negative', width: 150 },
-          { field: 'shahi_negative', headerName: 'Shahi Negative', width: 150 },
-          { field: 'month', headerName: 'Month', width: 100 },
-          { field: 'date_hand_finance', headerName: 'Date of Hand over to Finance', width: 150 },
+          { field: 'id', headerName: 'ID', width: 90 },
+          { field: 'name', headerName: 'Name', width: 150 },
         ],
-        apiEndpoint: 'http://localhost:5000/Reports/aefRegister'
+        apiEndpoint: '/api/ff/air-import/report1'
       },
       report2: {
         headers: [
@@ -143,13 +84,28 @@ const moduleConfig = {
   },
 };
 
+useEffect(() => {
+
+    console.log("Props updated: ", { selectedModule, selectedComponent ,selectedSubDivision, selectedModule});
+    // Do something with the updated props
+
+}, [selectedModule, selectedComponent,selectedSubDivision,selectedModule]);
+
+// useEffect(()=>{
+
+
+//   console.log("current config use effect ",currentConfig);
+// },[currentConfig])
+
 let tabs={};
+
 function updatetabs(){
 
  tabs = {
   ff:{
     AirImport:[
-    {label: 'Air import 1', component: configState.currentConfig&&<ExportDefaultToolbar props={configState.currentConfig['report1']}/> },
+      {label: 'Air import 1', component: currentConfig&&<ExportDefaultToolbar props={currentConfig}/> },
+  //  {label:'Air import 1',component:<ExportDefaultToolbar  prop="name"  gowthmi={currentConfig} />},
     {label:'Air import 2',component:<h1>ff Air import2 componnet</h1>} ,
     {label:'Air import 3',component:<h1>ff Air import 3 componnet</h1>} ,
     {label:'Air import 4',component:<h1>ff Air import 4 componnet</h1>} ,
@@ -161,7 +117,8 @@ function updatetabs(){
       {label:'2023 v 2024',component:<h1>2023 v 2024</h1>},
       {label:'CHA',component:<h1>CHA</h1>},
       {label:'AWR',component:<h1>AWR</h1>},
-      {label:'CWR',component:<ExportDefaultToolbar />},
+      {label:'CWR',component:<ExportDefaultToolbar 
+        header={currentConfig} />},
       {label:'TOP 15',component:<h1>TOP 15</h1>},
       {label:'TOP CARRIER',component:<h1>TOP CARRIER</h1>},
       {label:'PIC',component:<h1>AEF PIC</h1>},
@@ -240,55 +197,164 @@ function updatetabs(){
 }
  
 
-const subBranchOptions = [
-  { label: 'Bangalore', value: '10' },
-  { label: 'Chennai', value: '40' },
-  { label: 'Mumbai', value: '30' }
-];
+  const subBranchOptions = [
+    { label: 'Bangalore', value: '10' },
+    { label: 'Chennai', value: '40' },
+    { label: 'Mumbai', value: '30' }
+  ];
+ 
+  const moduleOptions = [
+    { label: 'Freight Forwarding', value: 'ff' },
+    { label: 'Custom Brokerage', value: 'cha' },
+    { label: 'Removals', value: 'removals' }
+  ];
 
-const moduleOptions = [
-  { label: 'Freight Forwarding', value: 'ff' },
-  { label: 'Custom Brokerage', value: 'cha' },
-  { label: 'Removals', value: 'removals' }
-];
+    // Define submodules for each module
+  const subDivisions = [
 
-// Define submodules for each module
-const subDivisions = [
+    { label: 'Air Export', value: 'AirExport' },
+    { label: 'Air Import', value: 'AirImport' },
+    { label: 'Ocean Export', value: 'OceanExport' },
+    { label: 'Ocean Import', value: 'OceanImport' }
+  ];
 
-  { label: 'Air Export', value: 'AirExport' },
-  { label: 'Air Import', value: 'AirImport' },
-  { label: 'Ocean Export', value: 'OceanExport' },
-  { label: 'Ocean Import', value: 'OceanImport' }
-];
 
-//** centrlize Sate update  *********************************************************************************************************/
-const handleConfigChange = (field, value) => {
-  setConfigState((prevState) => ({
-    ...prevState,
-    [field]: value?.value || '',  // Update the appropriate field dynamically
-  }));
-};
+  // const subDivisions={
+  //   ff:[
+  //     { label: 'Air Export', value: 'AirExport' },
+  //     { label: 'Air Import', value: 'AirImport' },
+  //     { label: 'Ocean Export', value: 'OceanExport' },
+  //     { label: 'Ocean Import', value: 'OceanImport' }
+  //   ],
+  //   cha:[
+  //     { label: 'Air Export', value: 'AirExport' },
+  //     { label: 'Air Import', value: 'AirImport' },
+  //     { label: 'Ocean Export', value: 'OceanExport' },
+  //     { label: 'Ocean Import', value: 'OceanImport' }
+  //   ],
+  //   removals:[
+  //     { label: 'Air Export', value: 'AirExport' },
+  //     { label: 'Air Import', value: 'AirImport' },
+  //     { label: 'Ocean Export', value: 'OceanExport' },
+  //     { label: 'Ocean Import', value: 'OceanImport' },
+  //     { label: 'Domestic', value: 'OceanImport' }
+  //   ]
+    
 
-useEffect(() => {
-  if (configState.selectedModule && configState.selectedSubDivision) {
-    const config = moduleConfig[configState.selectedModule][configState.selectedSubDivision];
-    setConfigState((prevState) => ({
-      ...prevState,
-      currentConfig: config
+  // }
+
+
+
+
+  const handleTabChange = (event, newValue) => {
+    setSelectedTab(newValue);
+  };
+
+  
+ 
+
+  const submodulesMap = { 
+    ff: [
+      { 
+        icon: <AirplanemodeActiveIcon style={{ transform: 'rotate(180deg)' }} color="success"/>,
+         name: 'Air Import',value:'AirImport',
+         right:'101',
+        //  tab : {
+        //   AirImport:[
+        //   {label:'Air import 1',component:<h1>Air import 1 componnet</h1>} ,
+        //   {label:'Air import 2',component:<h1>Air import2 componnet</h1>} ,
+        //   {label:'Air import 3',component:<h1>Air import 3 componnet</h1>} ,
+        //   {label:'Air import 4',component:<h1>Air import 4 componnet</h1>} ,
+        //   ]}
+        
+        
+        },
+      { icon: <AirplanemodeActiveIcon color="success"/>, name: 'Air Export',value:'AirExport',component:<VerticalTabs/>,right:'102' },
+      { icon: <DirectionsBoatFilledIcon color="success"/>, name: 'Ocean Import',value:'OceanImport',right:'103' },
+      { icon: <SailingIcon color="success" />, name: 'Ocean Export',value:'OceanExport' ,right:'104'},
+    ],
+    cha: [
+      { icon: <AirplanemodeActiveIcon style={{ transform: 'rotate(180deg)' }} color="success"/>, name: 'Air Import',right:'101' },
+      { icon: <AirplanemodeActiveIcon color="success"/>, name: 'Air Export',right:'102' },
+      { icon: <DirectionsBoatFilledIcon color="success"/>, name: 'Ocean Import',right:'103' },
+      { icon: <SailingIcon color="success" />, name: 'Ocean Export' ,right:'104'},
+    ],
+    removals: [
+      { icon: <AirplanemodeActiveIcon style={{ transform: 'rotate(180deg)' }} color="success"/>, name: 'Air Import',right:'101' },
+      { icon: <AirplanemodeActiveIcon color="success"/>, name: 'Air Export',right:'102' },
+      { icon: <DirectionsBoatFilledIcon color="success"/>, name: 'Ocean Import',right:'103' },
+      { icon: <SailingIcon color="success" />, name: 'Ocean Export' ,right:'104'},
+    ]
+  };
+ 
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+ 
+  const handleModuleChange = (event, newValue) => {
+    setSelectedModule(newValue?.value || '');
+  };
+ const handleSubDivision=(event,newValue)=>{
+  setSelectedSubDivision(newValue?.value || '');
+ }
+ 
+ 
+  const handleSubBranch = (event, newValue) => {
+    const branch = newValue.value;
+    setSubBranch(branch);
+    setValidationErrors((prevErrors) => ({
+      ...prevErrors,
+      subBranch: branch.trim() === "" ? true : false,
     }));
-  }
-}, [configState.selectedModule, configState.selectedSubDivision]);
+  };
+ 
+  const handleFromDate = (newDate) => {
+    setFromDate(newDate.format('YYYY-MM-DD'));
+    setValidationErrors((prevErrors) => ({
+      ...prevErrors,
+      fromDate: newDate && dayjs(newDate).isValid() ? false : true,
+    }));
+  };
+ 
+  const handleToDate = (newDate) => {
+    setToDate(newDate.format('YYYY-MM-DD'));
+    setValidationErrors((prevErrors) => ({
+      ...prevErrors,
+      toDate: newDate && dayjs(newDate).isValid() ? false : true,
+    }));
+  };
+  
+  const handleSubmoduleClick = (event,newValue) => {
+
+  
+   
+
+
+    setSelectedSubDivision(newValue.value);
+
+    console.log("new value  "+newValue.value)
+
+   
+  };
 
 useEffect(()=>{
-  updatetabs()
-  setSelectedComponent(configState.selectedSubDivision ? tabs[configState.selectedModule][configState.selectedSubDivision] : null); 
-  console.log(configState.currentConfig);
-},[configState.currentConfig])
+console.log("after seleting sub divisinon");
+setCurrentConfig(moduleConfig[selectedModule]?.[selectedSubDivision]?.['report1']);
 
 
+},[selectedSubDivision])
 
-//************************* *****************************************************************************************************/
+useEffect(()=>{
+  
+  
+updatetabs();
+  
+setSelectedComponent(selectedSubDivision ? tabs[selectedModule][selectedSubDivision] : null);
 
+console.log("selectedComponent "+selectedComponent);
+  console.log(currentConfig);
+ 
+},[currentConfig])
+ 
   return (
     <>
       <div>
@@ -301,8 +367,7 @@ useEffect(()=>{
                 freeSolo
                 disableClearable
                 options={subBranchOptions}
-             //   onChange={handleSubBranch}
-             onChange={(event, newValue) => handleConfigChange('subBranch', newValue)}
+                onChange={handleSubBranch}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -312,9 +377,7 @@ useEffect(()=>{
                       type: 'search',
                     }}
                     required
-                    // error={!!validationErrors?.configState.subBranch && (configState.subBranch === '')}
-                    error={!!(validationErrors?.configState?.subBranch && configState.subBranch === '')}
-
+                    error={!!validationErrors?.subBranch && (subBranch === '')}
                   />
                 )}
               />
@@ -328,7 +391,7 @@ useEffect(()=>{
                 freeSolo
                 disableClearable
                 options={moduleOptions}
-                onChange={(event, newValue) => handleConfigChange('selectedModule', newValue)}
+                onChange={handleModuleChange}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -344,7 +407,6 @@ useEffect(()=>{
             </FormControl>
           </Grid>
 
-
           <Grid item xs={2}>
             <FormControl fullWidth>
               <Autocomplete
@@ -352,8 +414,7 @@ useEffect(()=>{
                 freeSolo
                 disableClearable
                 options={subDivisions}
-                // onChange={handleSubmoduleClick}
-                onChange={(event, newValue) => handleConfigChange('selectedSubDivision', newValue)}
+                onChange={handleSubmoduleClick}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -374,9 +435,8 @@ useEffect(()=>{
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <MobileDatePicker
                   name="fromDate"
-                  value={configState.fromDate ? dayjs(configState.fromDate, 'DD/MM/YYYY') : null}
-                  // onChange={handleFromDate}
-                  onChange={(event, newValue) => handleConfigChange('fromDate', newValue)}
+                  value={fromDate ? dayjs(fromDate, 'DD/MM/YYYY') : null}
+                  onChange={handleFromDate}
                   inputFormat="DD/MM/YYYY"
                   label='From Date *'
                   slotProps={{
@@ -384,7 +444,7 @@ useEffect(()=>{
                       error: !!validationErrors?.fromDate,
                     },
                   }}
-                  error={validationErrors.fromDate && (configState.fromDate === null)}
+                  error={validationErrors.fromDate && (fromDate === null)}
                 />
               </LocalizationProvider>
             </FormControl>
@@ -395,8 +455,8 @@ useEffect(()=>{
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <MobileDatePicker
                   name="toDate"
-                  value={configState.toDate ? dayjs(configState.toDate, 'DD/MM/YYYY') : null}
-                  onChange={(event, newValue) => handleConfigChange('toDate', newValue)}
+                  value={toDate ? dayjs(toDate, 'DD/MM/YYYY') : null}
+                  onChange={handleToDate}
                   inputFormat="DD/MM/YYYY"
                   label='To Date *'
                   slotProps={{
@@ -404,7 +464,7 @@ useEffect(()=>{
                       error: !!validationErrors?.toDate,
                     },
                   }}
-                  error={validationErrors.toDate && (configState.toDate === null)}
+                  error={validationErrors.toDate && (toDate === null)}
                 />
               </LocalizationProvider>
             </FormControl>
@@ -414,11 +474,42 @@ useEffect(()=>{
             <Button variant="contained" style={{ backgroundColor: '#1a005d', color: 'white', height: '40px' }} onClick={() => console.log('Submit data')}>Submit</Button>
           </Grid>
 
+          {/* SpeedDial with dynamic submodules */}
+         {/* <Grid item xs={1}>
+            <Box sx={{  transform: 'translateZ(0px)', flexGrow: 1 }}>
+              <SpeedDial
+                ariaLabel="SpeedDial controlled open example"
+                sx={{ position: 'absolute', top: -10, right: 16 }}
+                icon={<SpeedDialIcon />}
+                onClose={handleClose}
+                onOpen={handleOpen}
+                open={open}
+                direction="down"
+              >
+                {submodulesMap[selectedModule]?.map((action) => (
+                  <SpeedDialAction
+                    key={action.name}
+                    icon={action.icon}
+                    tooltipTitle={action.name}
+                    onClick={() => handleSubmoduleClick(action)}
+                  />
+                ))}
+              </SpeedDial>
+            </Box>
         
+ </Grid> */}
  </Grid>
         {/* Render the selected component */}
         <div style={{ marginTop: '20px' }}>
-              {selectedComponent && (<VerticalTabs tabs={selectedComponent}/>)}
+
+
+
+        
+
+        {selectedComponent && (    
+          <VerticalTabs tabs={selectedComponent} division={selectedModule} subDivision={selectedSubDivision}
+/>
+        )}
         </div> 
       </div>
     </>

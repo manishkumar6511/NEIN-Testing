@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
  
 function TabPanel(props) {
-  console.log("props",props);
+ // console.log("props",props);
   const { children, value, index, ...other } = props;
  
   return (
@@ -39,8 +39,11 @@ function a11yProps(index) {
   };
 }
  
-export default function VerticalTabs({ tabs,subDivision,division }) {
-  console.log("tabs from props",tabs);
+export default function VerticalTabs({ tabs }) {
+
+  // console.log("tabs Componets  sub division",subDivision);
+  // console.log("tabs Componets division ",division);
+  // console.log("tabs Componets",tabs);
   const [value, setValue] = React.useState(0);
  
   const handleChange = (event, newValue) => {

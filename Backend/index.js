@@ -9,6 +9,7 @@ const cha=require('./src/controllers/customBrokerageController');
 const dashboard=require('./src/controllers/DashboardController');
 const removals=require('./src/controllers/removalsController');
 const finance=require('./src/Listners/FinaceDataToDb');
+const Reports=require('./src/controllers/Reports');
 
 
 app.use(express.json());
@@ -19,6 +20,7 @@ app.use('/cha', cha);
 app.use('/dashboard',dashboard);
 app.use('/removals',removals);
 app.use('/finance',finance);
+app.use('/Reports',Reports);
 
 
 

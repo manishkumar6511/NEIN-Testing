@@ -14,13 +14,13 @@ exports.getAllIndustry= (req, res) => {
             console.error(err);
             res.status(500).send("An error occurred while fetching data");
         } else {
-            sendEmail(
-                'Manish',
-                'manish.kumar@nipponexpress.com',
-                'manish.kumar@nipponexpress.com',
-                '<h1>Hello World</h1>',
-                'Test Subject'
-            );
+            // sendEmail(
+            //     'Manish',
+            //     'manish.kumar@nipponexpress.com',
+            //     'manish.kumar@nipponexpress.com',
+            //     '<h1>Hello World</h1>',
+            //     'Test Subject'
+            // );
             res.json(result);
         }
     });
