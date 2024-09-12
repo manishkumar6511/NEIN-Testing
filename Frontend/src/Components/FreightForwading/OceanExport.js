@@ -17,11 +17,12 @@ import dayjs from 'dayjs'
 import DisplayModal from "../centralized_components/AutoFieldModal";
 import axios from 'axios';
 import { ToastProvider, useToast } from '../centralized_components/Toast';
-import { useLocation } from 'react-router-dom'; 
+import { Navigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function AirExport(){
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-
+  const navigate = useNavigate();
   const location = useLocation();
   const dataReceived = location.state;
   const [mawbNo, setMawbNo] = useState('');
@@ -30,6 +31,9 @@ function AirExport(){
   
     if (dataReceived) {
       setMawbNo(dataReceived.mawbNo);
+      const newValue=dataReceived.mawbNo;
+      console.log("new value in useeffetc",newValue);
+      handleOptionChange('',newValue);
     }else{
       setMawbNo('');
     }
@@ -1178,15 +1182,15 @@ return(
    <Card className="card">
 <Grid container spacing={2}>
   <Grid item xs={11}>
-  <p className='auto-card-title'>Manual Fields. </p>
+  <p className='card-title'>Manual Fields. </p>
 
   </Grid>
-  <Grid item xs={1}>
+  {/* <Grid item xs={1}>
   <IconButton onClick={handleOpen}>
       <InfoIcon style={{color:'#1A005D'}}/>
     </IconButton>
     <DisplayModal open={open} handleClose={handleClose} fields={fields} />
-  </Grid>
+  </Grid> */}
 </Grid>
 
 

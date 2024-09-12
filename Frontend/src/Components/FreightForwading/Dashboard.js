@@ -46,17 +46,17 @@ const BranchChart = () => {
     labels,
     datasets: [
       {
-        label: 'Total Entries',
+        label: 'Total Transactions',
         data: totalEntries,
         backgroundColor: '#8EC400',
       },
       {
-        label: 'Pending Entries',
+        label: 'Pending OR',
         data: pendingEntries,
         backgroundColor: 'rgba(255, 206, 86, 0.6)',
       },
       {
-        label: 'Completed Entries',
+        label: 'Completed OR',
         data: completedEntries,
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
       },
@@ -90,7 +90,7 @@ const BranchChart = () => {
             },
             title: {
               display: true,
-              text: 'Branch Entries Overview',
+              text: 'NX-OPERATION REGISTER',
             },
           },
         }}

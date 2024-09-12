@@ -1088,13 +1088,13 @@ return(
    <Card className="card">
 <Grid container spacing={2}>
   <Grid item xs={11}>
-  <p className='auto-card-title'>Manual Fields. </p>
+  <p className='card-title'>Manual Fields. </p>
 
   </Grid>
   <Grid item xs={1}>
-  <IconButton onClick={handleOpen}>
+  {/* <IconButton onClick={handleOpen}>
       <InfoIcon style={{color:'#1A005D'}}/>
-    </IconButton>
+    </IconButton> */}
     <DisplayModal open={open} handleClose={handleClose} fields={fields} />
   </Grid>
 </Grid>
@@ -1409,13 +1409,13 @@ return(
         <Grid item xs={2}>
        <TextField
        value={manualData.cha || ''}
-       className={manualData.cha==='' ? 'custom-textfield' : 'disabled-textfield-default'}
-      
+       className={manualData.clearanceDoneBy==='Nippon' ? 'disabled-textfield-default':'custom-textfield'  }
+       onChange={handleManualDataChange}
         name="cha"
         label="CHA Name"
         required
         InputProps={{
-          readOnly: !!manualData.cha,
+          readOnly:(manualData.clearanceDoneBy==="Nippon"),
         }}
      autoComplete="off"
         size='small'
@@ -1463,15 +1463,15 @@ return(
        <Grid item xs={3}>
   <FormControl fullWidth>
   <TextField
-     className={optionalFields.IATA_AGENT==='' ? 'custom-textfield' : 'disabled-textfield-default'}
-  value={optionalFields.IATA_AGENT}
+     className={manualData.clearanceDoneBy==='Nippon' ? 'disabled-textfield-default':'custom-textfield'  }
+  value={optionalFields.IATA_AGENT || ''}
   onChange={handleOptional}
     name="IATA_AGENT"
     label="IATA Agent"
     size='small'
     autoComplete="off"
     InputProps={{
-      readOnly: !!optionalFields.IATA_AGENT,
+      readOnly:(manualData.clearanceDoneBy==="Nippon"),
     }}
    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
     

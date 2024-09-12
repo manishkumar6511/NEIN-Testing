@@ -167,80 +167,9 @@ const[airImportDetails,setAirImportDetails]=useState([]);
 
   const [value, setValue] = useState(0);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-    if(newValue===1){
-      // console.log("coming here");
-      setData(airImportCB);    
-      setLink('/Operations/CustomBrokerage/AirImport');
-    }
-      else{
-        setSelectedType('AirImport');
-       
-        setData(airImportDetails);
-       
-        
-      }
-  };
 
-  const handleTableData = (actionName) => {
-    // console.log("table Data");
-    
-    // console.log("actionName",actionName);
-    if(value===0){
-      
-    switch (actionName) {
-      case 'Air Import':
-        setSelectedType('AirImport');
-       // setData(airImportDetails);
-        setLink("/Operations/FreightForwarding/AirImport");
-        break;
-      case 'Air Export':
-        setSelectedType('AirExport');
-       // setData(airExportDetails);
-        setLink("/Operations/FreightForwarding/AirExport");
-        break;
-      case 'Ocean Import':
-        setSelectedType('OceanImport');
-       // setData(oceanImportFF);
-        setLink("/Operations/FreightForwarding/OceanImport");
-        break;
-      case 'Ocean Export':
-        setSelectedType('OceanExport');
-        //setData(oceanExportFF);
-        setLink("/Operations/FreightForwarding/OceanExport");
-        break;
-      default:
-       // console.log('Unknown action');
-    }
-  }else{
-   // console.log("Custom Brokerage");
-    switch (actionName) {
-    case 'Air Import':
-        //setData(airImportCB);
-        setLink("/Operations/CustomBrokerage/AirImport");
-        break;
-      case 'Air Export':
-        
-        //setData(airExportCB);
-        setLink("/Operations/CustomBrokerage/AirExport");
-        break;
 
-        case 'Ocean Import':
-        setData(oceanImportCB);
-        setLink("/Operations/CustomBrokerage/OceanImport");
-        break;
 
-        case 'Ocean Export':
-        setData(oceanExportCB);
-        setLink("/Operations/CustomBrokerage/OceanExport");
-        break;
-
-        default:
-         // console.log('Unknown action');
-    }
-  }
-  };
   let linkToOperations ="";
 if(selectedType==='AirExport'){
    linkToOperations = `/Operations/airExport`;
@@ -495,6 +424,7 @@ useEffect(() => {
      setLink("/Operations/FreightForwarding/OceanImport");
     break;
   case 'Ocean Export':
+    console.log("coming to ocean export");
      APIType="OceanExport"
      setLink("/Operations/FreightForwarding/OceanExport");
     break;

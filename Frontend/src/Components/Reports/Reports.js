@@ -10,7 +10,8 @@ import { Button } from "antd";
 import VerticalTabs from "./Tabs";
 import AEFRegister from "./AEFReg";
 import DailyStatus from "./DailyStatus";
-
+import { moduleOptions,moduleSubDivisions } from "../centralized_components/moduleSubModule";
+import MonthComparision from "./monthComparision";
 
 
  
@@ -18,7 +19,7 @@ function Report() {
 
 const [validationErrors, setValidationErrors] = useState({});
 const [selectedComponent, setSelectedComponent] = useState(null);
-
+const[subDivisions,setSubDivision]=useState([]);
 
 //****Centralize State **** */
 //********************************************************************************************************************************** */
@@ -39,34 +40,34 @@ const moduleConfig = {
     AirImport: {
       report1: {
         headers: [
-          { field: 'sl_no', headerName: 'SL NO', width: 80 },
-          { field: 'dkt_no', headerName: 'DKT No', width: 150 },
-          { field: 'ref_no', headerName: 'REF NO', width: 150 },
-          { field: 'mawb_no', headerName: 'MAWB NO', width: 150 },
-          { field: 'mawb_dt', headerName: 'MAWB DT', width: 150 },
+          { field: 'Register_id', headerName: 'SL NO', width: 80 },
+          { field: 'JOB_DOCKETNO', headerName: 'DKT No', width: 150 },
+          { field: 'NEWINS_REFERENCE_NO', headerName: 'REF NO', width: 150 },
+          { field: 'MAWB_NO', headerName: 'MAWB NO', width: 150 },
+          { field: 'MAWB_DATE', headerName: 'MAWB DT', width: 150 },
           { field: 'mawb_g_weight', headerName: 'MAWB G.WEIGHT', width: 150 },
-          { field: 'mawb_c_weight', headerName: 'MAWB C.WEIGHT', width: 150 },
-          { field: 'hawb', headerName: 'HAWB', width: 150 },
-          { field: 'hawb_dt', headerName: 'HAWB DT', width: 150 },
+          { field: 'MAWB_CHARGEABLE_WEIGHT_KG', headerName: 'MAWB C.WEIGHT', width: 150 },
+          { field: 'HAWB_NO', headerName: 'HAWB', width: 150 },
+          { field: 'HAWB_DATE', headerName: 'HAWB DT', width: 150 },
           { field: 'mawb_hawb_pices', headerName: 'MAWB/HAWB PICES', width: 150 },
-          { field: 'hawb_g_weight', headerName: 'HAWB G.WEIGHT', width: 150 },
-          { field: 'hawb_c_weight', headerName: 'HAWB C.WEIGHT', width: 150 },
+          { field: 'HAWB_GROSS_WEIGHT', headerName: 'HAWB G.WEIGHT', width: 150 },
+          { field: 'HAWB_CHARGEABLE_WEIGHT_KG', headerName: 'HAWB C.WEIGHT', width: 150 },
           { field: 'exporter', headerName: 'Exporter', width: 150 },
-          { field: 'commodity', headerName: 'Commodity', width: 150 },
-          { field: 'consignee', headerName: 'Consignee', width: 150 },
-          { field: 'dest', headerName: 'Dest', width: 100 },
-          { field: 'dest_country', headerName: 'Dest-Country', width: 150 },
+          { field: 'COMMODITY_CODE', headerName: 'Commodity', width: 150 },
+          { field: 'CONSIGNEE', headerName: 'Consignee', width: 150 },
+          { field: 'DESTINATION', headerName: 'Dest', width: 100 },
+          { field: 'COUNTRY', headerName: 'Dest-Country', width: 150 },
           { field: 'area', headerName: 'Area', width: 100 },
-          { field: 'airline', headerName: 'AIRLINE', width: 150 },
+          { field: 'AIR_LINE_NAME', headerName: 'AIRLINE', width: 150 },
           { field: 'inv_no_dt', headerName: 'INV NO DT', width: 150 },
-          { field: 'description', headerName: 'DESCRIPTION', width: 150 },
+          { field: 'DESCRIPTION_OF_GOODS', headerName: 'DESCRIPTION', width: 150 },
           { field: 'pick_up_date', headerName: 'PICK UP DATE', width: 150 },
-          { field: 'customs_clr_dt', headerName: 'CUSTOMS CLR DT-', width: 150 },
-          { field: 'flight_details', headerName: 'Flight Details', width: 150 },
+          { field: 'CUSTOMS_CLEARANCE_DATE', headerName: 'CUSTOMS CLR DT-', width: 150 },
+          { field: 'FLIGHT_NO', headerName: 'Flight Details', width: 150 },
           { field: 'first_flight', headerName: '1ST FLIGHT', width: 150 },
           { field: 'second_flight', headerName: '2ND FLIGHT', width: 150 },
           { field: 'mawb_pp_cc', headerName: 'MAWB pp/cc', width: 150 },
-          { field: 'mawb_net_ft_amt', headerName: 'MAWB Net Ft Amt', width: 150 },
+          { field: 'MAWB_TOTAL_FREIGHT_AMOUNT', headerName: 'MAWB Net Ft Amt', width: 150 },
           { field: 'mawb_total_pp_amt', headerName: 'MAWB Total PP AMT', width: 150 },
           { field: 'surcharges', headerName: 'Surcharges', width: 150 },
           { field: 'hawb_pp_cc', headerName: 'HAWB pp/cc', width: 150 },
@@ -117,6 +118,103 @@ const moduleConfig = {
       },
       // Add up to 10 reports here
     },
+    AirExport: {
+      report1: {
+        headers: [
+          { field: 'Register_id', headerName: 'SL NO', width: 80 },
+          { field: 'JOB_DOCKETNO', headerName: 'DKT No', width: 150 },
+          { field: 'NEWINS_REFERENCE_NO', headerName: 'REF NO', width: 150 },
+          { field: 'MAWB_NO', headerName: 'MAWB NO', width: 150 },
+          { field: 'MAWB_DATE', headerName: 'MAWB DT', width: 150 },
+          { field: 'mawb_g_weight', headerName: 'MAWB G.WEIGHT', width: 150 },
+          { field: 'MAWB_CHARGEABLE_WEIGHT_KG', headerName: 'MAWB C.WEIGHT', width: 150 },
+          { field: 'HAWB_NO', headerName: 'HAWB', width: 150 },
+          { field: 'HAWB_DATE', headerName: 'HAWB DT', width: 150 },
+          { field: 'mawb_hawb_pices', headerName: 'MAWB/HAWB PICES', width: 150 },
+          { field: 'HAWB_GROSS_WEIGHT', headerName: 'HAWB G.WEIGHT', width: 150 },
+          { field: 'HAWB_CHARGEABLE_WEIGHT_KG', headerName: 'HAWB C.WEIGHT', width: 150 },
+          { field: 'exporter', headerName: 'Exporter', width: 150 },
+          { field: 'COMMODITY_CODE', headerName: 'Commodity', width: 150 },
+          { field: 'CONSIGNEE', headerName: 'Consignee', width: 150 },
+          { field: 'DESTINATION', headerName: 'Dest', width: 100 },
+          { field: 'COUNTRY', headerName: 'Dest-Country', width: 150 },
+          { field: 'area', headerName: 'Area', width: 100 },
+          { field: 'AIR_LINE_NAME', headerName: 'AIRLINE', width: 150 },
+          { field: 'inv_no_dt', headerName: 'INV NO DT', width: 150 },
+          { field: 'DESCRIPTION_OF_GOODS', headerName: 'DESCRIPTION', width: 150 },
+          { field: 'pick_up_date', headerName: 'PICK UP DATE', width: 150 },
+          { field: 'CUSTOMS_CLEARANCE_DATE', headerName: 'CUSTOMS CLR DT-', width: 150 },
+          { field: 'FLIGHT_NO', headerName: 'Flight Details', width: 150 },
+          { field: 'first_flight', headerName: '1ST FLIGHT', width: 150 },
+          { field: 'second_flight', headerName: '2ND FLIGHT', width: 150 },
+          { field: 'mawb_pp_cc', headerName: 'MAWB pp/cc', width: 150 },
+          { field: 'MAWB_TOTAL_FREIGHT_AMOUNT', headerName: 'MAWB Net Ft Amt', width: 150 },
+          { field: 'mawb_total_pp_amt', headerName: 'MAWB Total PP AMT', width: 150 },
+          { field: 'surcharges', headerName: 'Surcharges', width: 150 },
+          { field: 'hawb_pp_cc', headerName: 'HAWB pp/cc', width: 150 },
+          { field: 'hawb_currency', headerName: 'HAWB CURRENCY', width: 150 },
+          { field: 'hawb_amount', headerName: 'HAWB AMOUNT', width: 150 },
+          { field: 'sb_no_date', headerName: 'SB NO & DATE', width: 150 },
+          { field: 'fob_amt', headerName: 'FOB Amt', width: 150 },
+          { field: 'sb_copy_dispatch_dt', headerName: 'SB COPY DISPATCH DT', width: 150 },
+          { field: 'documents_waybill_no', headerName: 'DOCUMENTS COURIER WAYBILL NO', width: 150 },
+          { field: 'handling_amt', headerName: 'HANDLING AMOUNT', width: 150 },
+          { field: 'nippon_inv_dt', headerName: 'NIPPON INV # / DT', width: 150 },
+          { field: 'bills_dispatch_dt', headerName: 'BILLS DISPATCH DT', width: 150 },
+          { field: 'bills_courier_waybill_no', headerName: 'BILLS COURIER WAYBILL NO', width: 150 },
+          { field: 'ddu_ddp_inv_dt', headerName: 'DDU & DDP INV # & DT', width: 150 },
+          { field: 'ddu_ddp_inv_dispatch_dt', headerName: 'DDU / DDP INV DISPATCH DT', width: 150 },
+          { field: 'incoterm', headerName: 'INCOTERM', width: 100 },
+          { field: 'remark', headerName: 'REMARK', width: 150 },
+          { field: 'publish_rates', headerName: 'Publish Rates', width: 150 },
+          { field: 'buying_net_net_rates', headerName: 'Buying net net rates', width: 150 },
+          { field: 'fsc', headerName: 'FSC', width: 100 },
+          { field: 'scc', headerName: 'SCC', width: 100 },
+          { field: 'other_surcharges', headerName: 'OTHER SURCHARGES', width: 150 },
+          { field: 'service_type', headerName: 'Type of Service ( DG / Temp )', width: 150 },
+          { field: 'selling_net_net_rates', headerName: 'Selling net net rates', width: 150 },
+          { field: 'difference', headerName: 'Difference', width: 100 },
+          { field: 'profit_loss', headerName: 'Profit / Loss', width: 150 },
+          { field: 'total_all_freight_carrier', headerName: 'Total All in Freight need to pay to carrier', width: 150 },
+          { field: 'total_all_freight_customer', headerName: 'Total All in Freight billing to customer', width: 150 },
+          { field: 'prepared_by', headerName: 'Prepared by/reg/name', width: 150 },
+          { field: 'executive_name', headerName: 'EXECUTIVE/NAME', width: 150 },
+          { field: 'nomination', headerName: 'Nomination', width: 150 },
+          { field: 'cha', headerName: 'CHA', width: 100 },
+          { field: 'pick_up', headerName: 'Pick up', width: 100 },
+          { field: 'negative_margin', headerName: 'Negative Margin', width: 150 },
+          { field: 'molex_negative', headerName: 'Molex Negative', width: 150 },
+          { field: 'shahi_negative', headerName: 'Shahi Negative', width: 150 },
+          { field: 'month', headerName: 'Month', width: 100 },
+          { field: 'date_hand_finance', headerName: 'Date of Hand over to Finance', width: 150 },
+        ],
+        apiEndpoint: 'http://localhost:5000/Reports/aefRegister'
+      },
+      report2: {
+        headers: [
+          { field: 'CUSTOMS_CLEARANCE_DATE', headerName: 'Custom Clearance Date', width: 80 },
+          { field: 'SHIPPER', headerName: 'Exporter', width: 150 },
+          { field: 'MAWB_NO', headerName: 'MAWB No', width: 150 },
+          { field: 'DESTINATION', headerName: 'DEST', width: 150 },
+          { field: 'MAWB_DATE', headerName: 'Nomination', width: 150 },
+          { field: 'cha', headerName: 'CHA', width: 150 },
+          { field: 'MAWB_CHARGEABLE_WEIGHT_KG', headerName: 'Pick Up', width: 150 },
+          { field: 'HAWB_NO', headerName: 'Diff/KG', width: 150 },
+          { field: 'HAWB_DATE', headerName: 'Profit/Loss', width: 150 },
+          { field: 'mawb_hawb_pices', headerName: 'Negative Margin', width: 150 },
+          { field: 'HAWB_GROSS_WEIGHT', headerName: 'Molex Margin', width: 150 },
+          { field: 'HAWB_CHARGEABLE_WEIGHT_KG', headerName: 'Shahi Negative', width: 150 },
+          { field: 'exporter', headerName: 'Margin %', width: 150 },
+         
+        ],
+       apiEndpoint: 'http://localhost:5000/Reports/aefRegister'
+      },
+      // Add up to 10 reports here
+    },
+
+
+
+
     OceanExport: {
       report1: {
         headers: [
@@ -150,15 +248,15 @@ function updatetabs(){
   ff:{
     AirImport:[
     {label: 'Air import 1', component: configState.currentConfig&&<ExportDefaultToolbar props={configState.currentConfig['report1']}/> },
-    {label:'Air import 2',component:<h1>ff Air import2 componnet</h1>} ,
-    {label:'Air import 3',component:<h1>ff Air import 3 componnet</h1>} ,
-    {label:'Air import 4',component:<h1>ff Air import 4 componnet</h1>} ,
+    // {label:'Air import 2',component:<h1>ff Air import2 componnet</h1>} ,
+    // {label:'Air import 3',component:<h1>ff Air import 3 componnet</h1>} ,
+    // {label:'Air import 4',component:<h1>ff Air import 4 componnet</h1>} ,
     ],
    
     AirExport: [
-      {label:'AEF REGISTER',component:<AEFRegister/>},
-      {label:'DAILY STATUS',component:<DailyStatus/>},
-      {label:'2023 v 2024',component:<h1>2023 v 2024</h1>},
+      {label:'AEF REGISTER', component: configState.currentConfig&&<AEFRegister props={configState.currentConfig['report1']}/>},
+      {label:'DAILY STATUS', component: configState.currentConfig&&<DailyStatus props={configState.currentConfig['report2']}/>},
+      {label:'2023 v 2024',component:<MonthComparision/>},
       {label:'CHA',component:<h1>CHA</h1>},
       {label:'AWR',component:<h1>AWR</h1>},
       {label:'CWR',component:<ExportDefaultToolbar />},
@@ -246,30 +344,97 @@ const subBranchOptions = [
   { label: 'Mumbai', value: '30' }
 ];
 
-const moduleOptions = [
-  { label: 'Freight Forwarding', value: 'ff' },
-  { label: 'Custom Brokerage', value: 'cha' },
-  { label: 'Removals', value: 'removals' }
-];
+// const moduleOptions = [
+//   { label: 'Freight Forwarding', value: 'ff' },
+//   { label: 'Custom Brokerage', value: 'cha' },
+//   { label: 'Removals', value: 'removals' }
+// ];
 
 // Define submodules for each module
-const subDivisions = [
+// const subDivisions = [
 
-  { label: 'Air Export', value: 'AirExport' },
-  { label: 'Air Import', value: 'AirImport' },
-  { label: 'Ocean Export', value: 'OceanExport' },
-  { label: 'Ocean Import', value: 'OceanImport' }
-];
+//   { label: 'Air Export', value: 'AirExport' },
+//   { label: 'Air Import', value: 'AirImport' },
+//   { label: 'Ocean Export', value: 'OceanExport' },
+//   { label: 'Ocean Import', value: 'OceanImport' }
+// ];
 
 //** centrlize Sate update  *********************************************************************************************************/
 const handleConfigChange = (field, value) => {
+  if(field==='selectedModule'){
+    setSubDivision(moduleSubDivisions[value.value] || []);
+  }
   setConfigState((prevState) => ({
     ...prevState,
     [field]: value?.value || '',  // Update the appropriate field dynamically
   }));
 };
 
-useEffect(() => {
+
+const handleFromDate=(newDate)=>{
+  setConfigState((prevState) => ({
+    ...prevState,
+    fromDate: newDate.format('YYYY-MM-DD') || '',  // Update the appropriate field dynamically
+  }));
+ setValidationErrors((prevErrors) => ({
+  ...prevErrors,
+  fromDate: newDate && dayjs(newDate).isValid() ? false : true,
+}));
+}
+
+const handleToDate=(newDate)=>{
+  setConfigState((prevState) => ({
+    ...prevState,
+    toDate: newDate.format('YYYY-MM-DD') || '',  // Update the appropriate field dynamically
+  }));
+  setValidationErrors((prevErrors) => ({
+    ...prevErrors,
+    toDate: newDate && dayjs(newDate).isValid() ? false : true,
+  }));
+}
+
+
+const handleSubmit=()=>{
+
+  const fromDates = new Date(configState.fromDate);
+  const toDates = new Date(configState.toDate);
+  const errors = {}; // Object to store validation errors
+
+  // Validate `subBranch` field
+  if (!configState.subBranch || (configState.subBranch).trim() === "") {
+    errors.subBranch = true; // Mark as an error if empty
+  }
+  if (!configState.selectedModule || (configState.selectedModule).trim() === "") {
+    errors.selectedModule = true; // Mark as an error if empty
+  }
+
+  if (!configState.selectedSubDivision || (configState.selectedSubDivision).trim() === "") {
+    errors.selectedSubDivision = true; // Mark as an error if empty
+  }
+ console.log("from date",configState.fromDate);
+  // Validate `fromDate` field
+  if (configState.fromDate===null || dayjs(configState.fromDate, 'YYYY-MM-DD').isValid() === false) {
+    console.log("false");
+    errors.fromDate = true; // Mark as an error if invalid or empty
+  }
+
+  // Validate `toDate` field
+  if (!configState.toDate || dayjs(configState.toDate, 'YYYY-MM-DD').isValid() === false) {
+    errors.toDate = true; // Mark as an error if invalid or empty
+  }
+
+  // If there are any errors, do not proceed with form submission
+  if (Object.keys(errors).length > 0) {
+    setValidationErrors(errors); // Set validation errors state
+   // showToast("Please fill in all required fields", "error");
+    return;
+  }
+
+  // If all fields are validated successfully
+  
+
+
+
   if (configState.selectedModule && configState.selectedSubDivision) {
     const config = moduleConfig[configState.selectedModule][configState.selectedSubDivision];
     setConfigState((prevState) => ({
@@ -277,7 +442,18 @@ useEffect(() => {
       currentConfig: config
     }));
   }
-}, [configState.selectedModule, configState.selectedSubDivision]);
+
+}
+
+// useEffect(() => {
+//   if (configState.selectedModule && configState.selectedSubDivision) {
+//     const config = moduleConfig[configState.selectedModule][configState.selectedSubDivision];
+//     setConfigState((prevState) => ({
+//       ...prevState,
+//       currentConfig: config
+//     }));
+//   }
+// }, [configState.selectedModule, configState.selectedSubDivision]);
 
 useEffect(()=>{
   updatetabs()
@@ -313,7 +489,7 @@ useEffect(()=>{
                     }}
                     required
                     // error={!!validationErrors?.configState.subBranch && (configState.subBranch === '')}
-                    error={!!(validationErrors?.configState?.subBranch && configState.subBranch === '')}
+                    error={!!validationErrors?.subBranch && (configState.subBranch==='')}
 
                   />
                 )}
@@ -338,6 +514,7 @@ useEffect(()=>{
                       type: 'search',
                     }}
                     required
+                    error={!!validationErrors?.selectedModule && (configState.selectedModule==='')}
                   />
                 )}
               />
@@ -363,6 +540,7 @@ useEffect(()=>{
                       type: 'search',
                     }}
                     required
+                    error={!!validationErrors?.selectedSubDivision && (configState.selectedSubDivision==='')}
                   />
                 )}
               />
@@ -375,8 +553,8 @@ useEffect(()=>{
                 <MobileDatePicker
                   name="fromDate"
                   value={configState.fromDate ? dayjs(configState.fromDate, 'DD/MM/YYYY') : null}
-                  // onChange={handleFromDate}
-                  onChange={(event, newValue) => handleConfigChange('fromDate', newValue)}
+                   onChange={handleFromDate}
+                 // onChange={(event, newValue) => handleFromDate('fromDate', newValue)}
                   inputFormat="DD/MM/YYYY"
                   label='From Date *'
                   slotProps={{
@@ -396,7 +574,8 @@ useEffect(()=>{
                 <MobileDatePicker
                   name="toDate"
                   value={configState.toDate ? dayjs(configState.toDate, 'DD/MM/YYYY') : null}
-                  onChange={(event, newValue) => handleConfigChange('toDate', newValue)}
+                  onChange={handleToDate}
+                 // onChange={(event, newValue) => handleFromDate('toDate', newValue)}
                   inputFormat="DD/MM/YYYY"
                   label='To Date *'
                   slotProps={{
@@ -411,7 +590,7 @@ useEffect(()=>{
           </Grid>
  
           <Grid item xs={1}>
-            <Button variant="contained" style={{ backgroundColor: '#1a005d', color: 'white', height: '40px' }} onClick={() => console.log('Submit data')}>Submit</Button>
+            <Button variant="contained" style={{ backgroundColor: '#1a005d', color: 'white', height: '40px' }} onClick={handleSubmit}>Submit</Button>
           </Grid>
 
         

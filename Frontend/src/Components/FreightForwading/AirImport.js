@@ -17,18 +17,23 @@ import dayjs from 'dayjs'
 import DisplayModal from "../centralized_components/AutoFieldModal";
 import axios from 'axios';
 import { ToastProvider, useToast } from '../centralized_components/Toast';
-import { useLocation } from 'react-router-dom'; 
+
+import { Navigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function AirExport(){
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const location = useLocation();
   const dataReceived = location.state;
   const [mawbNo, setMawbNo] = useState('');
-
+  const navigate = useNavigate();
   useEffect(() => {
   
     if (dataReceived) {
       setMawbNo(dataReceived.mawbNo);
+      const newValue=dataReceived.mawbNo;
+      console.log("new value in useeffetc",newValue);
+      handleOptionChange('',newValue);
     }else{
       setMawbNo('');
     }
@@ -350,15 +355,17 @@ const[autoFields,setAutoFields]=useState({
 
 
   const updateAutoFields = (hawbData) => {
+    console.log("hawb date",hawbData);
     setAutoFields({
+     
       MAWB_NO: hawbData.MAWB_NO || '',
-      MAWB_DATE: hawbData.MAWB_DATE ? dayjs(hawbData.MAWB_DATE, 'YYYY-MM-DD') : null,// Default to current date if not set
+      MAWB_DATE: hawbData.MAWB_DATE ? dayjs(hawbData.MAWB_DATE, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,// Default to current date if not set
       NOOF_PACKAGES: hawbData.NO_PARCELS || '',
       CHARGEABLE_WEIGHT: hawbData.CHARGEABLE_WEIGHT || '',
       // MAWB_TOTAL_FREIGHT_AMOUNT:(hawbData&&hawbData.FREIGHT_PC_SIGN==='C')?(hawbData&&hawbData.CHARGE_TOTAL_CC):(hawbData&&hawbData.CHARGE_TOTAL_PP),
       // SHIPMENT_TYPE:(hawbData&&hawbData.FREIGHT_PC_SIGN==='P')?'PP':'CC' || '',
 	    HAWB_NO: hawbData.HAWB_NO || '',
-      HAWB_DATE:(hawbData.HAWB_DATE && hawbData.HAWB_DATE) ? dayjs(hawbData.HAWB_DATE, 'YYYY-MM-DD') : null,
+      HAWB_DATE:(hawbData.HAWB_DATE && hawbData.HAWB_DATE) ? dayjs(hawbData.HAWB_DATE, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
      // HAWB_TOTAL_AMOUNT:(hawbData.MASTER_HOUSE_BL)? hawbData.CHARGE_TOTAL_CC : '',
       GROSS_WEIGHT: (hawbData.GROSS_WEIGHT)?hawbData.GROSS_WEIGHT : '',
       
@@ -496,6 +503,7 @@ const handleSubmit=async(e)=>{
     showToast("Air Import Details Inserted Successfully", "success");
     setTimeout(() => {
       resetFields();
+      navigate('/Operation/Pending', { state: { type: 'Air Import' } });
     }, 3000);
   } catch (error) {
     showToast("Error inserting data", "error");
@@ -674,22 +682,21 @@ return(
 </FormControl>
 </Grid>
 <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="MAWBDate"
-      value={autoFields.MAWB_DATE}
-      onChange={handleCustomDate}
-     
-    
-      inputFormat="DD/MM/YYYY"
-      label='MAWB Date *' 
-      InputProps={{
-        readOnly: true,
-      }}
-      />
+<TextField
+  value={autoFields.MAWB_DATE||''}
+  className="disabled-textfield"
+     name="MAWB_DATE"
+    label="MAWB Date"
+    size='small'
    
-    </LocalizationProvider>
+    required
+    InputProps={{
+      readOnly: true,
+    }}
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
+
+
      
       </Grid>
      
@@ -711,20 +718,19 @@ return(
 </FormControl>
 </Grid>
 <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="HAWB_DATE"
-      value={autoFields.HAWB_DATE}
-      onChange={handleCustomDate}
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='HAWB Date *' />
+<TextField
+  value={autoFields.HAWB_DATE||''}
+  className="disabled-textfield"
+     name="HAWB_DATE"
+    label="HAWB Date"
+    size='small'
    
-    </LocalizationProvider>
+    required
+    InputProps={{
+      readOnly: true,
+    }}
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
       </Grid>
       
         <Grid item xs={2}>
@@ -963,15 +969,15 @@ return(
    <Card className="card">
 <Grid container spacing={2}>
   <Grid item xs={11}>
-  <p className='auto-card-title'>Manual Fields. </p>
+  <p className='card-title'>Manual Fields. </p>
 
   </Grid>
-  <Grid item xs={1}>
+  {/* <Grid item xs={1}>
   <IconButton onClick={handleOpen}>
       <InfoIcon style={{color:'#1A005D'}}/>
     </IconButton>
     <DisplayModal open={open} handleClose={handleClose} fields={fields} />
-  </Grid>
+  </Grid> */}
 </Grid>
 
 
@@ -1051,11 +1057,11 @@ return(
       <LocalizationProvider dateAdapter={AdapterDayjs}>
       <MobileDatePicker
        name="CAN_DATE"
-       value={CANDate ? dayjs(CANDate, 'DD/MM/YYYY') : null}
+       value={CANDate ? dayjs(CANDate, 'YYYY-MM-DD') : null}
        onChange={(date) => handleDateChange('CANDate', date)}
      
       className="custom-Datepicker"
-      inputFormat="DD/MM/YYYY"
+      inputFormat="YYYY-MM-DD"
       label='CAN Date *'
       slotProps={{
         textField: {
@@ -1145,10 +1151,10 @@ return(
       <LocalizationProvider dateAdapter={AdapterDayjs}>
       <MobileDatePicker
       name="DO_HANDOVER_DATE"
-      value={handOverDate ? dayjs(handOverDate, 'DD/MM/YYYY') : null}
+      value={handOverDate ? dayjs(handOverDate, 'YYYY-MM-DD') : null}
       onChange={(date) => handleDateChange('handOverDate', date)}
       className="custom-Datepicker"
-      inputFormat="DD/MM/YYYY"
+      inputFormat="YYYY-MM-DD"
       label='Do Hand Over Date *' 
       slotProps={{
         textField: {

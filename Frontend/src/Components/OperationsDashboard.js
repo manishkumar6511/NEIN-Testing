@@ -32,8 +32,8 @@ function OperationsDashboard(){
 
   const navigate = useNavigate();
 
-  const handleOperationClick = () => {
-    navigate('/Operation/Pending', { state: { type: 'Air Export' } });
+  const handleOperationClick = (operation) => {
+    navigate('/Operation/Pending', { state: { type: operation} });
   };
 
 return(
@@ -50,7 +50,7 @@ return(
          
           <Grid item xs={3}>
            
-          <Button onClick={handleOperationClick}>        
+          <Button onClick={() => handleOperationClick('Air Export')}>        
            <img src={airExportFF} alt="Booking Icon"  />
            </Button>     
               <p className="paragraph">Air Export</p>
@@ -59,41 +59,25 @@ return(
             </Grid>
             <Grid item xs={3}>
            
-           <Link
-            to={{
-               pathname:"/Operations/FreightForwarding/AirImport",
-               state: { type: 'Air Import' }
-            }}
-           >
+            <Button onClick={() => handleOperationClick('Air Import')}>   
              <img src={airImportFF} alt="Booking Icon" />
-             </Link>
+             </Button>
              <p className="paragraph">Air Import</p>
            
          </Grid>
             <Grid item xs={3}>
            
-            <Link 
-            to={{
-             pathname:"/Operations/FreightForwarding/OceanExport",
-             state: { type: 'Ocean Export' }
-            }}
-            
-            >
+            <Button onClick={() => handleOperationClick('Ocean Export')}>
               <img src={oceanExportFF} alt="Booking Icon" />
-              </Link>
+             </Button>
               <p className="paragraph">Ocean Export</p>
            
           </Grid>
             <Grid item xs={3}>
            
-            <Link 
-            to={{
-             pathname:"/Operations/FreightForwarding/OceanImport",
-             state: { type: 'Ocean Import' }
-          }}
-            >
+            <Button onClick={() => handleOperationClick('Ocean Import')}>
               <img src={oceanImportFF} alt="Booking Icon" />
-              </Link>
+              </Button>
               <p className="paragraph">Ocean Import</p>
            
           </Grid>

@@ -228,7 +228,7 @@ const handleNavigationWithData = (event,row) => {
             <TableCell>{row.Consignee}</TableCell>
             <TableCell>{hawbCount}</TableCell> {/* Display the HAWB count */}
             <TableCell>
-              <IconButton onClick={(event) => handleMenuClick(event, row)}>
+              <IconButton onClick={(event) => handleNavigationWithData(event, row)}>
                 <CreateIcon />
               </IconButton>
             </TableCell>

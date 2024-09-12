@@ -1017,15 +1017,15 @@ return(
    <Card className="card">
 <Grid container spacing={2}>
   <Grid item xs={11}>
-  <p className='auto-card-title'>Manual Fields. </p>
+  <p className='card-title'>Manual Fields. </p>
 
   </Grid>
-  <Grid item xs={1}>
+  {/* <Grid item xs={1}>
   <IconButton onClick={handleOpen}>
       <InfoIcon style={{color:'#1A005D'}}/>
     </IconButton>
     <DisplayModal open={open} handleClose={handleClose} fields={fields} />
-  </Grid>
+  </Grid> */}
 </Grid>
 
 
