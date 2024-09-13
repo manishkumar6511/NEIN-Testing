@@ -1167,6 +1167,8 @@ return(
         autoComplete="off"
         label="Buying Rate"
         required
+        type="number" 
+      
         size='small'
         InputLabelProps={{ style: { fontSize: '14px'} }}
         error={validationErrors.BUYING_RATE && (manualData.BUYING_RATE==='')}
@@ -1181,6 +1183,7 @@ return(
           autoComplete="off"
           label="Sell Rate"
           required
+          type="number" 
           size='small'
          InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
          error={validationErrors.SELL_RATE &&(manualData.SELL_RATE==='')}
@@ -1195,6 +1198,7 @@ return(
        autoComplete="off"
        label="MARGIN_KG / KG"
        required
+       type="number" 
        size='small'
       InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
       InputProps={{
@@ -1231,6 +1235,7 @@ return(
     autoComplete="off"
     label="Freight Amount"
     required
+    type="number" 
     size='small'
    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
    error={validationErrors.FREIGHT_AMOUNT && (manualData.FREIGHT_AMOUNT === '')}
@@ -1246,6 +1251,7 @@ return(
        label="Due_Carrier"
        autoComplete="off"
        required
+       type="number" 
        size='small'
       InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
       error={validationErrors.DUE_CARRIER && (manualData.DUE_CARRIER === '')}
