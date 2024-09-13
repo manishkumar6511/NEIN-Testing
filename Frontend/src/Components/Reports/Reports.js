@@ -256,7 +256,7 @@ function updatetabs(){
     AirExport: [
       {label:'AEF REGISTER', component: configState.currentConfig&&<AEFRegister props={configState.currentConfig['report1']}/>},
       {label:'DAILY STATUS', component: configState.currentConfig&&<DailyStatus props={configState.currentConfig['report2']}/>},
-      {label:'2023 v 2024',component:<MonthComparision/>},
+      {label:'2023 v 2024',component:<MonthComparision props={configState.toDate}/>},
       {label:'CHA',component:<h1>CHA</h1>},
       {label:'AWR',component:<h1>AWR</h1>},
       {label:'CWR',component:<ExportDefaultToolbar />},
