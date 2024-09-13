@@ -12,6 +12,7 @@ import { Tree, Transfer } from 'antd';
 import data from './data.js';
 import { filterTree, renderTreeNodes } from './utils.js';
 
+import {Link} from 'react-router-dom';
 
 function Masters(){
 
@@ -89,13 +90,13 @@ const [leftCheckedKeys, setLeftCheckedKeys] = useState([]);
             
           </Grid>
           <Grid item xs={2}>
-           
-           
+            <Link to="/Access" >           
               <img src={user} alt="userMenu"  />
              
               <p >User Role Access</p>
               
-          
+              </Link>
+
             </Grid>
  </Grid>
  </Box>

@@ -24,6 +24,7 @@ import FinanceReport from "../Components/Finance/FinanceReport";
 import EditOperations from "../Components/EditOperationsData";
 import PendingFTP from "../Components/PendingFTPData";
 import BranchChart from "../Components/FreightForwading/Dashboard";
+import UserAccessManagement from "../Components/Masters/Accesscontrol";
 // import HelpButton from "../Components/centralized_components/Help";
 function tmsRouting(){
 
@@ -33,6 +34,8 @@ function tmsRouting(){
 <DndProvider backend={HTML5Backend}>
          <Routes>
         <Route path="/Operations" element={<OperationsDashboard />} /> 
+        <Route path="/Access" element={<UserAccessManagement />} /> 
+
         <Route path="/Operations/FreightForwarding/AirExport" element={<AirExport />} /> 
         <Route path="/Operations/FreightForwarding/AirImport" element={<AirImport />} />
         <Route path="/Operations/FreightForwarding/OceanExport" element={<OceanExport />} />

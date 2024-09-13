@@ -31,13 +31,13 @@ function App() {
 <ToastProvider>
     
     
-  {userDetails?.isAuthenticated && <Header />}
-  {userDetails?.isAuthenticated && <MiniDrawer />}
+  {/* {userDetails?.isAuthenticated && <Header />}
+  {userDetails?.isAuthenticated && <MiniDrawer />} */}
           
-            
-
+  <Header />
+  <MiniDrawer />
           
-          <div>
+          {/* <div>
           <Routes>
               <Route path="/login"  element={userDetails?.isAuthenticated  ? <Navigate to="/" /> : <Login  />}/>
             
@@ -55,7 +55,7 @@ function App() {
             
             </Routes>
             
-          </div>
+          </div> */}
         </ToastProvider>
       </div>
     </BrowserRouter> 
