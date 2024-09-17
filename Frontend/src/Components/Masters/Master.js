@@ -11,12 +11,17 @@ import { Tree, Transfer } from 'antd';
 
 import data from './data.js';
 import { filterTree, renderTreeNodes } from './utils.js';
-
+import { useNavigate } from 'react-router-dom';
 import {Link} from 'react-router-dom';
 
 function Masters(){
 
-   
+  const navigate = useNavigate();
+
+  const handleUserMenu = () => {
+    navigate('/Access');
+  };
+
 
 const [leftCheckedKeys, setLeftCheckedKeys] = useState([]);
   const [checkedNodes, setCheckedNodes] = useState([]);
@@ -90,12 +95,12 @@ const [leftCheckedKeys, setLeftCheckedKeys] = useState([]);
             
           </Grid>
           <Grid item xs={2}>
-            <Link to="/Access" >           
-              <img src={user} alt="userMenu"  />
+            {/* <Link to="/Access" >            */}
+              <img src={user} alt="userMenu" onClick={handleUserMenu}  />
              
               <p >User Role Access</p>
               
-              </Link>
+              {/* </Link> */}
 
             </Grid>
  </Grid>

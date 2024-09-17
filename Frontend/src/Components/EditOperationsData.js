@@ -1,23 +1,21 @@
 import React,{useEffect, useState,useContext} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import {Select, FormControl, InputLabel, Grid } from '@mui/material';
+
+import { FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-import {IconButton} from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
-import { ExpandMore, ExpandLess, Margin } from '@mui/icons-material';
+
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs'
 
 import axios from 'axios';
-import { ToastProvider, useToast } from './centralized_components/Toast';
-import { useLocation } from 'react-router-dom';
+import { useToast } from './centralized_components/Toast';
+
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import UserContext from "../Context/UserContext";
@@ -111,14 +109,13 @@ const[HAWBAPI,setHAWBAPI]=useState('');
   const[selectedOperation,setSelectedOperation]=useState('');
   const[selectedSearch,setSelectedSearch]=useState('');
   const[shippingBillDate,setShippingBillDate]=useState(null);
-const[MAWBDate,setMAWBDate]=useState('');
-const[HAWBDate,setHAWBDate]=useState('');
+
   const [MAWBoptions, setMAWBOptions] = useState([]); // State to hold the options for autocomplete
   const [MAWBinputValue, setMAWBInputValue] = useState('');
   const [HAWBoptions, setHAWBOptions] = useState([]); // State to hold the options for autocomplete
   const [HAWBinputValue, setHAWBInputValue] = useState('');
   const[MAWBHAWBoptions,setMAWBHAWBOptions]=useState([]);
-  const [selectedOption, setSelectedOption] = useState(null);
+ 
   const[HAWBData,setHAWBData]=useState('');
   const [selectedHawb, setSelectedHawb] = useState('');
   const[industryOptions,setIndustryOptions]=useState('');
@@ -578,11 +575,7 @@ setFinanceData([]);
   
 };
 
-const handleFieldChange = (index, event) => {
-  const newFields = [...fields];
-  newFields[index].value = event.target.value;
-  setFields(newFields);
-};
+
 
 
 
@@ -949,44 +942,7 @@ console.log("finance Data",finance);
 
 
 
-  const updateAutoFields = (hawbData) => {
-    // setAutoFields({
-    //   MAWB_NO: hawbData.MAWB_BL_NO || '',
-    //   MAWB_DATE: hawbData.BL_CONSO_DATE ? dayjs(hawbData.BL_CONSO_DATE, 'DD-MM-YY') : null,// Default to current date if not set
-    //   MAWB_NOOF_PKGS: hawbData.TOTAL_NO_OF_PKGS || '',
-    //   MAWB_CHARGEABLE_WEIGHT_KG: hawbData.TOTAL_CHARGEABLE_WGT || '',
-    //   MAWB_TOTAL_FREIGHT_AMOUNT:(hawbData&&hawbData.FREIGHT_PC_SIGN==='C')?(hawbData&&hawbData.CHARGE_TOTAL_CC):(hawbData&&hawbData.CHARGE_TOTAL_PP),
-    //   SHIPMENT_TYPE:(hawbData&&hawbData.FREIGHT_PC_SIGN==='P')?'PP':'CC' || '',
-	  //   HAWB_NO: hawbData.MASTER_HOUSE_BL || '',
-    //   HAWB_DATE:(hawbData.MASTER_HOUSE_BL && hawbData.BL_CONSO_DATE) ? dayjs(hawbData.BL_CONSO_DATE, 'DD-MM-YY') : null,
-    //   HAWB_TOTAL_AMOUNT:(hawbData.MASTER_HOUSE_BL)? hawbData.CHARGE_TOTAL_CC : '',
-    //   HAWB_GROSS_WEIGHT: (hawbData.MASTER_HOUSE_BL)?hawbData.TOTAL_ACTUAL_WEIGHT : '',
-    //   HAWB_CHARGEABLE_WEIGHT_KG: (hawbData.MASTER_HOUSE_BL)?hawbData.TOTAL_CHARGEABLE_WGT : '',
-    //   HAWB_NOOF_PKGS:(hawbData.MASTER_HOUSE_BL)? hawbData.TOTAL_NO_OF_PKGS : '',
-    //   NEWINS_REFERENCE_NO: hawbData.REF_NO_BR_DV_OR_REF_NO_SEQ || '',
-    //   SHIPPER: hawbData.SHIPPER_NAME || '',
-    //   CONSIGNEE: hawbData.CONSIGNEE_NAME || '',
-    //   ORIGIN: hawbData.DEPARTURE_CITY || '',
-    //   DESTINATION: hawbData.DESTINATION_CITY || '',
-    //   COUNTRY: hawbData.CTCTNM || '',
-    //   COUNTRY_CODE: hawbData.CTISO || '',
-    //   REGION_CODE: hawbData.IATACODE || '',
-    //   AIR_LINE_NAME: hawbData.FLIGHT_CARRIER_CODE || '',
-    //   FLIGHT_NO: hawbData.FLIGHT_NO1 || '',
-    //   TARIFF_RATE: hawbData.TARIFF_RATE || '',
-    //   DDU_DDP: ((hawbData&&hawbData.FREE_HOUSE_SIGN==='I')?'DDP':'Select')||((hawbData&&hawbData.FREE_HOUSE_SIGN==='E')?'DDU':'Select'),
-    //   DESCRIPTION_OF_GOODS: hawbData.DESCRIPTION_OF_GOODS || '',
-    // });
-  };
-
-
-
-  const handleInputChange = (e) => {
-    setHAWBInputValue(e.target.value); // Update the input value
-  };
-
-
-
+ 
   
 
   const handleCustomDate=(newDate)=>{
@@ -1530,11 +1486,15 @@ return(
           className="custom-Datepicker"
           inputFormat="YYYY-MM-DD"
           label='Shipping Bill Date *'
-          // slotProps={{
-          //   textField: {
-          //     error: validationErrors.SHIPPING_BILL_DATE && !shippingBillDate, 
-          //   },
-          // }}
+          slotProps={{
+            textField: {
+              sx: {
+                '& .MuiInputBase-input': {
+                  padding: '8.5px',
+                },
+              },
+            },
+          }}
           />
        
         </LocalizationProvider>
@@ -1591,11 +1551,15 @@ return(
           
           inputFormat="YYYY-MM-DD"
           label='Custom Clearance Date *'
-          // slotProps={{
-          //   textField: {
-          //     error: validated && !customClearanceDate, 
-          //   },
-          // }}
+          slotProps={{
+            textField: {
+              sx: {
+                '& .MuiInputBase-input': {
+                  padding: '8.5px',
+                },
+              },
+            },
+          }}
          // //  error={validationErrors.CUSTOMS_CLEARANCE_DATE && (customClearanceDate === null)}
           />
        

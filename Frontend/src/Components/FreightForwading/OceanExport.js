@@ -1,23 +1,22 @@
 import React,{useEffect, useState,useContext} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import {Select, FormControl, InputLabel, Grid } from '@mui/material';
+
+import { FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-import {IconButton} from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
+
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs'
-import DisplayModal from "../centralized_components/AutoFieldModal";
+
 import axios from 'axios';
-import { ToastProvider, useToast } from '../centralized_components/Toast';
-import { Navigate, useLocation } from 'react-router-dom';
+import {  useToast } from '../centralized_components/Toast';
+import {  useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 function AirExport(){
@@ -51,7 +50,7 @@ function AirExport(){
   const [MBLoptions, setMBLoptions] = useState([]); // State to hold the options for autocomplete
   const [MBLInputValue, setMBLInputValue] = useState('');
   const [HBLoptions, setHBLoptions] = useState([]); // State to hold the options for autocomplete
-  const [HAWBinputValue, setHAWBInputValue] = useState('');
+
   const [selectedOption, setSelectedOption] = useState(null);
   const[HAWBData,setHAWBData]=useState('');
   const [selectedHBL, setselectedHBL] = useState('');
@@ -141,26 +140,13 @@ const[autoFields,setAutoFields]=useState({
 
   });
 
-  const FCL=[
-    {value:'NA',label:'NA'},
-    {value:'20 FF',label:'20 FF'},
-    {value:'40 FF',label:'40 FF'},
-  ]
+ 
   const informationStatus=[
     {value:'Closed',label:'Closed'},
     {value:'Open',label:'Open'},
   ]
 
-  const FCBRO=[
-    {value:'FC',label:'FC'},
-    {value:'BRO',label:'BRO'},
-  ]
-
-  const FHD=[
-    {value:'YES',label:'YES'},
-    {value:'NO',label:'NO'},    
-  ]
-
+  
 
 
 
@@ -359,7 +345,7 @@ const[autoFields,setAutoFields]=useState({
 				}
     console.log("a value",a);
     let lcl="";
-    let lclCBM="";
+    
     if(hawbData.SIservicetype==='FCL'){
       lcl='0';
     }else{
@@ -409,34 +395,11 @@ const[autoFields,setAutoFields]=useState({
 
 
 
-  const handleInputChange = (e) => {
-    setMBLInputValue(e.target.value); // Update the input value
-  };
-
-
-
-
-
-  const handleCustomDate=(newDate)=>{
-   // setCustomClearanceDate(newDate.format('DD/MM/YYYY'));
   
-  }
 
-  const [open, setOpen] = useState(false);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
-  const fields = [
-    { label: 'MAWB', data: '1010101' },
-    { label: 'MAWB Date', data: 'New York' },
-    { label: 'MAWB No Of Pkgs', data: 'Los Angeles' },
-    { label: 'MAWB CW', data: 'John Doe' },
-    { label: 'MAWB Total Freight', data: 'John Doe' },
-    { label: 'Shipment Type', data: 'John Doe' },
-   
-    // Add more fields as needed
-  ];
+
 
 const clearanceDoneBy=[
   {label:'Nippon',value:'Nippon Express (India) Private Limited.'},
@@ -455,22 +418,7 @@ const clearanceDoneBy=[
         }
     }
 };
-const handleUserChange = (event, value) => {
-  if (value) {
-      // Extract empid from the selected value
-      const selectedUser = userData.find(user => `${user.user_name} (${user.emp_id})` === value);
-      if (selectedUser) {
-          setSelectedEmpId(selectedUser.emp_id); // Set the empid
-          setManualData({ ...manualData, salesPicBranch: selectedUser.branch_name,SalesPic:value });
-      }
-  } else {
-      setSelectedEmpId(''); // Clear empid if nothing is selected
-  }
-}
-const handleOperationPic = (event, value) => {
-  setManualData({ ...manualData, OperationPic: value });
-}
-  
+
 
 const handleClearanceChange=(event,value)=>{
   if(value){
@@ -752,7 +700,7 @@ return(
       <MobileDatePicker
       name="HBL_DATE"
      value={autoFields.HBL_DATE}
-      onChange={handleCustomDate}
+     // onChange={handleCustomDate}
       InputProps={{
         readOnly: true,
       }}

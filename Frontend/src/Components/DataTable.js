@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper,
-  IconButton, Collapse, Box, Typography, TablePagination, Menu, MenuItem, Fade,TextField,Grid,Autocomplete
+  IconButton, Collapse, Box, Typography, TablePagination,TextField,Grid,Autocomplete
 } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -312,13 +312,13 @@ const handleNavigationWithData = (event,row) => {
   };
 
   return (
-    <TableContainer component={Paper} sx={{ marginTop: '29px' }}>
+    <TableContainer className='custom-table-container' component={Paper} sx={{ marginTop: '29px' }}>
       <Grid container spacing={2}>
         <Grid item xs={6}>
       <p style={{ margin: '10px 0px -40px 16px',textAlign:'left' }}><b>{selectedType}</b></p>
       </Grid>
       <Grid item xs={3}>
-      <Autocomplete size="small"  freeSolo id="free-solo-2-demo" disableClearable 
+      <Autocomplete  size="small"  freeSolo id="free-solo-2-demo" disableClearable 
       options={DateFilter}
       onChange={handleDateFilter}
     
@@ -331,7 +331,7 @@ const handleNavigationWithData = (event,row) => {
         ...params.InputProps,
         type: 'search',
         }}
-        style={{margin:'12px 0px 0px 2px'}}
+        style={{margin:'0px 0px 5px 18px'}}
         InputLabelProps={{ style: { fontSize: '14px'} }}
         required
        className="dashboard-autocomplete"
@@ -352,8 +352,8 @@ const handleNavigationWithData = (event,row) => {
 </Grid>
 
       </Grid>
-      <Table stickyHeader aria-label="sticky table">
-        <TableHead style={{backgroundColor:'#1a005d',color:'#fff'}}>
+      <Table stickyHeader aria-label="sticky table" className='custom-table'>
+        <TableHead className='custom-table-head' >
           <TableRow>
             {renderHeaders()}
           </TableRow>

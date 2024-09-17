@@ -1,66 +1,53 @@
-/* .MuiTableCell-root.padding-column {
-    
-} */
-.css-1ex1afd-MuiTableCell-root {
-    padding: 2px 0px 0px 0px !important;
+/* Use stable parent classes to scope styles */
+.custom-table .MuiTableCell-root {
+    padding: 2px 0px 0px 0px;
 }
 
-.css-y8ay40-MuiTableCell-root {
-   
-    border-bottom: 1px solid rgba(224, 224, 224, 1) !important;
-   
-    margin-left: 10px !important;
-    color: rgb(249 238 238 / 87%) !important;
-   
-    background-color: #1a005d !important;
+.custom-table .MuiTableCell-root.border-style {
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    margin-left: 10px;
+    color: rgb(249 238 238 / 87%);
+    background-color: #1a005d;
 }
 
-.css-1rk0fxb-MuiPaper-root-MuiTableContainer-root {
-    overflow-x: visible !important;
+.custom-table-container .MuiPaper-root {
+    overflow-x: visible;
 }
 
-
-/* Higher specificity */
-.table .MuiTableCell-root.padding-column {
-    padding: 29px 29px 29px 29px !important;
-}
-
-.tabs{
+.tabs {
     margin-top: 5px;
 }
-.textfield{
-    margin: 13px 0px 0px 0px !important;
-    
-    
+
+.textfield {
+    margin: 13px 0px 0px 0px;
 }
+
 .custom-textfield .MuiInputLabel-root {
     color: #1A005D;
-  }
-  
-  .custom-textfield .MuiInputLabel-root.Mui-focused {
+}
+
+.custom-textfield .MuiInputLabel-root.Mui-focused {
     color: #8EC400;
-  }
-.css-7dv1rb-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab:hover{
-    background-color: #8EC400 !important;
 }
-.css-7dv1rb-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab{
-    background-color: #1a005d !important;
-}
-
-
 
 .tableRowOdd {
-  background-color: #d3c9c9; /* Light gray background for odd rows */
+    background-color: #d3c9c9;
 }
 
 .tableRowEven {
-  background-color: #ffffff; /* White background for even rows */
+    background-color: #ffffff;
 }
 
-.css-15wwp11-MuiTableHead-root{
+.custom-table-head .MuiTableHead-root {
+    background-color: rgba(25, 118, 210, 0.2);
+}
 
-    background-color:rgba(25, 118, 210, 0.2);
+.custom-autocomplete .MuiOutlinedInput-root .MuiAutocomplete-input {
+    padding: 7.5px 4px 3.5px 5px;
 }
-.css-1y8r37a-MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input {
-    padding: 7.5px 4px 3.5px 5px !important;
-}
+
+.custom-table-head {
+    background-color: #1a005d; /* Use the correct CSS property */
+    color: #fff;
+  }
+

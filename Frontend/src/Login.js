@@ -26,7 +26,7 @@ const Login = () => {
   const [empid, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useContext(UserContext);
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -46,20 +46,27 @@ const Login = () => {
 
         
     try {
-      const response = await axios.post('http://localhost:9090/users/login', { empid, password });
-     console.log("response "+response);
-     console.log("response "+response.data);
+      const response = await axios.post(`${API_BASE_URL}/User/login1`, {
+        userid:empid,
+        password:password,
+      });
+      const userDetails = response.data.userDetails;
+const menus=response.data.userAccess.access_config;
+      console.log(userDetails);
+      console.log(menus);
+      
+      
       if (response.data) {
         login({
-          branchName: response.data.branchName,
-          email: response.data.email,
-          empid: response.data.empid,
-      empname: response.data.empname,
-      branchid: response.data.branchid,
-      user_right: response.data.user_right,
-      job_role: response.data.job_role,
-      employeeRoleType: response.data.employeeRoleType,
-      menus: response.data.menus,
+          branchName: userDetails.b_name,
+          email: userDetails.email,
+          empid: userDetails.emp_id,
+      empname: userDetails.full_name,
+      branchid: userDetails.b_no,
+      menus:menus,
+     
+     
+    //  menus: response.data.userDetails,
         });
       } else {
          showToast("Invalid Credentials", "error");

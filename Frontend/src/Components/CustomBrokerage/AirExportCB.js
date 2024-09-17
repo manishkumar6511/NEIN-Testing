@@ -1,7 +1,7 @@
-import React,{useEffect, useState,useContext} from "react";
+import React,{ useState} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import {Select, FormControl, InputLabel, Grid } from '@mui/material';
+
+import { FormControl,Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
@@ -63,20 +63,12 @@ const jobCancel=[
   {value:'Yes',label:'Yes'},
   {value:'No',label:'No'},
 ]
-const FHD=[
-    {value:'Yes',label:'Yes'},
-    {value:'No',label:'No'},
-  ]
+
   const ShimentType=[
     {value:'PP',label:'PP'},
     {value:'CC',label:'CC'},
   ]
-const regionCode=[
-  {value:'Tc1',label:'Tc1'},
-  {value:'Tc2',label:'Tc2'},
-  {value:'Tc3',label:'Tc3'},
-  {value:'Japan',label:'Japan'},
-]
+
 const DDUCCP=[
   {value:'DDU',label:'DDU'},
   {value:'DDP',label:'DDP'},
@@ -88,9 +80,7 @@ const industryType=[
   {value:'Mobility',label:'Mobility'},
   {value:'pharma',label:'pharma'},
 ]
-const hawbNo=[
-  {value:'',label:''}
-]
+
 const mainProduct=[
   {value:'Select',label:'Select'}
 ]

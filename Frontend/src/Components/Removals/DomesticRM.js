@@ -1,29 +1,28 @@
-import React,{useEffect, useState,useContext} from "react";
+import React,{useEffect, useState} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import {Select, FormControl, InputLabel, Grid } from '@mui/material';
+
+import {FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-import {IconButton} from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
-import { ExpandMore, ExpandLess } from '@mui/icons-material';
+
+
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs'  
-import DisplayModal from "../centralized_components/AutoFieldModal";
+
 import axios from "axios";
-import { ToastProvider, useToast } from '../centralized_components/Toast';
+import {  useToast } from '../centralized_components/Toast';
 
 function DomesticRM(){
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const[validated,setValidated]=useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const { showToast } = useToast();
-  const [isOpen, setIsOpen] = useState(true);
+  
   const[industryOptions,setIndustryOptions]=useState([]);
   const[industryData,setIndustryData]=useState('');
 const[dates,setDates]=useState({
@@ -71,10 +70,7 @@ const[initiatorDetails,setInitiatorDetails]=useState({
 })
 
 
-const [open, setOpen] = useState(false);
 
-const handleOpen = () => setOpen(true);
-const handleClose = () => setOpen(false);
 
 
 const handleDateChange = (date, key) => {

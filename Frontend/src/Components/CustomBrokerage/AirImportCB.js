@@ -1,7 +1,7 @@
-import React,{useEffect, useState,useContext} from "react";
+import React,{useEffect, useState} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import {Select, FormControl, InputLabel, Grid } from '@mui/material';
+
+import { FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
@@ -15,7 +15,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs'  
 import DisplayModal from "../centralized_components/AutoFieldModal";
-import { ToastProvider, useToast } from '../centralized_components/Toast';
+import {  useToast } from '../centralized_components/Toast';
 import axios from 'axios';
 
 
@@ -64,7 +64,7 @@ const[autoFields,setAutoFields]=useState({
   INVOICE_VALUE_IN_INR:'',
   DESCRIPTION:'',
   C_T_H_NO:'',
-  CHARGEABLE_WEIGHT:'',
+  
 
 
 
@@ -189,29 +189,6 @@ const FHD=[
     {value:'Yes',label:'Yes'},
     {value:'No',label:'No'},
   ]
-const regionCode=[
-  {value:'Tc1',label:'Tc1'},
-  {value:'Tc2',label:'Tc2'},
-  {value:'Tc3',label:'Tc3'},
-  {value:'Japan',label:'Japan'},
-]
-const DDUCCP=[
-  {value:'DDU',label:'DDU'},
-  {value:'CCP',label:'CCP'},
-]
-const industryType=[
-  {value:'',label:'Select'},
-  {value:'Lifestyle',label:'Lifestyle'},
-  {value:'Technology',label:'Technology'},
-  {value:'Mobility',label:'Mobility'},
-  {value:'pharma',label:'pharma'},
-]
-const hawbNo=[
-  {value:'',label:''}
-]
-const mainProduct=[
-  {value:'Select',label:'Select'}
-]
 
 useEffect(() => {
   const fetchIndustrys = async () => {

@@ -59,7 +59,7 @@ function Header() {
     logout(); // Perform logout
     navigate('/login'); // Redirect to login page
   };
-  const userNameInitial = userDetails ? userDetails.empname.charAt(0) : '';
+  const userNameInitial ='B';
 
   return (
     <>

@@ -1,20 +1,18 @@
 import React, { useState,useMemo,useEffect,useCallback } from "react";
-import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
-import { Grid, Tabs, Tab, TextField,FormControl } from '@mui/material';
+
+
+import { Grid, TextField,FormControl } from '@mui/material';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import Autocomplete from '@mui/material/Autocomplete';
-import SpeedDial from '@mui/material/SpeedDial';
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
-import SpeedDialAction from '@mui/material/SpeedDialAction';
+import './CSS/Dashboard.css';
 import AirplanemodeActiveIcon from '@mui/icons-material/AirplanemodeActive';
 import DirectionsBoatFilledIcon from '@mui/icons-material/DirectionsBoatFilled';
 import SailingIcon from '@mui/icons-material/Sailing';
 import axios from "axios";
-import './CSS/Dashboard.css';
+import { useLoader } from "../PrivateRoute/LoaderContext";
 import DataTable from "../Components/DataTable";
 import { Button } from "antd";
 import { useLocation } from 'react-router-dom';
@@ -24,6 +22,8 @@ import { useLocation } from 'react-router-dom';
 
 
 function PendingFTP() {
+
+  const { setLoading } = useLoader();
   const location = useLocation();
   const[API,setAPI]=useState('');
   const type = location.state?.type || 'Default Type'; // Store 'type' in a variable
@@ -69,29 +69,7 @@ const[airImportDetails,setAirImportDetails]=useState([]);
 
  
 
-  const airImportCB=[
-{id:1,DocketNo:'AIC/BLR/12905/2024',MAWB:'BIE53210365',Consignee:'GE POWER INDIA LIMITED',Industry:'Health Care'},
-{id:2,DocketNo:'AIC/BLR/12618/2024',MAWB:'NEE41037205',Consignee:'EUROBELT BELTING SOLUTIONS PVT LTD',Industry:'Electicals'},
-{id:3,DocketNo:'AIC/BLR/12858/2024',MAWB:'MNL0184721',Consignee:'ESSILOR INDIA PVT LTD',Industry:'Automotive'},
-  ]
-
-  const airExportCB=[
-    {id:1,DocketNo:'AEC/MUM/7161/2024',MAWB:'23248931201',Consignee:'BAGOHLIC  SVERIGE AB',Industry:'Pharmaceutical'},
-    {id:2,DocketNo:'AEC/MUM/7168/2024',MAWB:'15762103101',Consignee:'HONDA MALAYSIA',Industry:'Automotive'},
-    
-      ]
-
-      const oceanImportCB=[
-        {id:1,DocketNo:'OIC/CHN/02973/2024',IECode:'0516517911',Consignee:'MITIL POLYMER PRIVATE LIMITED',Industry:'Others'},
-        {id:2,DocketNo:'OIC/CHN/02927/2024',IECode:'0398028559',Consignee:'YAZAKI INDIA PRIVATE LIMITED',Industry:'Automotive'},
-        
-          ]
-
-          const oceanExportCB=[
-            {id:1,DocketNo:'OEC/BLR/00469/2024',IECode:'0707019532',Consignee:'M/S. GENERICS Maputo',Industry:'Pharma'},
-            {id:2,DocketNo:'OEC/BLR/00468/2024',IECode:'0710002017',Consignee:'YAZAKI INDIA PRIVATE LIMITED',Industry:'Automotive'},
-            
-              ]
+ 
 
 
 
@@ -207,10 +185,7 @@ if(selectedType==='AirExport'){
     setSelectedRow(null);
   };
 
-  const handleActionClick = (action) => {
-   // console.log(`Action: ${action} on row`, selectedRow);
-    handleMenuClose();
-  };
+
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -234,24 +209,8 @@ const userRights=[
   console.log(allowedActions);
  
 
-    const [direction, setDirection] = useState('down');
-    const [hidden, setHidden] = useState(false);
-   
-    const handleDirectionChange = (event) => {
-      setDirection(event.target.value);
-    };
-    const StyledSpeedDial = useMemo(() => styled(SpeedDial)(({ theme }) => ({
-      position: 'absolute',
-      '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {
-        bottom: theme.spacing(2),
-        right: theme.spacing(2),
-      },
-      '&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight': {
-        top: theme.spacing(2),
-        left: theme.spacing(2),
-      },
-    })), []);
 
+  
 
     const handleDateFilter = useCallback((event, value) => {
       if (selectedFilter !== value.value) {
@@ -370,6 +329,7 @@ const formatDate = (date) => {
 
 // Function to calculate dates and send data to API
 const FreightForwardingFTP = async (fromDate, toDate, branchId,operation) => {
+  
   console.log("coming to freight forwarding FTP")
   // console.log("operation",operation);
   // console.log("dates",typeof(fromDate));
@@ -385,7 +345,7 @@ const FreightForwardingFTP = async (fromDate, toDate, branchId,operation) => {
   
   try {
     //console.log("operation",operation);
-   
+    setLoading(true);
     const requestData = {
       FromDate: formatDate(fromDate),
       Todate: formatDate(toDate),
@@ -402,6 +362,10 @@ const FreightForwardingFTP = async (fromDate, toDate, branchId,operation) => {
   } catch (error) {
     console.error('Error sending dates to API:', error);
   }
+ finally {
+  // Hide loader regardless of success or failure
+  setLoading(false);
+}
 };
 
 useEffect(() => {
@@ -501,6 +465,14 @@ setAPI(APIType);
           slotProps={{
             textField: {
               error: !!validationErrors?.fromDate, 
+              sx: {
+                '& .MuiInputBase-input': {
+                  padding: '8.5px',
+                },
+                '& .MuiInputLabel-root': {
+                  top: '-5px', // Adjust this value as needed
+                },
+              },
             },
           }}
           error={validationErrors.fromDate && (fromDate === null)}
@@ -529,6 +501,14 @@ setAPI(APIType);
           slotProps={{
             textField: {
               error: !!validationErrors?.toDate, 
+              sx: {
+                '& .MuiInputBase-input': {
+                  padding: '8.5px',
+                },
+                '& .MuiInputLabel-root': {
+                  top: '-5px', // Adjust this value as needed
+                },
+              },
             },
           }}
           error={validationErrors.toDate && (toDate === null)}

@@ -1,13 +1,13 @@
 import React,{useEffect, useState,useRef} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import {Select, FormControl, InputLabel, Grid } from '@mui/material';
+
+import { FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-import { ToastProvider, useToast } from '../centralized_components/Toast';
+import {  useToast } from '../centralized_components/Toast';
 import axios from 'axios';
 
 import CheckIcon from '@mui/icons-material/Check';
@@ -22,7 +22,7 @@ function FinanceReport(){
   const [mawbNo, setMawbNo] = useState(null);
   const [fields, setFields] = useState([]);
   const[financeData,setFinanceData]=useState([]);
-const [isOpen, setIsOpen] = useState(true);
+
   const { showToast } = useToast();
 
 
@@ -36,14 +36,13 @@ const [isOpen, setIsOpen] = useState(true);
   const[MAWBInput,setMAWBInput]=useState('');
   const [MAWBHAWBoptions, setMAWBHAWBOptions] = useState([]); // State to hold the options for autocomplete
   
-  const [selectedOption, setSelectedOption] = useState(null);
-  const[HAWBData,setHAWBData]=useState('');
+  
+  
   const [selectedHawb, setSelectedHawb] = useState('');
 
  const[selectedInvoice,setSelectedInvoice]=useState('');
  const[InvoiceOptions,setInvoiceOptions]=useState([]);
-  const [customClearanceDate, setCustomClearanceDate] = useState(null);
- const[selectedMAWB,setSelectedMAWB]=useState('');
+
 
 
   const DynamicFields = {
@@ -430,7 +429,7 @@ if(len.length<=1){
         }
         const updatedFields = fields.map(field => ({
           ...field,
-          value: responseData&&responseData[field.name] || ''
+          value: (responseData&&responseData[field.name]) || ''
           
         }));
        
@@ -475,7 +474,7 @@ if(len.length<=1){
           console.log('Selected HAWB Details:', selectedHAWBDetails);
           const updatedFields = fields.map(field => ({
             ...field,
-            value: selectedHAWBDetails&&selectedHAWBDetails[field.name] || ''
+            value: (selectedHAWBDetails&&selectedHAWBDetails[field.name]) || ''
             
           }));
          
@@ -492,51 +491,7 @@ if(len.length<=1){
   };
 
 
-  const updateAutoFields = (hawbData) => {
-    // setAutoFields({
-    //   MAWB_NO: hawbData.MAWB_BL_NO || '',
-    //   MAWB_DATE: hawbData.BL_CONSO_DATE ? dayjs(hawbData.BL_CONSO_DATE, 'DD-MM-YY') : null,// Default to current date if not set
-    //   MAWB_NOOF_PKGS: hawbData.TOTAL_NO_OF_PKGS || '',
-    //   MAWB_CHARGEABLE_WEIGHT_KG: hawbData.TOTAL_CHARGEABLE_WGT || '',
-    //   MAWB_TOTAL_FREIGHT_AMOUNT:(hawbData&&hawbData.FREIGHT_PC_SIGN==='C')?(hawbData&&hawbData.CHARGE_TOTAL_CC):(hawbData&&hawbData.CHARGE_TOTAL_PP),
-    //   SHIPMENT_TYPE:(hawbData&&hawbData.FREIGHT_PC_SIGN==='P')?'PP':'CC' || '',
-	  //   HAWB_NO: hawbData.MASTER_HOUSE_BL || '',
-    //   HAWB_DATE:(hawbData.MASTER_HOUSE_BL && hawbData.BL_CONSO_DATE) ? dayjs(hawbData.BL_CONSO_DATE, 'DD-MM-YY') : null,
-    //   HAWB_TOTAL_AMOUNT:(hawbData.MASTER_HOUSE_BL)? hawbData.CHARGE_TOTAL_CC : '',
-    //   HAWB_GROSS_WEIGHT: (hawbData.MASTER_HOUSE_BL)?hawbData.TOTAL_ACTUAL_WEIGHT : '',
-    //   HAWB_CHARGEABLE_WEIGHT_KG: (hawbData.MASTER_HOUSE_BL)?hawbData.TOTAL_CHARGEABLE_WGT : '',
-    //   HAWB_NOOF_PKGS:(hawbData.MASTER_HOUSE_BL)? hawbData.TOTAL_NO_OF_PKGS : '',
-    //   NEWINS_REFERENCE_NO: hawbData.REF_NO_BR_DV_OR_REF_NO_SEQ || '',
-    //   SHIPPER: hawbData.SHIPPER_NAME || '',
-    //   CONSIGNEE: hawbData.CONSIGNEE_NAME || '',
-    //   ORIGIN: hawbData.DEPARTURE_CITY || '',
-    //   DESTINATION: hawbData.DESTINATION_CITY || '',
-    //   COUNTRY: hawbData.CTCTNM || '',
-    //   COUNTRY_CODE: hawbData.CTISO || '',
-    //   REGION_CODE: hawbData.IATACODE || '',
-    //   AIR_LINE_NAME: hawbData.FLIGHT_CARRIER_CODE || '',
-    //   FLIGHT_NO: hawbData.FLIGHT_NO1 || '',
-    //   TARIFF_RATE: hawbData.TARIFF_RATE || '',
-    //   DDU_DDP: ((hawbData&&hawbData.FREE_HOUSE_SIGN==='I')?'DDP':'Select')||((hawbData&&hawbData.FREE_HOUSE_SIGN==='E')?'DDU':'Select'),
-    //   DESCRIPTION_OF_GOODS: hawbData.DESCRIPTION_OF_GOODS || '',
-    // });
-  };
-
-
-
-  const handleInputChange = (e) => {
-    setMAWBInput(e.target.value); // Update the input value
-  };
-
-
-
   
-
-  const handleCustomDate=(newDate)=>{
-    setCustomClearanceDate(newDate.format('DD/MM/YYYY'));
-  
-  }
-
 
 
 

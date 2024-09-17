@@ -1,24 +1,23 @@
-import React,{useEffect, useState,useContext} from "react";
+import React,{useEffect, useState} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import {Select, FormControl, InputLabel, Grid } from '@mui/material';
+
+import { FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-import {IconButton} from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
+
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs'
-import DisplayModal from "../centralized_components/AutoFieldModal";
-import axios from 'axios';
-import { ToastProvider, useToast } from '../centralized_components/Toast';
 
-import { Navigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { useToast } from '../centralized_components/Toast';
+
+import {  useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 function AirExport(){
@@ -45,20 +44,20 @@ function AirExport(){
     setIsOpen(!isOpen);
   };
   
-  const[shippingBillDate,setShippingBillDate]=useState(null);
+ 
   const[validated,setValidated]=useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [MAWBoptions, setMAWBOptions] = useState([]); // State to hold the options for autocomplete
   const [MAWBinputValue, setMAWBInputValue] = useState('');
   const [HAWBoptions, setHAWBOptions] = useState([]); // State to hold the options for autocomplete
-  const [HAWBinputValue, setHAWBInputValue] = useState('');
+ 
   const [selectedOption, setSelectedOption] = useState(null);
   const[HAWBData,setHAWBData]=useState('');
   const [selectedHawb, setSelectedHawb] = useState('');
   const[industryOptions,setIndustryOptions]=useState('');
   const[industryData,setIndustryData]=useState('');
   const[userData,setUserData]=useState('');
-  const[selectedEmpid,setSelectedEmpId]=useState('');
+  
   const [customClearanceDate, setCustomClearanceDate] = useState(null);
   const [CANDate, setCANDate] = useState(null);
   const [handOverDate, setHandOverDate] = useState(null);
@@ -126,10 +125,7 @@ const[autoFields,setAutoFields]=useState({
     {value:'PP',label:'PP'},
     {value:'CC',label:'CC'},
   ]
-  const informationStatus=[
-    {value:'Confirm',label:'Confirm'},
-    {value:'Pending',label:'Pending'},
-  ]
+  
 
   const FCBRO=[
     {value:'FC',label:'FC'},
@@ -388,42 +384,16 @@ const[autoFields,setAutoFields]=useState({
 
 
 
-  const handleInputChange = (e) => {
-    setMAWBInputValue(e.target.value); // Update the input value
-  };
-
-
-
-  const handleShippingDate=(newDate)=>{
-    setShippingBillDate(newDate);
-    setManualData(prevFields => ({
-      ...prevFields,
-      
-      SHIPPING_BILL_DATE:newDate,
-}));
-  
-  }
+ 
 
   const handleCustomDate=(newDate)=>{
     setCustomClearanceDate(newDate.format('DD/MM/YYYY'));
   
   }
 
-  const [open, setOpen] = useState(false);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
-  const fields = [
-    { label: 'MAWB', data: '1010101' },
-    { label: 'MAWB Date', data: 'New York' },
-    { label: 'MAWB No Of Pkgs', data: 'Los Angeles' },
-    { label: 'MAWB CW', data: 'John Doe' },
-    { label: 'MAWB Total Freight', data: 'John Doe' },
-    { label: 'Shipment Type', data: 'John Doe' },
-   
-    // Add more fields as needed
-  ];
+ 
 
 const clearanceDoneBy=[
   {label:'Nippon',value:'Nippon Express (India) Private Limited.'},
@@ -442,21 +412,7 @@ const clearanceDoneBy=[
         }
     }
 };
-const handleUserChange = (event, value) => {
-  if (value) {
-      // Extract empid from the selected value
-      const selectedUser = userData.find(user => `${user.user_name} (${user.emp_id})` === value);
-      if (selectedUser) {
-          setSelectedEmpId(selectedUser.emp_id); // Set the empid
-          setManualData({ ...manualData, salesPicBranch: selectedUser.branch_name,SalesPic:value });
-      }
-  } else {
-      setSelectedEmpId(''); // Clear empid if nothing is selected
-  }
-}
-const handleOperationPic = (event, value) => {
-  setManualData({ ...manualData, OperationPic: value });
-}
+
   
 
 const handleClearanceChange=(event,value)=>{

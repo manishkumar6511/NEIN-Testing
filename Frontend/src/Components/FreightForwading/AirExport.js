@@ -1,14 +1,14 @@
-import React,{useEffect, useState,useContext} from "react";
+import React,{useEffect, useState} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import {Select, FormControl, InputLabel, Grid } from '@mui/material';
+
+import { FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-import {IconButton} from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
+
+
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -16,8 +16,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs'
 import DisplayModal from "../centralized_components/AutoFieldModal";
 import axios from 'axios';
-import { ToastProvider, useToast } from '../centralized_components/Toast';
-import { Navigate, useLocation } from 'react-router-dom';
+import {  useToast } from '../centralized_components/Toast';
+import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
   
 
@@ -67,7 +67,7 @@ const[HAWBDate,setHAWBDate]=useState('');
   const [MAWBoptions, setMAWBOptions] = useState([]); // State to hold the options for autocomplete
   const [MAWBinputValue, setMAWBInputValue] = useState('');
   const [HAWBoptions, setHAWBOptions] = useState([]); // State to hold the options for autocomplete
-  const [HAWBinputValue, setHAWBInputValue] = useState('');
+  
   const [selectedOption, setSelectedOption] = useState(null);
   const[HAWBData,setHAWBData]=useState('');
   const [selectedHawb, setSelectedHawb] = useState('');
@@ -389,9 +389,7 @@ const[autoFields,setAutoFields]=useState({
 
 
 
-  const handleInputChange = (e) => {
-    setMAWBInputValue(e.target.value); // Update the input value
-  };
+  
 
 
 
@@ -413,7 +411,7 @@ const[autoFields,setAutoFields]=useState({
 
   const [open, setOpen] = useState(false);
 
-  const handleOpen = () => setOpen(true);
+  
   const handleClose = () => setOpen(false);
 
   const fields = [
@@ -1386,6 +1384,14 @@ return(
           slotProps={{
             textField: {
               error: validationErrors.SHIPPING_BILL_DATE && !shippingBillDate, 
+              sx: {
+                '& .MuiInputBase-input': {
+                  padding: '8.5px',
+                },
+                '& .MuiInputLabel-root': {
+                  top: '-5px', // Adjust this value as needed
+                },
+              },
             },
           }}
           />
@@ -1443,6 +1449,14 @@ return(
           slotProps={{
             textField: {
               error: validated && !customClearanceDate, 
+              sx: {
+                '& .MuiInputBase-input': {
+                  padding: '8.5px',
+                },
+                '& .MuiInputLabel-root': {
+                  top: '-5px', // Adjust this value as needed
+                },
+              },
             },
           }}
           error={validationErrors.CUSTOMS_CLEARANCE_DATE && (customClearanceDate === null)}

@@ -95,6 +95,13 @@ border-radius
   .custom-textfield .MuiInputLabel-root.Mui-focused {
     color: #8EC400;
   }
+  .disabled-textfield .MuiInputLabel-root {
+    color: #1A005D;
+  }
+  
+  .disabled-textfield .MuiInputLabel-root.Mui-focused {
+    color: #8EC400;
+  }
   .main-card{
     width: 100%;
     margin: 40px 0;
@@ -152,7 +159,11 @@ border-radius
 
   
   .disabled-textfield .MuiInputBase-input {
-    cursor: not-allowed; /* Show not-allowed cursor */
+    cursor: not-allowed; 
+    font-size: smaller;
+  }
+  .custom-textfield .MuiInputBase-input {
+  font-size: smaller;
   }
   .auto-card-title{
     position: absolute;   
@@ -188,7 +199,24 @@ border-radius
     background-color: #1A005D !important;
     color: #d4d3da !important;
   }
-  :where(.css-dev-only-do-not-override-p8b6i).ant-picker-outlined {
+
+
+  /* Apply black text color to disabled fields */
+.Mui-disabled {
+  opacity: 1 !important; /* Ensure opacity is set to 1 */
+}
+
+.Mui-disabled .MuiInputBase-input {
+  -webkit-text-fill-color: #000 !important; /* For WebKit browsers */
+  color: #000 !important; /* Standard color property */
+}
+
+/* Ensure high specificity */
+
+
+
+
+  /* :where(.css-dev-only-do-not-override-p8b6i).ant-picker-outlined {
     border-color: #ada0a0;
     background: #fff;
   }
@@ -254,5 +282,5 @@ border-radius
   }
   
   input[type=number] {
-    -moz-appearance: textfield; /* Hide arrows in Firefox */
-  }
+    -moz-appearance: textfield; 
+  } */

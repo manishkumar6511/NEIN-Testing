@@ -12,32 +12,30 @@ import Divider from '@mui/material/Divider';
 // import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import PreviewIcon from '@mui/icons-material/Preview';
 import HelpIcon from '@mui/icons-material/Help';
-import AddIcon from '@mui/icons-material/Add';
+
 import DashboardIcon from '@mui/icons-material/Dashboard';
 
-import Collapse from '@mui/material/Collapse'; // Add this import
+
 import ListAltIcon from '@mui/icons-material/ListAlt';
-import HelpCenterIcon from '@mui/icons-material/HelpCenter';
+
 
 import './../Components/CSS/muiSlider.css';
 import TmsRouting from '../Tms-Routes/tmsRouting';
 
 import {Link} from 'react-router-dom';
-import RemoveIcon from '@mui/icons-material/Remove';
+
 import BarChartIcon from '@mui/icons-material/BarChart';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import SchemaIcon from '@mui/icons-material/Schema';
+
 import CardTravelIcon from '@mui/icons-material/CardTravel';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+
 
 const drawerWidth = 240;
 
@@ -120,10 +118,7 @@ export default function MiniDrawer() {
     const [openSubmenu, setSubmenu] = useState(false);
 
     // Function to toggle the state of the submenu for "User" ListItem
-    const handleUserSubMenuToggle = (text) => {
-        setOpenUserSubMenu(!openUserSubMenu);
-        setSubmenu(text);
-    };
+    
 
     const handleDrawerOpen = () => {
         setOpen(!open);
@@ -156,11 +151,7 @@ export default function MiniDrawer() {
 
     // };
 
-    const handleBillingSubMenuToggle = () => {
-        setOpenBillingSubMenu(!openBillingSubMenu);
-        setOpenOperationSubMenu(false);
-        setOpenMasterSubMenu(false);
-    };
+   
     // const handleMasterSubMenuToggle = () => {
     //     setOpenMasterSubMenu(!openMasterSubMenu);
     //     setOpenOperationSubMenu(false);

@@ -1,34 +1,65 @@
-import React, { useState } from 'react';
-import { Grid, Typography, Switch, FormControlLabel, Box, TextField, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Grid, Typography, Switch, FormControlLabel, Box, TextField, Button, Divider ,Autocomplete} from '@mui/material';
 import axios from 'axios';
+import Paper from '@mui/material/Paper';
+import InputBase from '@mui/material/InputBase';
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
+import { useToast } from '../centralized_components/Toast';
 
-// Define the structure of the modules and submodules
 const modules = [
   {
-    moduleName: 'Module 1',
-    submodules: ['Submodule 1', 'Submodule 2', 'Submodule 3', 'Submodule 4'],
+    moduleName: 'Freight Forwarding',
+    submodules: ['Air Export', 'Air Import', 'Ocean Export', 'Ocean Import'],
   },
   {
-    moduleName: 'Module 2',
-    submodules: ['Submodule 1', 'Submodule 2', 'Submodule 3', 'Submodule 4'],
+    moduleName: 'Custom Brokerage',
+    submodules: ['Air Export', 'Air Import', 'Ocean Export', 'Ocean Import'],
   },
   {
-    moduleName: 'Module 3',
-    submodules: ['Submodule 1', 'Submodule 2', 'Submodule 3', 'Submodule 4', 'Submodule 5'], // 5 submodules
+    moduleName: 'Removals',
+    submodules: ['Air Export', 'Air Import', 'Ocean Export', 'Ocean Import', 'Domestic'],
+  },
+  {
+    moduleName: 'Other Modules',
+    submodules: ['Dashboard', 'Finance', 'View/Edit', 'Masters', 'Reports'],
   },
 ];
 
 const SlideSwitchPage = () => {
+  const { showToast } = useToast();
+  const[userData,setUserData]=useState('');
+const[Userbranch,setUserBranch]=useState('');
+const[UserName,setUserName]=useState('');
+
+let empid="";
+  const storedUser = localStorage.getItem('userDetails');
+  if (storedUser) {
+    // Parse the JSON string into an object
+    const userDetails = JSON.parse(storedUser);
+  
+    // Access the branchName property
+     empid = userDetails.empid;
+  
+    // Log or use the branchName as needed
+    console.log("empid:", empid);
+  } else {
+    console.log("No user details found in localStorage.");
+  }
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const [userId, setUserId] = useState('');
   const [switchState, setSwitchState] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
 
-  // Handle input change for user ID
-  const handleUserIdChange = (event) => {
-    setUserId(event.target.value);
+  const handleUserIdChange = (event, value) => {
+    
+    const selectedUser = userData.find(user => `${user.user_name} (${user.emp_id})` === value);
+    if (selectedUser) {
+       
+    setUserId(selectedUser.emp_id);
+    }
   };
 
-  // Handle switch toggling
   const handleSwitchChange = (module, submodule) => (event) => {
     setSwitchState({
       ...switchState,
@@ -37,64 +68,148 @@ const SlideSwitchPage = () => {
     setHasChanges(true); // Track if there are changes to be saved
   };
 
-  // Function to simulate fetching user access based on user ID
   const fetchUserAccess = async () => {
     try {
-      // Simulate API call to get user access data
-      const accessData = {
-        'Module 1-Submodule 1': true,
-        'Module 1-Submodule 2': false,
-        'Module 2-Submodule 1': true,
-        'Module 3-Submodule 1': false,
-        'Module 3-Submodule 5': true,
-      };
-      setSwitchState(accessData); // Update switches based on access data
+      console.log("userId",userId);
+      const response = await axios.post(`${API_BASE_URL}/User/Access`, { userid: userId });
+      console.log(response.data);
+      if(response.data!=="No access found for user"){
+          // Ensure the response data is properly structured
+    const menus = response.data.userAccess.access_config;
+const Userbranch=response.data.userDetails.b_name;
+console.log("UserName",response.data);
+setUserBranch(Userbranch);
+const UserName=response.data.userDetails.full_name;
+
+setUserName(UserName);
+    // Log the type of menus to understand its structure
+    console.log("Type of menus:", typeof menus);
+    console.log("Fetched menus of employee:", menus);
+
+    // Check if menus is a string and parse if necessary
+    const parsedMenus = typeof menus === 'string' ? JSON.parse(menus) : menus;
+
+    // Ensure parsedMenus is an object with correct key-value pairs
+    if (typeof parsedMenus === 'object' && parsedMenus !== null) {
+      setSwitchState(parsedMenus); // Update state with fetched access data
+      setHasChanges(false); // Reset changes state as the data is freshly fetched
+    } else {
+      console.error('Fetched menus are not in the expected format:', parsedMenus);
+    }
+  }else{
+    resetFields();
+  }
     } catch (error) {
       console.error('Failed to fetch user access:', error);
     }
   };
 
-  // Handle save button click
+  // Debugging: Add a useEffect to check if the switchState is being updated correctly
+  useEffect(() => {
+    console.log('Switch State Updated:', switchState);
+    console.log('userId ', userId);
+  }, [switchState]);
+
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/ff/User`);
+        const details=response.data;
+        setUserData(details);
+        // const userName = details.map(item => item.user_name);
+        // setIndustryOptions(industry); // Set the fetched options
+        // console.log("industry", response.data);
+      } catch (error) {
+        console.error('Error fetching user Details:', error);
+      }
+    };
+
+  const debounceFetch = setTimeout(fetchUsers, 300);
+
+  return () => clearTimeout(debounceFetch); // Cleanup the timeout
+
+}, []); // Empty dependency array to run only once when the component mounts
+
   const handleSave = async () => {
     const accessData = JSON.stringify(switchState);
-    console.log('Saving access data:', accessData);
+    console.log('Saving access data:', switchState);
+    console.log('initiator id:', empid);
 
     try {
-      // Simulate sending the data to the API
-      await axios.post('/api/save-access', { userId, accessData });
+      
+      await axios.post(`${API_BASE_URL}/User/update`, { userId, accessData,empid });
       setHasChanges(false); // Reset changes state after successful save
+      showToast("Saved Successfully", "success");
+    setTimeout(() => {
+      setUserId('');
+      resetFields();
+      
+    }, 3000);
     } catch (error) {
       console.error('Failed to save access data:', error);
     }
   };
+const resetFields=()=>{
+  
+
+setSwitchState({});
+}
+
+
 
   return (
     <Box sx={{ p: 4 }}>
-      {/* Input box for user ID */}
-      <TextField
-        label="User ID"
-        value={userId}
-        onChange={handleUserIdChange}
-        variant="outlined"
-        fullWidth
-        sx={{ mb: 3 }}
-      />
+      <Grid container spacing={2}>
+        <Grid item xs={3} margin={'10px'}>
+        <Autocomplete size='small'  freeSolo id="free-solo-2-demo" disableClearable 
+        options={userData&&userData.map(user => `${user.user_name} (${user.emp_id})`)} // Format options
+        onChange={handleUserIdChange} // Handle selection change
+       value={userId}
+       renderInput={(params) => (
+       <TextField 
+        {...params}
+        label="User Id"
+        InputProps={{
+        ...params.InputProps,
+      
+        type: 'search',
+        readOnly: true,
+        }}
+        InputLabelProps={{ style: { fontSize: '14px'} }}
+       
+        required
+        
+         className="custom-textfield"
+        />)}/>
+        </Grid>
+       
+        <Grid item xs={2} margin={'10px'}>
+          <Button
+            variant="outlined"
+            onClick={fetchUserAccess}
+            sx={{ mb: 1 }}
+            style={{ backgroundColor: '#1A005D', color: 'white' }}
+          >
+            Fetch Access
+          </Button>
+         
+        </Grid>
+      </Grid>
+      <Divider />
 
-      <Button variant="outlined" onClick={fetchUserAccess} sx={{ mb: 3 }}>
-        Fetch User Access
-      </Button>
-
-
-      {/* Render each module */}
       {modules.map((module) => (
         <Box key={module.moduleName} sx={{ mb: 3 }}>
-          <Typography variant="h6">{module.moduleName}</Typography>
+          <Typography variant="h6" style={{ textAlign: 'left', fontSize: '18px', color: '#1A005D' }}>
+            {module.moduleName}
+          </Typography>
           <Grid container spacing={2} wrap="nowrap">
             {module.submodules.map((submodule) => (
               <Grid item key={submodule}>
                 <FormControlLabel
                   control={
                     <Switch
+                      // Make sure switchState is being checked properly
                       checked={switchState[`${module.moduleName}-${submodule}`] || false}
                       onChange={handleSwitchChange(module.moduleName, submodule)}
                     />
@@ -104,15 +219,15 @@ const SlideSwitchPage = () => {
               </Grid>
             ))}
           </Grid>
+          <Divider />
         </Box>
       ))}
 
-      {/* Save button */}
       <Button
         variant="contained"
-        color="primary"
+        style={{ color: 'white' }}
         onClick={handleSave}
-        disabled={!hasChanges} // Disable button if no changes
+        
       >
         Save Changes
       </Button>

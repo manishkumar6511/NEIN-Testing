@@ -8,13 +8,15 @@ import BranchChart from './Components/FreightForwading/Dashboard';
 import {CssBaseline} from'@mui/material';
 import {StyledEngineProvider}
 from '@mui/material/styles';
+import { LoaderProvider } from './PrivateRoute/LoaderContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
      <StyledEngineProvider injectFirst> <CssBaseline/> </StyledEngineProvider>
      <UserProvider>
-     
+     <LoaderProvider>
      <App />
+     </LoaderProvider>
     </UserProvider>
   
 

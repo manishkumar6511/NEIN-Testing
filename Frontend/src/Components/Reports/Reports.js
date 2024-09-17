@@ -6,14 +6,15 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Button } from "antd";
- import ExportDefaultToolbar from "./CWR";
+
 import VerticalTabs from "./Tabs";
 import AEFRegister from "./AEFReg";
 import DailyStatus from "./DailyStatus";
 import { moduleOptions,moduleSubDivisions } from "../centralized_components/moduleSubModule";
 import MonthComparision from "./monthComparision";
-
-
+import CHAReport from "./cha";
+import AWR from "./AWR";
+import CWRData from "./CWR";
  
 function Report() {
 
@@ -209,6 +210,70 @@ const moduleConfig = {
         ],
        apiEndpoint: 'http://localhost:5000/Reports/aefRegister'
       },
+      report3: {
+        headers: [
+          { field: 'Register_id', headerName: 'SL NO', width: 80 },
+          { field: 'JOB_DOCKETNO', headerName: 'DKT No', width: 150 },
+          { field: 'NEWINS_REFERENCE_NO', headerName: 'REF NO', width: 150 },
+          { field: 'MAWB_NO', headerName: 'MAWB NO', width: 150 },
+          { field: 'MAWB_DATE', headerName: 'MAWB DT', width: 150 },
+          { field: 'mawb_g_weight', headerName: 'MAWB G.WEIGHT', width: 150 },
+          { field: 'MAWB_CHARGEABLE_WEIGHT_KG', headerName: 'MAWB C.WEIGHT', width: 150 },
+          { field: 'HAWB_NO', headerName: 'HAWB', width: 150 },
+          { field: 'HAWB_DATE', headerName: 'HAWB DT', width: 150 },
+          { field: 'mawb_hawb_pices', headerName: 'MAWB/HAWB PICES', width: 150 },
+          { field: 'HAWB_GROSS_WEIGHT', headerName: 'HAWB G.WEIGHT', width: 150 },
+          { field: 'HAWB_CHARGEABLE_WEIGHT_KG', headerName: 'HAWB C.WEIGHT', width: 150 },
+          { field: 'exporter', headerName: 'Exporter', width: 150 },
+          { field: 'COMMODITY_CODE', headerName: 'Commodity', width: 150 },
+          { field: 'CONSIGNEE', headerName: 'Consignee', width: 150 },
+          { field: 'DESTINATION', headerName: 'Dest', width: 100 },
+          { field: 'COUNTRY', headerName: 'Dest-Country', width: 150 },
+          { field: 'area', headerName: 'Area', width: 100 },
+          { field: 'AIR_LINE_NAME', headerName: 'AIRLINE', width: 150 },
+          { field: 'inv_no_dt', headerName: 'INV NO DT', width: 150 },
+          { field: 'DESCRIPTION_OF_GOODS', headerName: 'DESCRIPTION', width: 150 },
+          { field: 'pick_up_date', headerName: 'PICK UP DATE', width: 150 },
+          { field: 'CUSTOMS_CLEARANCE_DATE', headerName: 'CUSTOMS CLR DT-', width: 150 },
+          { field: 'FLIGHT_NO', headerName: 'Flight Details', width: 150 },
+          { field: 'first_flight', headerName: '1ST FLIGHT', width: 150 },
+          { field: 'second_flight', headerName: '2ND FLIGHT', width: 150 },
+          { field: 'mawb_pp_cc', headerName: 'MAWB pp/cc', width: 150 },
+          { field: 'MAWB_TOTAL_FREIGHT_AMOUNT', headerName: 'MAWB Net Ft Amt', width: 150 },
+          { field: 'mawb_total_pp_amt', headerName: 'MAWB Total PP AMT', width: 150 },
+          { field: 'surcharges', headerName: 'Surcharges', width: 150 },
+          { field: 'hawb_pp_cc', headerName: 'HAWB pp/cc', width: 150 },
+          { field: 'hawb_currency', headerName: 'HAWB CURRENCY', width: 150 },
+          { field: 'hawb_amount', headerName: 'HAWB AMOUNT', width: 150 },
+          { field: 'sb_no_date', headerName: 'SB NO & DATE', width: 150 },
+          { field: 'fob_amt', headerName: 'FOB Amt', width: 150 },
+          { field: 'sb_copy_dispatch_dt', headerName: 'SB COPY DISPATCH DT', width: 150 },
+          { field: 'documents_waybill_no', headerName: 'DOCUMENTS COURIER WAYBILL NO', width: 150 },
+          { field: 'handling_amt', headerName: 'HANDLING AMOUNT', width: 150 },
+          { field: 'nippon_inv_dt', headerName: 'NIPPON INV # / DT', width: 150 },
+          { field: 'bills_dispatch_dt', headerName: 'BILLS DISPATCH DT', width: 150 },
+          { field: 'bills_courier_waybill_no', headerName: 'BILLS COURIER WAYBILL NO', width: 150 },
+          { field: 'ddu_ddp_inv_dt', headerName: 'DDU & DDP INV # & DT', width: 150 },
+          { field: 'ddu_ddp_inv_dispatch_dt', headerName: 'DDU / DDP INV DISPATCH DT', width: 150 },
+          { field: 'incoterm', headerName: 'INCOTERM', width: 100 },
+          { field: 'remark', headerName: 'REMARK', width: 150 },
+          { field: 'publish_rates', headerName: 'Publish Rates', width: 150 },
+          { field: 'buying_net_net_rates', headerName: 'Buying net net rates', width: 150 },
+          { field: 'fsc', headerName: 'FSC', width: 100 },
+          { field: 'scc', headerName: 'SCC', width: 100 },
+          { field: 'other_surcharges', headerName: 'OTHER SURCHARGES', width: 150 },
+          { field: 'service_type', headerName: 'Type of Service ( DG / Temp )', width: 150 },
+          { field: 'selling_net_net_rates', headerName: 'Selling net net rates', width: 150 },
+          { field: 'difference', headerName: 'Difference', width: 100 },
+          { field: 'profit_loss', headerName: 'Profit / Loss', width: 150 },
+          { field: 'total_all_freight_carrier', headerName: 'Total All in Freight need to pay to carrier', width: 150 },
+          { field: 'total_all_freight_customer', headerName: 'Total All in Freight billing to customer', width: 150 },
+          { field: 'prepared_by', headerName: 'Prepared by/reg/name', width: 150 },
+          { field: 'executive_name', headerName: 'EXECUTIVE/NAME', width: 150 },
+         
+        ],
+       apiEndpoint: 'http://localhost:5000/Reports/aefRegister'
+      },
       // Add up to 10 reports here
     },
 
@@ -247,7 +312,7 @@ function updatetabs(){
  tabs = {
   ff:{
     AirImport:[
-    {label: 'Air import 1', component: configState.currentConfig&&<ExportDefaultToolbar props={configState.currentConfig['report1']}/> },
+    {label: 'Air import 1', component: configState.currentConfig&&<AEFRegister props={configState.currentConfig['report1']}/> },
     // {label:'Air import 2',component:<h1>ff Air import2 componnet</h1>} ,
     // {label:'Air import 3',component:<h1>ff Air import 3 componnet</h1>} ,
     // {label:'Air import 4',component:<h1>ff Air import 4 componnet</h1>} ,
@@ -257,9 +322,9 @@ function updatetabs(){
       {label:'AEF REGISTER', component: configState.currentConfig&&<AEFRegister props={configState.currentConfig['report1']}/>},
       {label:'DAILY STATUS', component: configState.currentConfig&&<DailyStatus props={configState.currentConfig['report2']}/>},
       {label:'2023 v 2024',component:<MonthComparision props={configState.toDate}/>},
-      {label:'CHA',component:<h1>CHA</h1>},
-      {label:'AWR',component:<h1>AWR</h1>},
-      {label:'CWR',component:<ExportDefaultToolbar />},
+      {label:'CHA',component: configState.currentConfig&&<CHAReport props={configState.currentConfig['report1']}/>},
+      {label:'AWR',component:<AWR props={configState.toDate}/>},
+      {label:'CWR',component:<CWRData props={configState.toDate}/>},
       {label:'TOP 15',component:<h1>TOP 15</h1>},
       {label:'TOP CARRIER',component:<h1>TOP CARRIER</h1>},
       {label:'PIC',component:<h1>AEF PIC</h1>},
@@ -560,6 +625,14 @@ useEffect(()=>{
                   slotProps={{
                     textField: {
                       error: !!validationErrors?.fromDate,
+                      sx: {
+                        '& .MuiInputBase-input': {
+                          padding: '8.5px',
+                        },
+                        '& .MuiInputLabel-root': {
+                          top: '-5px', // Adjust this value as needed
+                        },
+                      },
                     },
                   }}
                   error={validationErrors.fromDate && (configState.fromDate === null)}
@@ -581,6 +654,14 @@ useEffect(()=>{
                   slotProps={{
                     textField: {
                       error: !!validationErrors?.toDate,
+                      sx: {
+                        '& .MuiInputBase-input': {
+                          padding: '8.5px',
+                        },
+                        '& .MuiInputLabel-root': {
+                          top: '-5px', // Adjust this value as needed
+                        },
+                      },
                     },
                   }}
                   error={validationErrors.toDate && (configState.toDate === null)}
