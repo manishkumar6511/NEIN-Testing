@@ -1,26 +1,24 @@
 import React,{useEffect, useState} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-
 import { FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs'
-
 import axios from 'axios';
 import { useToast } from '../centralized_components/Toast';
-
 import {  useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import TruckLoder from "../centralized_components/truckLoder";
 
 function AirExport(){
+  const  [loading, setLoading] =  useState(false);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const location = useLocation();
   const dataReceived = location.state;
@@ -64,12 +62,36 @@ function AirExport(){
   
 
   const[initiatorDetails,setInitiatorDetails]=useState({
-    Initiator_id:'2849',
-    Initiator_Name:'Gowthami B',
-    Register_Branch_Id:'10',
-    Register_Sub_branch:'10',
+    Initiator_id:'',
+    Initiator_Name:'',
+    Register_Branch_Id:'',
+    Register_Branch_Code:'',
     
   })
+
+  useEffect(()=>{
+    let SessionDetails = {};
+    const storedUser = localStorage.getItem('userDetails');
+    if (storedUser) {
+      const userDetails = JSON.parse(storedUser);
+    
+     if(userDetails){
+      console.log("string of branch id",userDetails.branchid);
+      setInitiatorDetails((prevState) => ({
+        ...prevState,
+        Initiator_id:userDetails.empid ,
+        Initiator_Name:userDetails.empname,
+        Register_Branch_Id:String(userDetails.branchid),
+        Register_Branch_Code:userDetails.branchCode,
+  
+      }));
+     }
+      
+    } else {
+      console.log("No menu details found in localStorage.");
+    }
+  
+  },[])
 
 const[autoFields,setAutoFields]=useState({
   MAWB_NO:'',
@@ -279,12 +301,14 @@ const[autoFields,setAutoFields]=useState({
   const handleOptionChange = async (event, newValue) => {
     console.log(newValue);
     if (newValue) {
+      setLoading(true);
       try {
         const response = await axios.post(`${API_BASE_URL}/ff/ai_masterData`, {
           MAWB_NO: newValue
         });
         console.log('Response data:', response.data);
         const details = response.data;
+        setLoading(false);
         console.log("1st response",details);
         if(details&&details[0].Initiator_Name){
           console.log("MAWB Details Already Entered By");
@@ -300,6 +324,7 @@ const[autoFields,setAutoFields]=useState({
           setHAWBData(details[0]);
           updateAutoFields(details[0]);
           console.log("HAWB Dataaaa", details); // Log the updated data
+          
         }
         if (hawbNumbers.length === 1 && hawbNumbers[0] !== "") {
           setSelectedHawb(hawbNumbers[0]); // Set the selected HAWB
@@ -375,7 +400,7 @@ const[autoFields,setAutoFields]=useState({
       REGION_CODE: hawbData.IATACODE || '',
       AIR_LINES: hawbData.AIR_LINE_CODE || '',
       FLIGHT_NO: hawbData.FLIGHT_NO || '',
-      FLIGHT_DATE:hawbData.FLIGHT_DATE ? dayjs(hawbData.FLIGHT_DATE, 'DD-MM-YY') : null,
+      FLIGHT_DATE:hawbData.FLIGHT_DATE ? dayjs(hawbData.FLIGHT_DATE, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
       CITY_NAME:hawbData.DESTINATION_NAME || '',
      // DDU_DDP: ((hawbData&&hawbData.FREE_HOUSE_SIGN==='I')?'DDP':'Select')||((hawbData&&hawbData.FREE_HOUSE_SIGN==='E')?'DDU':'Select'),
       //DESCRIPTION_OF_GOODS: hawbData.DESCRIPTION_OF_GOODS || '',
@@ -443,7 +468,7 @@ const handleSubmit=async(e)=>{
   // If there are any errors, do not proceed with form submission
   if (Object.keys(errors).length > 0) {
     setValidationErrors(errors); // Set the validation errors state
-    showToast("Please fill in all required fields", "error");
+    showToast("Please fill in all required fields", "error",{ closeOnClick: true });
     return;
   }
 
@@ -456,11 +481,12 @@ const handleSubmit=async(e)=>{
    console.log("Total Data",TotaData);
    try {
     const response = await axios.post(`${API_BASE_URL}/ff/ai_insert`, TotaData);
-    showToast("Air Import Details Inserted Successfully", "success");
+    showToast("Submitted Successfully", "success",{ closeOnClick: true });
+    setLoading(false);
     setTimeout(() => {
       resetFields();
       navigate('/Operation/Pending', { state: { type: 'Air Import' } });
-    }, 3000);
+    }, 5000);
   } catch (error) {
     showToast("Error inserting data", "error");
   }
@@ -530,6 +556,8 @@ setValidationErrors({});
 
 return(
     <div>
+
+{(loading ? ( <TruckLoder/> ) :"")}
         <Card className="main-card" >
 
 <p className='card-title'>Air Import Details. </p>
@@ -893,20 +921,20 @@ return(
            />
           </Grid>
           <Grid item xs={2}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="FLIGHT_DATE"
-      value={autoFields.FLIGHT_DATE}
-      onChange={handleCustomDate}
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='Flight Date *' />
+          <TextField
+  value={autoFields.FLIGHT_DATE||''}
+  className="disabled-textfield"
+     name="FLIGHT_DATE"
+    label="Flight Date"
+    size='small'
    
-    </LocalizationProvider>
+    required
+    InputProps={{
+      readOnly: true,
+    }}
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
+
       </Grid>
      
 
@@ -970,7 +998,9 @@ return(
        name="Industry"
        label="Industry"
        required
-       disabled
+       InputProps={{
+        readOnly: true,
+      }}
        size='small'
       InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
       error={validationErrors.Industry && (manualData.Industry === '')}
@@ -1000,8 +1030,10 @@ return(
       <TextField
       value={manualData.CAN_NO}
       onChange={handleManualDataChange}
+      onWheel={(e) => e.target.blur()} 
       className="custom-textfield"
        name="CAN_NO"
+       type="number" 
        label="CAN No" required
        size='small'
        InputLabelProps={{ style: { fontSize: '14px'  } }}
@@ -1022,6 +1054,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.CAN_DATE && !CANDate, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       />
@@ -1033,11 +1075,13 @@ return(
   <FormControl fullWidth>
   <TextField
   onChange={handleManualDataChange}
+  onWheel={(e) => e.target.blur()} 
   value={manualData.CAN_AMOUNT}
    className="custom-textfield"
     name="CAN_AMOUNT"
     label="CAN Amount" required
     size='small'
+    type="number" 
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.CAN_AMOUNT && (manualData.CAN_AMOUNT === '')}
     />
@@ -1115,6 +1159,17 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.DO_HANDOVER_DATE && !handOverDate, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px',
+              fontSize:'14px',
+              color:'#1a005d',
+              // Adjust this value as needed
+            },
+          },
         },
       }}
       />
@@ -1138,7 +1193,7 @@ return(
         InputLabelProps={{ style: { fontSize: '14px'} }}
        
         required
-         className="disabled-textfield"
+         className="custom-textfield"
          error={validationErrors.clearanceDoneBy && (manualData.clearanceDoneBy === '')}
         />)}/>
         </Grid>
@@ -1230,7 +1285,9 @@ return(
           label="Initiator"
           size='small'
           required
-          disabled
+          InputProps={{
+            readOnly: true,
+          }}
          InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
            />
            </FormControl>

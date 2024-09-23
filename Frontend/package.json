@@ -2,7 +2,7 @@
   "name": "nein-or",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://neintestserver.nittsu.co.in:8180/my-react-app",
+  "homepage": "https://neinsoft-test.nittsu.co.in:6000/NX-OR/Frontend/build/",
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",

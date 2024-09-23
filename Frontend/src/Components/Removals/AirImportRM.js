@@ -35,13 +35,35 @@ const[dates,setDates]=useState({
 })
 
 const[initiatorDetails,setInitiatorDetails]=useState({
-  initiator_id:'2849',
-  initiator_name:'Gowthami B',
-  register_branch:'10',
-  register_sub_branch:'10',
- // Register_Branch_Id:'BLR'
+  initiator_id:'',
+  initiator_name:'',
+  register_branch:'',
+  Register_Branch_Code:'',
   
 })
+
+useEffect(()=>{
+  let SessionDetails = {};
+  const storedUser = localStorage.getItem('userDetails');
+  if (storedUser) {
+    const userDetails = JSON.parse(storedUser);
+  
+   if(userDetails){
+    setInitiatorDetails((prevState) => ({
+      ...prevState,
+      initiator_id:userDetails.empid ,
+      initiator_name:userDetails.empname,
+      register_branch:userDetails.branchid,
+      Register_Branch_Code:userDetails.branchCode,
+
+    }));
+   }
+    
+  } else {
+    console.log("No menu details found in localStorage.");
+  }
+
+},[])
 
 const[MandatoryFields,setMandatoryFields]=useState({
   JOB_DOCKET_NO:'',
@@ -181,7 +203,7 @@ const handleSubmit=async(e)=>{
   
    try {
     const response = await axios.post(`${API_BASE_URL}/removals/ai_jobinsert`, TotaData);
-    showToast("Air Import Data Inserted Successfully", "success");
+    showToast("Submitted Successfully", "success");
     setTimeout(() => {
       resetFields();
     }, 3000);
@@ -326,7 +348,9 @@ return(
     name="INDUSTRY"
     label="Industry" required
     size='small'
-   disabled
+    InputProps={{
+      readOnly: true,
+    }}
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.INDUSTRY && (MandatoryFields.INDUSTRY === '')}
     />
@@ -453,6 +477,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.HAWB_DATE && !dates.HAWB_DATE, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       />
@@ -463,6 +497,7 @@ return(
       <TextField
        value={MandatoryFields.FLIGHT_DETAILS}
        onChange={handleManualDataChange}
+       
       className="custom-textfield"
        name="FLIGHT_DETAILS"
        label="Flight Details" required
@@ -476,6 +511,8 @@ return(
        <TextField
         value={MandatoryFields.NO_OF_PACKAGES}
         onChange={handleManualDataChange}
+        onWheel={(e) => e.target.blur()} 
+        type="number" 
       className="custom-textfield"
         name="NO_OF_PACKAGES"
         label="No Of Packages" required
@@ -491,6 +528,8 @@ return(
   <TextField
    value={MandatoryFields.GROSS_WEIGHT}
    onChange={handleManualDataChange}
+   onWheel={(e) => e.target.blur()} 
+   type="number" 
  className="custom-textfield"
     name="GROSS_WEIGHT"
     label="Gross Weight" required
@@ -505,6 +544,8 @@ return(
       <TextField
        value={MandatoryFields.CHARGEABLE_WEIGHT}
        onChange={handleManualDataChange}
+       onWheel={(e) => e.target.blur()} 
+       type="number" 
       className="custom-textfield"
        name="CHARGEABLE_WEIGHT"
        label="Chargeable Weight" required
@@ -526,6 +567,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.ARRIVAL_DATE && !dates.ARRIVAL_DATE, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       />
@@ -544,6 +595,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.DO_RECVD_ON && !dates.DO_RECVD_ON, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       />
@@ -575,6 +636,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.SHPT_CLEARED_ON && !dates.SHPT_CLEARED_ON, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       />
@@ -601,7 +672,7 @@ return(
 <CardContent>
 <Typography variant="h5" component="div">
    <Grid container spacing={2}>
-       <Grid item xs={2}>
+       {/* <Grid item xs={2}>
   <FormControl fullWidth>
   <TextField
    className="custom-textfield"
@@ -611,7 +682,7 @@ return(
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     />
 </FormControl>
-</Grid>
+</Grid> */}
 <Grid item xs={2}>
 <LocalizationProvider dateAdapter={AdapterDayjs}>
       <MobileDatePicker
@@ -620,7 +691,23 @@ return(
       onChange={(date) => handleDateChange(date, 'DELIVERY_DATE')}
       className="custom-Datepicker"
       inputFormat="DD/MM/YYYY"
-      label='Delivery Date' />
+      label='Delivery Date' 
+      slotProps={{
+        textField: {
+          
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
+        },
+      }}
+      />
 
     </LocalizationProvider>
       </Grid>
@@ -628,6 +715,8 @@ return(
        <TextField
         value={optionalFields.GROSS_MARGIN}
         onChange={handleOptionalDataChange}
+        onWheel={(e) => e.target.blur()} 
+        type="number" 
         className="custom-textfield"
         name="GROSS_MARGIN"
         label="Gross Margin"
@@ -639,6 +728,8 @@ return(
          <TextField
            value={optionalFields.TRANSPORTATION_ESTIMATE}
            onChange={handleOptionalDataChange}
+           onWheel={(e) => e.target.blur()} 
+           type="number" 
           className="custom-textfield"
           name="TRANSPORTATION_ESTIMATE"
           label="Transportation Estimate"
@@ -650,6 +741,8 @@ return(
             <TextField
               value={optionalFields.TRASPORTATION_COST}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="TRASPORTATION_COST"
           label="Transportation Cost"
@@ -664,6 +757,8 @@ return(
             <TextField
               value={optionalFields.TRANSPORTATION_MARGIN}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="TRANSPORTATION_MARGIN"
           label="Transportation Margin"
@@ -676,6 +771,8 @@ return(
             <TextField
               value={optionalFields.AAI_CHARGES}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="AAI_CHARGES"
           label="AAI Charges"
@@ -699,6 +796,8 @@ return(
             <TextField
               value={optionalFields.CUSTOM_DUTY}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="CUSTOM_DUTY"
           label="Custom Duty"

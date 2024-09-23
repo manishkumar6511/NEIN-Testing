@@ -61,15 +61,36 @@ const[optionalFields,setOptionalFields]=useState({
 })
 
 const[initiatorDetails,setInitiatorDetails]=useState({
-  initiator_id:'2849',
-  initiator_name:'Gowthami B',
-  register_branch:'10',
-  register_sub_branch:'10',
+  initiator_id:'',
+  initiator_name:'',
+  register_branch:'',
+  Register_Branch_Code:'',
   
   
 })
 
+useEffect(()=>{
+  let SessionDetails = {};
+  const storedUser = localStorage.getItem('userDetails');
+  if (storedUser) {
+    const userDetails = JSON.parse(storedUser);
+  
+   if(userDetails){
+    setInitiatorDetails((prevState) => ({
+      ...prevState,
+      initiator_id:userDetails.empid ,
+      initiator_name:userDetails.empname,
+      register_branch:userDetails.branchid,
+      Register_Branch_Code:userDetails.branchCode,
 
+    }));
+   }
+    
+  } else {
+    console.log("No menu details found in localStorage.");
+  }
+
+},[])
 
 
 
@@ -162,7 +183,7 @@ const handleSubmit=async(e)=>{
   
    try {
     const response = await axios.post(`${API_BASE_URL}/removals/Domestic_jobinsert`, TotaData);
-    showToast("Domestic Data Inserted Successfully", "success");
+    showToast("Submitted Successfully", "success");
     setTimeout(() => {
      resetFields();
     }, 3000);
@@ -274,7 +295,9 @@ return(
     name="INDUSTRY"
     label="Industry" required
     size='small'
-   disabled
+    InputProps={{
+      readOnly: true,
+    }}
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.INDUSTRY && (MandatoryFields.INDUSTRY === '')}
     />
@@ -365,6 +388,8 @@ return(
   <TextField
    value={MandatoryFields.VOLUME}
    onChange={handleManualDataChange}
+   onWheel={(e) => e.target.blur()} 
+   type="number" 
  className="custom-textfield"
     name="VOLUME"
     label="Volume" required
@@ -380,6 +405,8 @@ return(
        <TextField
         value={MandatoryFields.NO_OF_PACKAGES}
         onChange={handleManualDataChange}
+        onWheel={(e) => e.target.blur()} 
+        type="number" 
       className="custom-textfield"
         name="NO_OF_PACKAGES"
         label="No Of Packages" required
@@ -416,6 +443,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.DELIVERY_DATE && !dates.DELIVERY_DATE, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       
@@ -443,7 +480,7 @@ return(
 <CardContent>
 <Typography variant="h5" component="div">
    <Grid container spacing={2}>
-       <Grid item xs={2}>
+       {/* <Grid item xs={2}>
   <FormControl fullWidth>
   <TextField
    className="custom-textfield"
@@ -453,7 +490,7 @@ return(
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     />
 </FormControl>
-</Grid>
+</Grid> */}
 
 
        
@@ -462,6 +499,8 @@ return(
        <TextField
         value={optionalFields.GROSS_MARGIN}
         onChange={handleOptionalDataChange}
+        onWheel={(e) => e.target.blur()} 
+        type="number" 
         className="custom-textfield"
         name="GROSS_MARGIN"
         label="Gross Margin"
@@ -474,6 +513,8 @@ return(
             <TextField
               value={optionalFields.TRANSPORTATION_ESTIMATE}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="TRANSPORTATION_ESTIMATE"
           label="Transportation Estimate"
@@ -485,6 +526,8 @@ return(
             <TextField
               value={optionalFields.TRASPORTATION_COST}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="TRASPORTATION_COST"
           label="Transportation Cost"
@@ -496,6 +539,8 @@ return(
             <TextField
               value={optionalFields.TRANSPORTATION_MARGIN}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="TRANSPORTATION_MARGIN"
           label="Transportation Margin"

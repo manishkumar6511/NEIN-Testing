@@ -59,7 +59,18 @@ function Header() {
     logout(); // Perform logout
     navigate('/login'); // Redirect to login page
   };
-  const userNameInitial ='B';
+  let name = {};
+  let initial="";
+  const storedUser = localStorage.getItem('userDetails');
+  if (storedUser) {
+    const userDetails = JSON.parse(storedUser);
+   name=userDetails.empname;
+   initial=name.charAt(0);
+    console.log("name object:",initial); 
+    
+    
+  } 
+  
 
   return (
     <>
@@ -86,7 +97,7 @@ function Header() {
 <IconButton onClick={handleClick}>
 <Avatar
         sx={{ bgcolor: '#1A005D' }}
-        alt={userNameInitial}
+        alt={initial} 
         src="/broken-image.jpg"
       />
        </IconButton>

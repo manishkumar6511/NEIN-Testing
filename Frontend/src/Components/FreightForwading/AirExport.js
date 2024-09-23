@@ -1,14 +1,11 @@
 import React,{useEffect, useState} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-
 import { FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-
-
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -19,10 +16,10 @@ import axios from 'axios';
 import {  useToast } from '../centralized_components/Toast';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-  
+import TruckLoder from "../centralized_components/truckLoder"; 
 
 function AirExport(){
-
+  const  [loading, setLoading] =  useState(false);
   const navigate = useNavigate();
 // console.log("dataReceived",dataReceived.mawbNo);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -30,7 +27,7 @@ function AirExport(){
    const dataReceived = location.state;
    const { state } = location;
   
-  console.log("state",state); // Should output { type: 'Air Export' }
+ // console.log("state",state); // Should output { type: 'Air Export' }
  
   const [mawbNo, setMawbNo] = useState('');
 //   if(dataReceived){
@@ -42,7 +39,7 @@ function AirExport(){
     if (dataReceived) {
       setMawbNo(dataReceived.mawbNo);
       const newValue=dataReceived.mawbNo;
-      console.log("new value in useeffetc",newValue);
+      console.log("new value in useeffetc",dataReceived);
       handleOptionChange('',newValue);
     }else{
       setMawbNo('');
@@ -79,13 +76,35 @@ const[HAWBDate,setHAWBDate]=useState('');
  
 
   const[initiatorDetails,setInitiatorDetails]=useState({
-    Initiator_id:'2849',
-    Initiator_Name:'Gowthami B',
-    Register_Branch_Id:'10',
-    Register_Sub_branch:'10',
+    Initiator_id:'',
+    Initiator_Name:'',
+    Register_Branch_Id:'',
+    Register_Branch_Code:'',
     
   })
+useEffect(()=>{
+  let SessionDetails = {};
+  const storedUser = localStorage.getItem('userDetails');
+  if (storedUser) {
+    const userDetails = JSON.parse(storedUser);
+  
+   if(userDetails&&dataReceived){
+    setInitiatorDetails((prevState) => ({
+      ...prevState,
+      Initiator_id:userDetails.empid ,
+      Initiator_Name:userDetails.empname,
+      Register_Branch_Id:dataReceived.branchId,
+      Register_Branch_Code:dataReceived.branchCode,
 
+    }));
+   }
+    
+  } else {
+    console.log("No menu details found in localStorage.");
+  }
+
+},[])
+ 
 const[autoFields,setAutoFields]=useState({
   MAWB_NO:'',
   MAWB_DATE:null,
@@ -285,6 +304,7 @@ const[autoFields,setAutoFields]=useState({
   const handleOptionChange = async (event, newValue) => {
     console.log("coming handle Option change");
     console.log(newValue);
+    setLoading(true);
     if (newValue) {
       try {
         const response = await axios.post(`${API_BASE_URL}/ff/ae_masterData`, {
@@ -292,6 +312,7 @@ const[autoFields,setAutoFields]=useState({
         });
         console.log('Response data:', response.data);
         const details = response.data;
+        setLoading(false);
         console.log("1st response",details);
         if(details&&details[0].Initiator_Name){
           console.log("MAWB Details Already Entered By");
@@ -610,6 +631,8 @@ const handleIncoTerms=async(e)=>{
 
 return(
     <div>
+
+{(loading ? ( <TruckLoder/> ) :"")}
         <Card className="main-card" >
       
 <p className='card-title'>Air Export Details. </p>
@@ -1160,6 +1183,7 @@ return(
        <TextField
        value={manualData.BUYING_RATE}
        onChange={handleManualDataChange}
+       onWheel={(e) => e.target.blur()} 
        className="custom-textfield"
         name="BUYING_RATE"
         autoComplete="off"
@@ -1176,6 +1200,7 @@ return(
          <TextField
           value={manualData.SELL_RATE}
           onChange={handleManualDataChange}
+          onWheel={(e) => e.target.blur()} 
          className="custom-textfield"
           name="SELL_RATE"
           autoComplete="off"
@@ -1228,6 +1253,7 @@ return(
   <TextField
    value={manualData.FREIGHT_AMOUNT}
    onChange={handleManualDataChange}
+   onWheel={(e) => e.target.blur()} 
   className="custom-textfield"
     name="FREIGHT_AMOUNT"
     autoComplete="off"
@@ -1244,6 +1270,7 @@ return(
       <TextField
        value={manualData.DUE_CARRIER}
        onChange={handleManualDataChange}
+       onWheel={(e) => e.target.blur()} 
       className="custom-textfield"
        name="DUE_CARRIER"
        label="Due_Carrier"
@@ -1386,10 +1413,12 @@ return(
               error: validationErrors.SHIPPING_BILL_DATE && !shippingBillDate, 
               sx: {
                 '& .MuiInputBase-input': {
-                  padding: '8.5px',
+                  padding: '6.5px',
                 },
                 '& .MuiInputLabel-root': {
-                  top: '-5px', // Adjust this value as needed
+                  top: '-2px', 
+                  fontSize:'14px',
+                  color:'#1a005d',
                 },
               },
             },
@@ -1451,10 +1480,12 @@ return(
               error: validated && !customClearanceDate, 
               sx: {
                 '& .MuiInputBase-input': {
-                  padding: '8.5px',
+                  padding: '6.5px',
                 },
                 '& .MuiInputLabel-root': {
-                  top: '-5px', // Adjust this value as needed
+                  top: '-2px', 
+                  fontSize:'14px',
+                  color:'#1a005d',
                 },
               },
             },

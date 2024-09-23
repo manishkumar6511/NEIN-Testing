@@ -14,22 +14,23 @@ import SailingIcon from '@mui/icons-material/Sailing';
 import axios from "axios";
 import { useLoader } from "../PrivateRoute/LoaderContext";
 import DataTable from "../Components/DataTable";
+import DataTableFF from "./centralized_components/DataTableFF";
 import { Button } from "antd";
 import { useLocation } from 'react-router-dom';
-
+import TruckLoder from "./centralized_components/truckLoder";
 
 
 
 
 function PendingFTP() {
 
-  const { setLoading } = useLoader();
+  const  [loading, setLoading] =  useState(false);
   const location = useLocation();
   const[API,setAPI]=useState('');
   const type = location.state?.type || 'Default Type'; // Store 'type' in a variable
   const[validated,setValidated]=useState(false);
   const [validationErrors, setValidationErrors] = useState({});
-  console.log('Type:', type);
+  
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const [selectedMawbNo, setSelectedMawbNo] = React.useState(null);
   const [openRow, setOpenRow] = useState(null);
@@ -44,27 +45,62 @@ function PendingFTP() {
   const[link,setLink]=useState("/Operations/FreightForwarding/AirImport");
 
   const[subBranch,setSubBranch]=useState('');
-  const[subBranchOptions,setSubBranchOptions]=useState([
-    {label:'Bangalore',value:'10'},
-    {label:'chennai',value:'40'},
-    {label:'mumbai',value:'30'}
-  ]);
-
+  const[subBranchOptions,setSubBranchOptions]=useState([]);
+  const[selectedSubBranch,setSelectedSubBranch]=useState('');
 const[airImportDetails,setAirImportDetails]=useState([]);
-
-
-
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const[DateFilter,setDateFilter]=useState([
+const[selectedFilter,setSelectedFilter]=useState('');
+const [searchTerm, setSearchTerm] = useState('');
+const[DateFilter,setDateFilter]=useState([
     {label:'Last 45 Days',value:'45'},
     {label:'Today',value:'Today'},
     {label:'Week',value:'Week'},
     {label:'Month',value:'Month'}
     
   ])
+  const[sessionData,setSessionData]=useState({});
+  
 
-  const[selectedFilter,setSelectedFilter]=useState('');
+
+// const[reportingBranch,setReportingBranch]=useState("");
+ 
+//   const storedUser = localStorage.getItem('userDetails');
+//   if (storedUser) {
+//     const userDetails = JSON.parse(storedUser);
+//     setReportingBranch(userDetails.reportingBranch);
+   
+   
+//   } else {
+//     console.log("No menu details found in localStorage.");
+//   }
+
+  
+  useEffect(() => {
+   const fetchSubBranches=async()=>{
+    let reportingBranch="";
+    const storedUser = localStorage.getItem('userDetails');
+    if (storedUser) {
+      const userDetails = JSON.parse(storedUser);
+      setSessionData(userDetails);
+      reportingBranch=userDetails.reportingBranch;
+     setSelectedSubBranch(userDetails.branchid);
+    }
+    try {
+      const response = await axios.post(`${API_BASE_URL}/User/subBranch`, {
+        reportingBranch:reportingBranch,
+       
+      });
+setSubBranchOptions(response.data);
+
+    }  catch (error) {
+      console.error('There was an error logging in!', error);
+    }
+  }
+  const debounceFetch = setTimeout(fetchSubBranches, 300);
+
+  return () => clearTimeout(debounceFetch);
+
+}, []); // Effect runs when HAWBData.MAWBDate changes
+ 
 
 
  
@@ -101,10 +137,10 @@ const[airImportDetails,setAirImportDetails]=useState([]);
     if (!subBranch || subBranch.trim() === "") {
       errors.subBranch = true; // Mark as an error if empty
     }
-    console.log("from Date",fromDate);
+  
     // Validate `fromDate` field
     if (fromDate===null || dayjs(fromDate, 'YYYY-MM-DD').isValid() === false) {
-      console.log("false");
+     
       errors.fromDate = true; // Mark as an error if invalid or empty
     }
 
@@ -164,8 +200,7 @@ if(selectedType==='AirExport'){
 
   const handleSearchTerm=(e)=>{
     setSearchTerm(e.target.value);
-    console.log("search term",e.target.value);
-
+   
   }
 
 
@@ -206,7 +241,7 @@ const userRights=[
   const allowedActions = actions.filter(action =>
     userRights.some(userRight => userRight.right === action.right)
   );
-  console.log(allowedActions);
+
  
 
 
@@ -221,8 +256,8 @@ const userRights=[
 
 
     const filteredData = useMemo(() => {
-       console.log("calling filtered data",data);
-   
+      
+   console.log("selected sub branch",selectedSubBranch);
         const currentDate = dayjs();
   
   // Define the start dates for today, this week, and this month
@@ -234,8 +269,7 @@ const userRights=[
   const lastMonthStart = dayjs().subtract(1, 'month').startOf('month'); // July 1st
   const lastMonthEnd = dayjs().subtract(1, 'month').endOf('month');     // July 31st
 
-  console.log("lastMonthStart",lastMonthStart);
-  console.log("lastMonthEnd",lastMonthEnd);
+
   const last45DaysStart = currentDate.subtract(45, 'day');
   // console.log("month week",weekStart);
   return data.filter(row => {
@@ -298,24 +332,38 @@ const userRights=[
         // Split the search terms and check if all are included in the row string
         const searchTerms = searchTerm.toLowerCase().split(' ');
         const containsAllSearchTerms = searchTerms.every(term => rowString.includes(term));
-    
-        // Return true if the row is within the date range and contains all search terms
-         return isWithinDateRange && containsAllSearchTerms;
+    if(type==='Air Export'){
+      let isSubBranchData=true;
+      if (selectedSubBranch) {
+        isSubBranchData = String(row.BRANCH) === String(selectedSubBranch);
+        if (isSubBranchData) {
+          console.log("Matching row:", row); // Log rows that match the selected sub-branch
+        }else{
+          console.log(" row:", row);
+        }
+      }
+      
+      
+              // Return true if the row is within the date range and contains all search terms
+               return isWithinDateRange && containsAllSearchTerms && isSubBranchData;
+    }else{
+      return isWithinDateRange && containsAllSearchTerms;
+    }
+
         
       });
    
-    }, [searchTerm, selectedFilter, data]);
+    }, [searchTerm, selectedFilter, data,selectedSubBranch]);
 
 
     
 
 const handleSubBranch=(event,newValue)=>{
-  const branch=newValue.value;
-  setSubBranch(newValue.value);
-  setValidationErrors((prevErrors) => ({
-    ...prevErrors,
-    subBranch: branch.trim() === "" ? true : false, 
-  }));
+ console.log("subbranch",newValue);
+ console.log("data",data);
+ setSelectedSubBranch(newValue.branch_type_code);
+
+ 
 
 }
 
@@ -324,17 +372,23 @@ const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
   const year = date.getFullYear();
-  return `${year}-${month}-${day}`;
+  if(type==='Air Export'){
+    return `${day}-${month}-${year}`;
+
+  }else{
+    return `${year}-${month}-${day}`;
+  }
+  
 };
 
 // Function to calculate dates and send data to API
 const FreightForwardingFTP = async (fromDate, toDate, branchId,operation) => {
   
   console.log("coming to freight forwarding FTP")
-  // console.log("operation",operation);
-  // console.log("dates",typeof(fromDate));
+ 
   console.log("from Date",fromDate);
   console.log("To Date",toDate);
+  console.log("branchId in pending ftp",branchId);
 
   if (!(fromDate instanceof Date) || !(toDate instanceof Date)) {
     console.error('Invalid date objects:', { fromDate, toDate });
@@ -349,9 +403,11 @@ const FreightForwardingFTP = async (fromDate, toDate, branchId,operation) => {
     const requestData = {
       FromDate: formatDate(fromDate),
       Todate: formatDate(toDate),
-      ...(operation === 'AirImport' ? { BranchCode: 'DEL' } : { BranchId: branchId })
+      ...(operation === 'AirImport' ? { BranchCode:branchId  } : { BranchId: branchId })
     };
+console.log("request data for pending details",requestData);
 
+      setLoading(true);
 
     const response = await axios.post(`${API_BASE_URL}/dashboard/${operation}`, requestData);
     
@@ -364,7 +420,7 @@ const FreightForwardingFTP = async (fromDate, toDate, branchId,operation) => {
   }
  finally {
   // Hide loader regardless of success or failure
-  setLoading(false);
+   setLoading(false);
 }
 };
 
@@ -372,35 +428,57 @@ useEffect(() => {
   const today = new Date();
   const fromDate = new Date(today);
   fromDate.setDate(today.getDate() - 90);
- //console.log("coming to useEffect");
+ 
  let APIType="";
+ let branchTypeCodes=";"
  switch (type) {
   case 'Air Import':
     APIType="AirImport";
     setLink("/Operations/FreightForwarding/AirImport");
+    branchTypeCodes=sessionData.branchCode;
     break;
   case 'Air Export':
     APIType="AirExport"
     setLink("/Operations/FreightForwarding/AirExport");
+    branchTypeCodes = subBranchOptions.map(branch => branch.branch_type_code).join(', ');
+setSubBranch(branchTypeCodes);
     break;
   case 'Ocean Import':
      APIType="OceanImport"
      setLink("/Operations/FreightForwarding/OceanImport");
+     branchTypeCodes=sessionData.branchid;
     break;
   case 'Ocean Export':
-    console.log("coming to ocean export");
+   
      APIType="OceanExport"
      setLink("/Operations/FreightForwarding/OceanExport");
+     branchTypeCodes=sessionData.branchid;
     break;
   default:
-   // console.log('Unknown action');
+   
 }
+
+
 setAPI(APIType);
-  FreightForwardingFTP(fromDate, today, '10',APIType);
-}, [type]);
+  FreightForwardingFTP(fromDate, today, branchTypeCodes,APIType);
+}, [type,subBranchOptions]);
+
+
+
+
+
+
+
 
   return (
     <div>
+
+{(loading ? ( <TruckLoder/> ) :"")}
+
+
+
+
+
     
 
           <p style={{textAlign:'left'}}>NX-OPERATION REGISTER</p>
@@ -427,29 +505,7 @@ setAPI(APIType);
         </Grid> */}
        
 <Grid container spacing={2} style={{marginTop:'10px'}}>
-  <Grid item xs={3}>
-  <FormControl fullWidth>
-  <Autocomplete size="small"  freeSolo id="free-solo-2-demo" disableClearable 
-      options={subBranchOptions}
-      onChange={handleSubBranch}
-    
-    //  value={subBranch || ''} 
-       renderInput={(params) => (
-       <TextField 
-        {...params}
-        label="Sub Branch"
-        InputProps={{
-        ...params.InputProps,
-        type: 'search',
-        }}
-        InputLabelProps={{ style: { fontSize: '14px'} }}
-        required
-       className="dashboard-autocomplete"
-       error={!!validationErrors?.subBranch && (subBranch==='')} // Use the error prop
-       
-        />)}/> 
-    </FormControl>
-  </Grid>
+  
 <Grid item xs={3}>
 <FormControl fullWidth>
 <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -522,42 +578,9 @@ setAPI(APIType);
           <Button variant="contained" style={{backgroundColor:'#1a005d',color:'white',height:'40px'}} onClick={fetchData}>Submit</Button>
         </Grid>
         </Grid>
-        {/* <Grid container spacing={2} style={{alignItems:'revert'}}>
-          <Grid item xs={2}>
-          <TextField
-            className="textfield"
-          
-            name="search"
-            label="Search..."
-            size="small"
-            onChange={(e) => setSearchTerm(e.target.value)}
-           
-            InputLabelProps={{ style: { fontSize: '14px'} }}
-           
-          />
-</Grid>
-<Grid item xs={2}>
-<Autocomplete size="small"  freeSolo id="free-solo-2-demo" disableClearable 
-      options={DateFilter}
-      onChange={handleDateFilter}
-    
-      //value={subBranch || null} 
-       renderInput={(params) => (
-       <TextField 
-        {...params}
-        label="Last 45 Days"
-        InputProps={{
-        ...params.InputProps,
-        type: 'search',
-        }}
-        style={{margin:'12px 0px 0px 2px'}}
-        InputLabelProps={{ style: { fontSize: '14px'} }}
-        required
-       className="dashboard-autocomplete"
-        />)}/> 
-</Grid>
-</Grid> */}
-        <DataTable
+
+   {type&&type==='Air Export' &&(
+ <DataTable
         data={filteredData}
         page={page}
         rowsPerPage={rowsPerPage}
@@ -577,7 +600,35 @@ setAPI(APIType);
         handleSearch={handleSearchTerm}
         DateFilter={DateFilter}
         handleDateFilter={handleDateFilter}
+        subBranchOptions={subBranchOptions}
+        handleSubBranch={handleSubBranch}
+        selectedSubBranch={selectedSubBranch}
       />
+    )}
+ {type&&type!=='Air Export' &&(
+<DataTableFF
+        data={filteredData}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+        handleRowClick={handleRowClick}
+        openRow={openRow}
+        handleMenuClick={handleMenuClick}
+        anchorEl={anchorEl}
+        isMenuOpen={isMenuOpen}
+        handleMenuClose={handleMenuClose}
+        selectedType={type}
+        link={link}
+        selectedTab={value}
+        selectedMawbNo={selectedMawbNo}
+        searchTerm={searchTerm}
+        handleSearch={handleSearchTerm}
+        DateFilter={DateFilter}
+        handleDateFilter={handleDateFilter}
+      
+      />
+ )}
       
     </div>
   );

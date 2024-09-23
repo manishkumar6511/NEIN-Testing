@@ -1,25 +1,24 @@
 import React,{useEffect, useState,useContext} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-
 import { FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs'
-
 import axios from 'axios';
 import {  useToast } from '../centralized_components/Toast';
 import {  useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import TruckLoder from "../centralized_components/truckLoder";
 
-function AirExport(){
+function OceanExport(){
+  const  [loading, setLoading] =  useState(false);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const navigate = useNavigate();
   const location = useLocation();
@@ -66,12 +65,34 @@ function AirExport(){
   
 
   const[initiatorDetails,setInitiatorDetails]=useState({
-    Initiator_id:'2849',
-    Initiator_Name:'Gowthami B',
-    Register_Branch_Id:'10',
-    Register_Sub_branch:'10',
+    Initiator_id:'',
+    Initiator_Name:'',
+    Register_Branch_Id:'',
+    Register_Branch_Code:'',
     
   })
+  useEffect(()=>{
+    let SessionDetails = {};
+    const storedUser = localStorage.getItem('userDetails');
+    if (storedUser) {
+      const userDetails = JSON.parse(storedUser);
+    
+     if(userDetails){
+      setInitiatorDetails((prevState) => ({
+        ...prevState,
+        Initiator_id:userDetails.empid ,
+        Initiator_Name:userDetails.empname,
+        Register_Branch_Id:userDetails.branchid,
+        Register_Branch_Code:userDetails.branchCode,
+  
+      }));
+     }
+      
+    } else {
+      console.log("No menu details found in localStorage.");
+    }
+  
+  },[])
 
 const[autoFields,setAutoFields]=useState({
   MBL_NO:'',
@@ -259,12 +280,14 @@ const[autoFields,setAutoFields]=useState({
   const handleOptionChange = async (event, newValue) => {
     console.log(newValue);
     if (newValue) {
+      setLoading(true);
       try {
         const response = await axios.post(`${API_BASE_URL}/ff/oe_masterData`, {
           MAWB_NO: newValue
         });
         console.log('Response data:', response.data);
         const details = response.data;
+        setLoading(false);
         console.log("1st response",details);
         if(details&&details[0].Initiator_Name){
           console.log("MAWB Details Already Entered By");
@@ -359,9 +382,9 @@ const[autoFields,setAutoFields]=useState({
 
     setAutoFields({
       MBL_NO:hawbData.MBL_No || '',
-      MBL_DATE:hawbData.ETD ? dayjs(hawbData.ETD, 'DD/MM/YYYY') : null,
+      MBL_DATE:hawbData.ETD ? dayjs(hawbData.ETD, 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
       HBL_NO:hawbData.HBL_No || '',
-      HBL_DATE:hawbData.ETD ? dayjs(hawbData.ETD, 'DD/MM/YYYY') : null,
+      HBL_DATE:hawbData.ETD ? dayjs(hawbData.ETD, 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
       SHIPMENT_TYPE:(a==="P"?'PP':'CC') || '',
       SHIPPER:hawbData.Shipper || '',
       CONSIGNEE:hawbData.Consignee || '',
@@ -370,7 +393,7 @@ const[autoFields,setAutoFields]=useState({
       PLACE_OF_DELIVERY:hawbData.PlaceofDelivery || '',
       SHIPPING_COLOADER_NAME:hawbData.CarrierName || '',
       VESSEL_VOYAGE:hawbData.Voyage || '',
-      ETD_SOB_DATE:hawbData.ETD ? dayjs(hawbData.ETD, 'DD/MM/YYYY') : null,
+      ETD_SOB_DATE:hawbData.ETD ? dayjs(hawbData.ETD, 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
       NO_OF_CONTAINER:hawbData.TEU || '',
       VOLUME_CBM:hawbData.GrossVolume || '',
       CONTAINER_NO:hawbData.ContainerNo || '',
@@ -383,11 +406,11 @@ const[autoFields,setAutoFields]=useState({
       GROSS_WEIGHT:hawbData.GrossWeight || '',
       CURRENCY:'INR',
       FCL_TUES:hawbData.TEU || '',
-      SAILING_DATE:hawbData.ETD ? dayjs(hawbData.ETD, 'DD/MM/YYYY') : null,
+      SAILING_DATE:hawbData.ETD ? dayjs(hawbData.ETD, 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
       REGION_CODE:regionCode || '',
       REGION_NAME:hawbData.RegionName || '',
-      ETD:hawbData.ETD ? dayjs(hawbData.ETD, 'DD/MM/YYYY') : null,
-      ETA:hawbData.ETA ? dayjs(hawbData.ETA, 'DD/MM/YYYY') : null,
+      ETD:hawbData.ETD ? dayjs(hawbData.ETD, 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
+      ETA:hawbData.ETA ? dayjs(hawbData.ETA, 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
 
 
     });
@@ -459,10 +482,11 @@ const handleSubmit=async(e)=>{
    console.log("Total Data",TotaData);
    try {
     const response = await axios.post(`${API_BASE_URL}/ff/oe_insert`, TotaData);
-    showToast("Ocean Export Details Inserted Successfully", "success");
+    showToast("Submitted Successfully", "success");
     setTimeout(() => {
       resetFields();
-    }, 3000);
+      navigate('/Operation/Pending', { state: { type: 'Ocean Export' } });
+    }, 5000);
   } catch (error) {
     showToast("Error inserting data", "error");
   }
@@ -544,7 +568,7 @@ const resetFields=()=>{
  })
  setMawbNo('');
  setValidationErrors({});
- HBLoptions([]);
+ setHBLoptions([]);
 
 
 }
@@ -553,6 +577,7 @@ const resetFields=()=>{
 
 return(
     <div>
+      {(loading ? ( <TruckLoder/> ) :"")}
         <Card className="main-card" >
 
 <p className='card-title'>Ocean Export Details. </p>
@@ -660,20 +685,19 @@ return(
 </FormControl>
 </Grid>
 <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="MBL_DATE"
-       value={autoFields.MBL_DATE}
-      //onChange={handleCustomDate}
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='MBL Date *' />
-   
-    </LocalizationProvider>
+<TextField
+  value={autoFields.MBL_DATE||''}
+  className="disabled-textfield"
+     name="MBL_DATE"
+    label="MBL Date"
+    size='small'
+    InputProps={{
+      readOnly: true,
+    }}
+    required
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
+
      
       </Grid>
   
@@ -695,20 +719,19 @@ return(
 </FormControl>
 </Grid>
 <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="HBL_DATE"
-     value={autoFields.HBL_DATE}
-     // onChange={handleCustomDate}
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='HBL Date *' />
-   
-    </LocalizationProvider>
+<TextField
+  value={autoFields.HBL_DATE||''}
+  className="disabled-textfield"
+     name="HBL_DATE"
+    label="HBL Date"
+    size='small'
+    InputProps={{
+      readOnly: true,
+    }}
+    required
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
+
       </Grid>
       <Grid item xs={2}>
       <TextField
@@ -827,20 +850,19 @@ return(
 </FormControl>
 </Grid> 
 <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="ETD_SOB_DATE"
-      value={autoFields.ETD_SOB_DATE}
-      
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='ETD/SOB Date *' />
-   
-    </LocalizationProvider>
+<TextField
+  value={autoFields.ETD_SOB_DATE||''}
+  className="disabled-textfield"
+     name="ETD_SOB_DATE"
+    label="ETD/SOB Date"
+    size='small'
+    InputProps={{
+      readOnly: true,
+    }}
+    required
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
+
       </Grid>
       <Grid item xs={2}>
        <TextField
@@ -1031,20 +1053,19 @@ return(
           </Grid> 
 
           <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="SAILING_DATE"
-      value={autoFields.SAILING_DATE}
-    
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='SAILING_DATE *' />
-   
-    </LocalizationProvider>
+          <TextField
+  value={autoFields.SAILING_DATE||''}
+  className="disabled-textfield"
+     name="SAILING_DATE"
+    label="Sailing Date"
+    size='small'
+    InputProps={{
+      readOnly: true,
+    }}
+    required
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
+
 
       </Grid>
 
@@ -1084,37 +1105,35 @@ return(
         
           </Grid> 
           <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="ETD"
-      value={autoFields.ETD}
-    
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='ETD *' />
-   
-    </LocalizationProvider>
+          <TextField
+  value={autoFields.ETD || ''}
+  className="disabled-textfield"
+     name="ETD"
+    label="ETD"
+    size='small'
+    InputProps={{
+      readOnly: true,
+    }}
+    required
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
+
 
       </Grid>
       <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="ETA"
-      value={autoFields.ETA}
-    
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='ETA *' />
-   
-    </LocalizationProvider>
+      <TextField
+  value={autoFields.ETA||''}
+  className="disabled-textfield"
+     name="ETA"
+    label="ETA"
+    size='small'
+    InputProps={{
+      readOnly: true,
+    }}
+    required
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
+
 
       </Grid>
 
@@ -1175,7 +1194,9 @@ return(
        name="Industry"
        label="Industry"
        required
-       disabled
+       InputProps={{
+        readOnly: true,
+      }}
        size='small'
       InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
       error={validationErrors.Industry && (manualData.Industry === '')}
@@ -1199,10 +1220,12 @@ return(
         <TextField
       value={manualData.BUYING_RATE_OCEAN_FREIGHT_LOCAL_USD}
       onChange={handleManualDataChange}
+      onWheel={(e) => e.target.blur()} 
       className="custom-textfield"
        name="BUYING_RATE_OCEAN_FREIGHT_LOCAL_USD"
        label="Buying Rate Ocean Freigh Local USD" required
        size='small'
+       type="number" 
        InputLabelProps={{ style: { fontSize: '14px'  } }}
        error={validationErrors.BUYING_RATE_OCEAN_FREIGHT_LOCAL_USD && (manualData.BUYING_RATE_OCEAN_FREIGHT_LOCAL_USD === '')}
        />
@@ -1211,9 +1234,11 @@ return(
         <TextField
       value={manualData.SELLING_FREIGHT_RATE_USD}
       onChange={handleManualDataChange}
+      onWheel={(e) => e.target.blur()} 
       className="custom-textfield"
        name="SELLING_FREIGHT_RATE_USD"
        label="Selling Freight Rate USD" required
+       type="number" 
        size='small'
        InputLabelProps={{ style: { fontSize: '14px'  } }}
        error={validationErrors.SELLING_FREIGHT_RATE_USD && (manualData.SELLING_FREIGHT_RATE_USD === '')}
@@ -1241,11 +1266,13 @@ return(
   <FormControl fullWidth>
   <TextField
   onChange={handleManualDataChange}
+  onWheel={(e) => e.target.blur()} 
   value={manualData.TOTAL_FREIGHT_IN_INR}
    className="custom-textfield"
     name="TOTAL_FREIGHT_IN_INR"
     label="Total Freight in INR" required
     size='small'
+    type="number" 
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.TOTAL_FREIGHT_IN_INR && (manualData.TOTAL_FREIGHT_IN_INR === '')}
     />
@@ -1255,10 +1282,12 @@ return(
   <FormControl fullWidth>
   <TextField
   onChange={handleManualDataChange}
+  onWheel={(e) => e.target.blur()} 
   value={manualData.MARGIN}
    className="custom-textfield"
     name="MARGIN"
     label="Margin" required
+    type="number" 
     size='small'
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.MARGIN && (manualData.MARGIN === '')}
@@ -1293,6 +1322,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.SHIPPING_BILL_DATE && !dates.SHIPPING_BILL_DATE, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       />
@@ -1352,6 +1391,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.CLEARED_ON && !dates.CLEARED_ON, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       />
@@ -1436,7 +1485,7 @@ return(
   <Autocomplete size='small'  freeSolo id="free-solo-2-demo" disableClearable 
         options={informationStatus}
         value={optionalFields.CLOSED_OPEN}
-        onChange={(event, value) => setOptionalFields({ ...optionalFields, CLOSED_OPEN: value })}
+        onChange={(event, value) => setOptionalFields({ ...optionalFields, CLOSED_OPEN: value.value })}
        renderInput={(params) => (
        <TextField 
         {...params}
@@ -1562,4 +1611,4 @@ return(
 )
 
 }
-export default AirExport;
+export default OceanExport;

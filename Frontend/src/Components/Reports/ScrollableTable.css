@@ -73,3 +73,10 @@
   .css-hip9hq-MuiPaper-root-MuiAppBar-root {
 width: min-content !important;
   }
+
+/* Target the horizontal scrollbar */
+.MuiDataGrid-scrollbar--horizontal {
+    width: 50% !important; /* Set the width of the horizontal scrollbar */
+  }
+  
+ 

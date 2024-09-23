@@ -10,9 +10,8 @@ export const UserProvider = ({ children }) => {
     empid: '',
       empname:'',
       branchid: '',
-      user_right: '',
-      job_role: '',
-      employeeRoleType: '',
+      reportingBranch:'',
+      branchCode:'',
       menus: '',
   });
 
@@ -48,9 +47,8 @@ export const UserProvider = ({ children }) => {
       empid: details.empid,
       empname: details.empname,
       branchid: details.branchid,
-      user_right: details.user_right,
-      job_role: details.job_role,
-      employeeRoleType: details.employeeRoleType,
+      branchCode:details.branchCode,
+      reportingBranch:details.reportingBranch,
       menus:details.menus,
       expirationTime,
     };

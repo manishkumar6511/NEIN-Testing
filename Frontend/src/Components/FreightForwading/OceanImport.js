@@ -1,25 +1,25 @@
 import React,{useEffect, useState} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-
 import { FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs'
-
 import axios from 'axios';
 import {  useToast } from '../centralized_components/Toast';
 import { useLocation } from 'react-router-dom'; 
+import TruckLoder from "../centralized_components/truckLoder";
+import { useNavigate } from 'react-router-dom';
 
 function AirExport(){
-
+  const  [loading, setLoading] =  useState(false);
+  const navigate = useNavigate();
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const location = useLocation();
   const dataReceived = location.state;
@@ -29,6 +29,9 @@ function AirExport(){
   
     if (dataReceived) {
       setMawbNo(dataReceived.mawbNo);
+      const newValue=dataReceived.mawbNo;
+      console.log("new value in useeffetc",newValue);
+      handleOptionChange('',newValue);
     }else{
       setMawbNo('');
     }
@@ -58,12 +61,35 @@ function AirExport(){
   
 
   const[initiatorDetails,setInitiatorDetails]=useState({
-    Initiator_id:'2849',
-    Initiator_Name:'Gowthami B',
-    Register_Branch_Id:'10',
-    Register_Sub_branch:'10',
+    Initiator_id:'',
+    Initiator_Name:'',
+    Register_Branch_Id:'',
+    Register_Branch_Code:'',
     
   })
+
+  useEffect(()=>{
+    let SessionDetails = {};
+    const storedUser = localStorage.getItem('userDetails');
+    if (storedUser) {
+      const userDetails = JSON.parse(storedUser);
+    
+     if(userDetails){
+      setInitiatorDetails((prevState) => ({
+        ...prevState,
+        Initiator_id:userDetails.empid ,
+        Initiator_Name:userDetails.empname,
+        Register_Branch_Id:userDetails.branchid,
+        Register_Branch_Code:userDetails.branchCode,
+  
+      }));
+     }
+      
+    } else {
+      console.log("No menu details found in localStorage.");
+    }
+  
+  },[])
 
   const[dates,setDates]=useState({
     ETA_MAA:'',
@@ -248,12 +274,14 @@ const[autoFields,setAutoFields]=useState({
   const handleOptionChange = async (event, newValue) => {
     console.log(newValue);
     if (newValue) {
+      setLoading(true);
       try {
         const response = await axios.post(`${API_BASE_URL}/ff/oi_masterData`, {
           MAWB_NO: newValue
         });
         console.log('Response data:', response.data);
         const details = response.data;
+        setLoading(false);
         console.log("1st response",details);
         if(details&&details[0].Initiator_Name){
           console.log("MAWB Details Already Entered By");
@@ -441,9 +469,10 @@ const handleSubmit=async(e)=>{
    console.log("Total Data",TotaData);
    try {
     const response = await axios.post(`${API_BASE_URL}/ff/oi_insert`, TotaData);
-    showToast("Ocean Import Details Inserted Successfully", "success");
+    showToast("Submitted Successfully", "success");
     setTimeout(() => {
       resetFields();
+      navigate('/Operation/Pending', { state: { type: 'Ocean Import' } });
     }, 3000);
   } catch (error) {
     showToast("Error inserting data", "error");
@@ -522,6 +551,8 @@ const resetFields = () => {
 
 return(
     <div>
+
+{(loading ? ( <TruckLoder/> ) :"")}
         <Card className="main-card" >
 
 <p className='card-title'>Ocean Import Details. </p>
@@ -629,26 +660,25 @@ return(
 </FormControl>
 </Grid>
 <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="MBL_DATE"
-       value={autoFields.MBL_DATE}
-      //onChange={handleCustomDate}
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='MBL Date *' />
-   
-    </LocalizationProvider>
+<TextField
+  value={autoFields.MBL_DATE||''}
+  className="disabled-textfield"
+     name="MBL_DATE"
+    label="MBL Date"
+    size='small'
+    InputProps={{
+      readOnly: true,
+    }}
+    required
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
      
       </Grid>
      
 
         <Grid item xs={2}>
   <FormControl fullWidth>
+    
   <TextField
    value={(autoFields.HBL_NO)||''}
  className="disabled-textfield"
@@ -664,20 +694,19 @@ return(
 </FormControl>
 </Grid>
 <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="HBL_DATE"
-      value={autoFields.HBL_DATE}
-     // onChange={handleCustomDate}
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='HBL Date *' />
-   
-    </LocalizationProvider>
+<TextField
+  value={autoFields.HBL_DATE||''}
+  className="disabled-textfield"
+     name="HBL_DATE"
+    label="HBL Date"
+    size='small'
+    InputProps={{
+      readOnly: true,
+    }}
+    required
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
+
       </Grid>
       <Grid item xs={2}>
       <TextField
@@ -897,20 +926,19 @@ return(
 </FormControl>
 </Grid>
 <Grid item xs={2}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-      
-      <MobileDatePicker
-      name="ETD"
-      value={autoFields.ETD}
-     // onChange={handleCustomDate}
-      InputProps={{
-        readOnly: true,
-      }}
-    
-      inputFormat="DD/MM/YYYY"
-      label='ETD *' />
-   
-    </LocalizationProvider>
+<TextField
+  value={autoFields.ETD||''}
+  className="disabled-textfield"
+     name="ETD"
+    label="ETD"
+    size='small'
+    InputProps={{
+      readOnly: true,
+    }}
+    required
+    InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+    />
+
 
       </Grid>
       <Grid item xs={2}>
@@ -1018,7 +1046,9 @@ return(
        name="Industry"
        label="Industry"
        required
-       disabled
+       InputProps={{
+        readOnly: true,
+      }}
        size='small'
       InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
       error={validationErrors.Industry && (manualData.Industry === '')}
@@ -1095,6 +1125,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.ETA_BLR && !dates.ETA_BLR, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       
@@ -1115,6 +1155,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.ETA_MAA && !dates.ETA_MAA, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       />
@@ -1126,10 +1176,12 @@ return(
   <FormControl fullWidth>
   <TextField
   onChange={handleManualDataChange}
+  onWheel={(e) => e.target.blur()} 
   value={manualData.BUYING_RATE_OCEAN_FREIGHT_LOCAL_USD}
    className="custom-textfield"
     name="BUYING_RATE_OCEAN_FREIGHT_LOCAL_USD"
     label="Buying Rate Ocean Freight Local USD" required
+    type="number" 
     size='small'
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.BUYING_RATE_OCEAN_FREIGHT_LOCAL_USD && (manualData.BUYING_RATE_OCEAN_FREIGHT_LOCAL_USD === '')}
@@ -1140,11 +1192,13 @@ return(
   <FormControl fullWidth>
   <TextField
   onChange={handleManualDataChange}
+  onWheel={(e) => e.target.blur()} 
   value={manualData.SELLING_FREIGHT_RATE_USD}
    className="custom-textfield"
     name="SELLING_FREIGHT_RATE_USD"
     label="Selling Freight Rate USD" required
     size='small'
+    type="number" 
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.SELLING_FREIGHT_RATE_USD && (manualData.SELLING_FREIGHT_RATE_USD === '')}
     />
@@ -1154,10 +1208,12 @@ return(
   <FormControl fullWidth>
   <TextField
   onChange={handleManualDataChange}
+  onWheel={(e) => e.target.blur()} 
   value={manualData.TOTAL_FREIGHT_IN_INR}
    className="custom-textfield"
     name="TOTAL_FREIGHT_IN_INR"
     label="Total Freight In INR" required
+    type="number" 
     size='small'
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.TOTAL_FREIGHT_IN_INR && (manualData.TOTAL_FREIGHT_IN_INR === '')}
@@ -1168,11 +1224,13 @@ return(
   <FormControl fullWidth>
   <TextField
   onChange={handleManualDataChange}
+  onWheel={(e) => e.target.blur()} 
   value={manualData.MARGIN}
    className="custom-textfield"
     name="MARGIN"
     label="Margin" required
     size='small'
+    type="number" 
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.MARGIN && (manualData.MARGIN === '')}
     />
@@ -1271,6 +1329,17 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.ClearedOn && !dates.ClearedOn, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
+          
         },
       }}
       />
@@ -1331,7 +1400,9 @@ return(
           label="Initiator"
           size='small'
           required
-          disabled
+          InputProps={{
+            readOnly: true,
+          }}
          InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
            />
            </FormControl>

@@ -120,6 +120,19 @@ export default function MiniDrawer() {
     // Function to toggle the state of the submenu for "User" ListItem
     
 
+    let menu = {};
+    const storedUser = localStorage.getItem('userDetails');
+    if (storedUser) {
+      const userDetails = JSON.parse(storedUser);
+     const menus = userDetails.menus;
+       menu = typeof menus === 'string' ? JSON.parse(menus) : menus;
+    //   console.log("Menu object:", menu); 
+    //   console.log("Type od Menu object:", typeof menu); 
+    } else {
+      console.log("No menu details found in localStorage.");
+    }
+
+
     const handleDrawerOpen = () => {
         setOpen(!open);
     };
@@ -239,6 +252,7 @@ export default function MiniDrawer() {
                  {/* Operataions  end*/}
 
     {/* Finance Start*/}
+    {menu&&menu['Other Modules-Finance'] && (
     <List component="div" disablePadding>
                         <Link to="/FinanceReport" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ListItem disablePadding
@@ -258,9 +272,11 @@ export default function MiniDrawer() {
                             </ListItem>
                         </Link>
                         </List>
+    )}
 
                  {/* Finance  end*/}
                   {/* view and edit Start*/}
+                  {menu&&menu['Other Modules-View/Edit'] && (
     <List component="div" disablePadding>
                         <Link to="/ViewEdit" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ListItem disablePadding
@@ -280,11 +296,12 @@ export default function MiniDrawer() {
                             </ListItem>
                         </Link>
                         </List>
+                  )}
 
                  {/* view and edit  end*/}
 
                           {/* Masters Start */}
-
+                          {menu&&menu['Other Modules-Masters'] && (
                           <Link to="/Masters" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ListItem disablePadding
                                 onClick={() => {
@@ -302,6 +319,7 @@ export default function MiniDrawer() {
                                 </ListItemButton>
                             </ListItem>
                         </Link>
+                          )}
                       
             {/* Masters end */}
 
@@ -330,7 +348,7 @@ export default function MiniDrawer() {
            {/*Help Start */}
                         
 
-               <Link to="/Testing" style={{ textDecoration: 'none', color: 'inherit' }}>
+               {/* <Link to="/Testing" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ListItem disablePadding
                                 onClick={() => {
                                     handleMenuItemClick('Help');
@@ -347,7 +365,7 @@ export default function MiniDrawer() {
                                 </ListItemButton>
                             </ListItem>
                         </Link>
-                      
+                       */}
                         {/*Help End */}
 
 

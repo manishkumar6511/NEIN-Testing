@@ -46,7 +46,7 @@ const Login = () => {
 
         
     try {
-      const response = await axios.post(`${API_BASE_URL}/User/login1`, {
+      const response = await axios.post(`${API_BASE_URL}/User/login`, {
         userid:empid,
         password:password,
       });
@@ -58,11 +58,13 @@ const menus=response.data.userAccess.access_config;
       
       if (response.data) {
         login({
-          branchName: userDetails.b_name,
+          branchName: userDetails.branch_name,
           email: userDetails.email,
           empid: userDetails.emp_id,
       empname: userDetails.full_name,
-      branchid: userDetails.b_no,
+      branchid: userDetails.branch_type_code,
+      branchCode:userDetails.branch_code,
+      reportingBranch:userDetails.reporting_branch_lta,
       menus:menus,
      
      
@@ -95,6 +97,7 @@ const menus=response.data.userAccess.access_config;
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
         <Grid item xs={12}>
+        <FormControl sx={{ m: 0, width: '23ch' }} variant="outlined" size="small">
       <TextField
          
           value={empid}
@@ -107,6 +110,7 @@ const menus=response.data.userAccess.access_config;
             InputLabelProps={{ style: { fontSize: '14px'} }}
            
           />
+          </FormControl>
           </Grid>
           <Grid item xs={12}>
            {/* <TextField

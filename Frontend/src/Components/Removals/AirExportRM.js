@@ -75,13 +75,36 @@ const[optionalFields,setOptionalFields]=useState({
 })
 
 const[initiatorDetails,setInitiatorDetails]=useState({
-  initiator_id:'2849',
-  initiator_name:'Gowthami B',
-  register_branch:'10',
-  register_sub_branch:'10',
+  initiator_id:'',
+  initiator_name:'',
+  register_branch:'',
+  Register_Branch_Code:'',
   
   
 })
+
+useEffect(()=>{
+  let SessionDetails = {};
+  const storedUser = localStorage.getItem('userDetails');
+  if (storedUser) {
+    const userDetails = JSON.parse(storedUser);
+  
+   if(userDetails){
+    setInitiatorDetails((prevState) => ({
+      ...prevState,
+      initiator_id:userDetails.empid ,
+      initiator_name:userDetails.empname,
+      register_branch:userDetails.branchid,
+      Register_Branch_Code:userDetails.branchCode,
+
+    }));
+   }
+    
+  } else {
+    console.log("No menu details found in localStorage.");
+  }
+
+},[])
 
 
 
@@ -184,7 +207,7 @@ const handleSubmit=async(e)=>{
   
    try {
     const response = await axios.post(`${API_BASE_URL}/removals/ae_jobinsert`, TotaData);
-    showToast("Air Export Data Inserted Successfully", "success");
+    showToast("Submitted Successfully", "success");
     setTimeout(() => {
       resetFields();
     }, 3000);
@@ -315,7 +338,9 @@ return(
     name="INDUSTRY"
     label="Industry" required
     size='small'
-   disabled
+    InputProps={{
+      readOnly: true,
+    }}
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.INDUSTRY && (MandatoryFields.INDUSTRY === '')}
     />
@@ -469,6 +494,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.ETD && !dates.ETD, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       
@@ -480,6 +515,8 @@ return(
       <TextField
        value={MandatoryFields.AIR_FREIGHT}
        onChange={handleManualDataChange}
+       onWheel={(e) => e.target.blur()} 
+       type="number" 
       className="custom-textfield"
        name="AIR_FREIGHT"
        label="Air Freight" required
@@ -493,10 +530,12 @@ return(
        <TextField
         value={MandatoryFields.NO_OF_PACKAGES}
         onChange={handleManualDataChange}
+        onWheel={(e) => e.target.blur()} 
       className="custom-textfield"
         name="NO_OF_PACKAGES"
         label="No Of Packages" required
         size='small'
+        type="number" 
         InputLabelProps={{ style: { fontSize: '14px'} }}
         error={validationErrors.NO_OF_PACKAGES && (MandatoryFields.NO_OF_PACKAGES === '')}
         
@@ -508,9 +547,11 @@ return(
   <TextField
    value={MandatoryFields.GROSS_WEIGHT}
    onChange={handleManualDataChange}
+   onWheel={(e) => e.target.blur()} 
  className="custom-textfield"
     name="GROSS_WEIGHT"
     label="Gross Weight" required
+    type="number" 
     size='small'
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.GROSS_WEIGHT && (MandatoryFields.GROSS_WEIGHT === '')}
@@ -522,9 +563,11 @@ return(
       <TextField
        value={MandatoryFields.CHARGEABLE_WEIGHT}
        onChange={handleManualDataChange}
+       onWheel={(e) => e.target.blur()} 
       className="custom-textfield"
        name="CHARGEABLE_WEIGHT"
        label="Chargeable Weight" required
+       type="number" 
        size='small'
        InputLabelProps={{ style: { fontSize: '14px'  } }}
        error={validationErrors.CHARGEABLE_WEIGHT && (MandatoryFields.CHARGEABLE_WEIGHT === '')}
@@ -556,6 +599,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.SHPT_CLEARED_ON && !dates.SHPT_CLEARED_ON, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       />
@@ -582,7 +635,7 @@ return(
 <CardContent>
 <Typography variant="h5" component="div">
    <Grid container spacing={2}>
-       <Grid item xs={2}>
+       {/* <Grid item xs={2}>
   <FormControl fullWidth>
   <TextField
    className="custom-textfield"
@@ -592,7 +645,7 @@ return(
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     />
 </FormControl>
-</Grid>
+</Grid> */}
 <Grid item xs={2}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
       <MobileDatePicker
@@ -601,7 +654,24 @@ return(
       onChange={(date) => handleDateChange(date, 'ARRIVAL_DATE')}
       className="custom-Datepicker"
       inputFormat="DD/MM/YYYY"
-      label='Arrival Date' />
+      label='Arrival Date'
+      
+      slotProps={{
+        textField: {
+          
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
+        },
+      }}
+      />
 
     </LocalizationProvider>
         </Grid>
@@ -613,7 +683,23 @@ return(
       onChange={(date) => handleDateChange(date, 'DO_RECVD_ON')}
       className="custom-Datepicker"
       inputFormat="DD/MM/YYYY"
-      label='DO Received On' />
+      label='DO Received On'
+      slotProps={{
+        textField: {
+        
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
+        },
+      }}
+      />
 
     </LocalizationProvider>
           </Grid>
@@ -625,7 +711,23 @@ return(
       onChange={(date) => handleDateChange(date, 'DELIVERY_DATE')}
       className="custom-Datepicker"
       inputFormat="DD/MM/YYYY"
-      label='Delivery Date' />
+      label='Delivery Date'
+      slotProps={{
+        textField: {
+          
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
+        },
+      }}
+      />
 
     </LocalizationProvider>
       </Grid>
@@ -633,10 +735,12 @@ return(
        <TextField
         value={optionalFields.GROSS_MARGIN}
         onChange={handleOptionalDataChange}
+        onWheel={(e) => e.target.blur()} 
         className="custom-textfield"
         name="GROSS_MARGIN"
         label="Gross Margin"
         size='small'
+        type="number" 
         InputLabelProps={{ style: { fontSize: '14px'} }}
         />
         </Grid>
@@ -644,10 +748,12 @@ return(
          <TextField
            value={optionalFields.TRANSPORTATION_ESTIMATE}
            onChange={handleOptionalDataChange}
+           onWheel={(e) => e.target.blur()} 
           className="custom-textfield"
           name="TRANSPORTATION_ESTIMATE"
           label="Transportation Estimate"
           size='small'
+          type="number" 
           InputLabelProps={{ style: { fontSize: '14px'  } }}
            />
            </Grid>
@@ -655,9 +761,11 @@ return(
             <TextField
               value={optionalFields.TRASPORTATION_COST}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
           className="custom-textfield"
           name="TRASPORTATION_COST"
           label="Transportation Cost"
+          type="number" 
           size='small'
           InputLabelProps={{ style: { fontSize: '14px'  } }}
            />
@@ -669,9 +777,11 @@ return(
             <TextField
               value={optionalFields.TRANSPORTATION_MARGIN}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
           className="custom-textfield"
           name="TRANSPORTATION_MARGIN"
           label="Transportation Margin"
+          type="number" 
           size='small'
           InputLabelProps={{ style: { fontSize: '14px'  } }}
            />
@@ -681,9 +791,12 @@ return(
             <TextField
               value={optionalFields.AAI_CHARGES}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="AAI_CHARGES"
           label="AAI Charges"
+           
           size='small'
           InputLabelProps={{ style: { fontSize: '14px'  } }}
            />
@@ -704,6 +817,8 @@ return(
             <TextField
               value={optionalFields.CUSTOM_DUTY}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="CUSTOM_DUTY"
           label="Custom Duty"

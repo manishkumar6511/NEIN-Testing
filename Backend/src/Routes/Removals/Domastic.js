@@ -11,6 +11,7 @@ exports.InsertDomasticRemovals= (req, res) => {
     const currentYear = currentDate.getFullYear();
     console.log("Current Year: " + currentYear);
     const registerBranchId = data.Register_Branch_Id;
+    const registerBranchCode=data.Register_Branch_Code;
     const mawbNumber = data.MAWB_NO;
     const HAWB_NO = data.HAWB_NO;
     
@@ -27,7 +28,7 @@ exports.InsertDomasticRemovals= (req, res) => {
         const newJobCount = maxCount + 1;
         
         // Update data object with calculated values
-       data.OR_JOB_NO = registerBranchId+"/DMR"+currentYear+"/"+newJobCount ;
+       data.OR_JOB_NO = registerBranchCode+"/DMR"+currentYear+"/"+newJobCount ;
         data.sequenceId = newJobCount;
     
     query = "INSERT INTO `domestic_removals` SET  ? ";

@@ -1,50 +1,46 @@
 import React, { useState } from 'react';
 import {
   TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper,
-  IconButton, Collapse, Box, Typography, TablePagination,TextField,Grid,Autocomplete,FormControl
+  IconButton, Collapse, Box, Typography, TablePagination,TextField,Grid,Autocomplete
 } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CreateIcon from '@mui/icons-material/Create';
 import { useNavigate } from 'react-router-dom';
-
-
-
-const DataTable = ({
+ 
+ 
+ 
+const DataTableFF = ({
   data, page, rowsPerPage, handleChangePage, handleChangeRowsPerPage,
   handleRowClick, openRow, handleMenuClick, anchorEl, isMenuOpen,
-  handleMenuClose, selectedType, link, selectedTab,searchTerm,handleSearch,DateFilter,handleDateFilter,handleSubBranch,subBranchOptions,
-  selectedSubBranch
+  handleMenuClose, selectedType, link, selectedTab,searchTerm,handleSearch,DateFilter,handleDateFilter
 }) => {
   const[selectedMawbNo,setSelectedMawbNo]=useState('');
   const navigate = useNavigate();
- console.log("Selected sub branch options......", subBranchOptions);
+  console.log("Selected MAWB No:", selectedMawbNo);
   let groupedData;
+ 
 
-if (selectedTab === 0 && selectedType === "Air Export") {
-    groupedData = groupByMAWB(data);
-} else if (selectedTab === 0 && selectedType.includes('Ocean')) {
+ if (selectedTab === 0 && selectedType.includes('Ocean')) {
     groupedData = groupByMBL(data);
 } else {
     groupedData = groupByMAWBNo(data);
 }
-
+ 
 const handleNavigationWithData = (event,row) => {
   const selectedMawbNo1 = row.MAWB_BL_NO || row.MAWB_NO || row.MBL_No;
-  const selectedBranchCode = subBranchOptions.find(subBranch => subBranch.branch_type_code === selectedSubBranch);
-const branchCode=selectedBranchCode.branch_code;
   setSelectedMawbNo(selectedMawbNo1);
-  const dataToSend = { mawbNo: selectedMawbNo1,branchCode:branchCode,branchId:selectedSubBranch }; // Replace with your data
+  const dataToSend = { mawbNo: selectedMawbNo1 }; // Replace with your data
   navigate(link, { state: dataToSend });
   handleMenuClose(); // Close the menu after navigation
 };
-
-
+ 
+ 
   const renderHeaders = () => {
-    // console.log("headers");
-    // console.log("tab",selectedTab);
-    // console.log("type",selectedType);
-
+    console.log("headers");
+    console.log("tab",selectedTab);
+    console.log("type",selectedType);
+ 
     if (selectedTab === 0) {
       return (
         <>
@@ -58,98 +54,23 @@ const branchCode=selectedBranchCode.branch_code;
           <TableCell><b>ACTION</b></TableCell>
         </>
       );
-    } else if (selectedTab === 1) {
-      return (
-        <>
-          <TableCell></TableCell>
-          <TableCell><b>#</b></TableCell>
-          <TableCell><b>Job/Docket No</b></TableCell>
-          <TableCell><b>{selectedType.includes('Air') ? 'MAWB No' : 'IE Code'}</b></TableCell>
-          <TableCell><b>Consignee</b></TableCell>
-          <TableCell><b>Industry</b></TableCell>
-          <TableCell><b>Action</b></TableCell>
-        </>
-      );
-    }
+    } 
   };
-
+ 
   const renderRows = (row, index, group) => {
-
+ 
    
-
-    // console.log("rows");
+ 
+     console.log("rows in Data FF...........");
     // console.log("tab",selectedTab);
     // console.log("type",selectedType);
-    // console.log(row); 
-    // console.log(index);
-    // console.log("group",group);
-
-    if (selectedTab === 0 && selectedType==='Air Export')  {
-      const hawbCount = group.filter(hawbRow => hawbRow.MASTER_HOUSE_BL || hawbRow.HBL).length;
-      return (
-        <>
-          <TableRow className={index % 2 === 0 ? 'tableRowEven' : 'tableRowOdd'}>
-            <TableCell>
-              <IconButton aria-label="expand row" size="small" onClick={() => handleRowClick(row.Id)}
-                disabled={hawbCount===0}
-                >
-                {openRow === row.Id ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-              </IconButton>
-            </TableCell>
-            <TableCell>{index + 1}</TableCell>
-            <TableCell>{row.MAWB_BL_NO || row.MBL}</TableCell>
-            <TableCell>{row.DEPARTURE_CITY || row.PortLoading}</TableCell>
-            <TableCell>{row.DESTINATION_CITY || row.PortDischarge}</TableCell>
-            <TableCell>{row.CONSIGNEE_NAME}</TableCell>
-            <TableCell>{hawbCount}</TableCell> {/* Display the HAWB count */}
-            <TableCell>
-              <IconButton onClick={(event) => handleNavigationWithData(event, row)}>
-                <CreateIcon />
-              </IconButton>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-              <Collapse in={openRow === row.Id} timeout="auto" unmountOnExit>
-                <Box margin={1}>
-                {hawbCount > 0 ? (
-                  <Table size="small" aria-label="purchases">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>{selectedType.includes('Air') ? 'HAWB NO' : 'HBL NO'}</TableCell>
-                        <TableCell>{selectedType.includes('Air') ? 'HAWB DATE' : 'HBL DATE'}</TableCell>
-                        <TableCell>{selectedType.includes('Air') ? 'HAWB TOTAL AMOUNT' : 'HBL TOTAL AMOUNT'}</TableCell>
-                        <TableCell>{selectedType.includes('Air') ? 'HAWB GROSS WEIGHT' : 'HBL GROSS WEIGHT'}</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {group.map((hawbRow) => (
-                        (hawbRow.MASTER_HOUSE_BL || hawbRow.HBL) && ( // Only render rows with HAWB data
-                        <TableRow key={hawbRow.HAWB}>
-                          <TableCell>{hawbRow.MASTER_HOUSE_BL || hawbRow.HBL}</TableCell>
-                          <TableCell>{(hawbRow.MASTER_HOUSE_BL)?hawbRow.BL_CONSO_DATE:'' || hawbRow.HAWBDate}</TableCell>
-                          <TableCell>{(hawbRow.MASTER_HOUSE_BL)?hawbRow.CHARGE_TOTAL_CC:'' || hawbRow.HAWBTotal}</TableCell>
-                          <TableCell>{(hawbRow.MASTER_HOUSE_BL)?hawbRow.TOTAL_ACTUAL_WEIGHT:''|| hawbRow.HAWBGross }</TableCell>
-                        </TableRow>
-                        )
-                      ))}
-                    </TableBody>
-                  </Table>
-                   ) : (
-                    <Typography variant="body2" color="textSecondary">
-                      No additional data available.
-                    </Typography>
-                  )}
-                </Box>
-              </Collapse>
-            </TableCell>
-          </TableRow>
-        </>
-      );
-
-    }else if(selectedTab === 0 && selectedType==='Air Import'){
+    console.log("for no data...........",row);
+    console.log("for no data...........",index);
+   // console.log("group",group);
+ 
+if(selectedTab === 0 && selectedType==='Air Import'){
       const hawbCount = group.filter(hawbRow => hawbRow.HAWB_NO || hawbRow.HBL).length;
-      // console.log("air import data table",hawbCount);
+      console.log("air import data table",hawbCount);
       return (
         <>
           <TableRow className={index % 2 === 0 ? 'tableRowEven' : 'tableRowOdd'}>
@@ -210,10 +131,10 @@ const branchCode=selectedBranchCode.branch_code;
           </TableRow>
         </>
       );
-
+ 
     }else if(selectedTab === 0 && selectedType.includes('Ocean')){
       const hawbCount = group.filter(hawbRow => hawbRow.HBL_No).length;
-      // console.log("ocean import data table",hawbCount);
+      console.log("ocean import data table",hawbCount);
       return (
         <>
           <TableRow className={index % 2 === 0 ? 'tableRowEven' : 'tableRowOdd'}>
@@ -274,7 +195,7 @@ const branchCode=selectedBranchCode.branch_code;
           </TableRow>
         </>
       );
-
+ 
     } else if (selectedTab === 1) {
       return (
         <>
@@ -313,59 +234,21 @@ const branchCode=selectedBranchCode.branch_code;
       );
     }
   };
-
+ 
   return (
     <TableContainer className='custom-table-container' component={Paper} sx={{ marginTop: '29px' }}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={6}>
       <p style={{ margin: '10px 0px -40px 16px',textAlign:'left' }}><b>{selectedType}</b></p>
       </Grid>
       <Grid item xs={3}>
-  <FormControl fullWidth>
-  <Autocomplete size="small"  freeSolo id="free-solo-2-demo" disableClearable 
-      options={subBranchOptions}
-      getOptionLabel={(option) => {
-        // If option is an object with branch_name, return that
-        if (typeof option === 'object' && option.branch_name) {
-          return option.branch_name;
-        }
-        // If selectedSubBranch is a branch_type_code, find the matching option
-        const selectedBranch = subBranchOptions.find(subBranch => subBranch.branch_type_code === selectedSubBranch);
-       
-        if (typeof selectedBranch === 'object' && selectedBranch.branch_name) {
-          console.log("selectedBranch",selectedBranch.branch_name);
-        return selectedBranch.branch_name ;
-        }
-        return '';
-      }}
-      onChange={handleSubBranch}
-    
-      value={subBranchOptions.find(option => option.branch_type_code === selectedSubBranch) || null}
-       renderInput={(params) => (
-       <TextField 
-        {...params}
-        label="Sub Branch"
-        InputProps={{
-        ...params.InputProps,
-        type: 'search',
-        }}
-        style={{margin:'10px 0px 5px 18px'}}
-        InputLabelProps={{ style: { fontSize: '14px'} }}
-        required
-       className="dashboard-autocomplete"
-       
-       
-        />)}/> 
-    </FormControl>
-  </Grid>
-      <Grid item xs={3}>
-      <Autocomplete  size="small"  freeSolo id="free-solo-2-demo" disableClearable 
+      <Autocomplete  size="small"  freeSolo id="free-solo-2-demo" disableClearable
       options={DateFilter}
       onChange={handleDateFilter}
-    
-      //value={subBranch || null} 
+   
+      //value={subBranch || null}
        renderInput={(params) => (
-       <TextField 
+       <TextField
         {...params}
         label="Last 45 Days"
         InputProps={{
@@ -376,7 +259,7 @@ const branchCode=selectedBranchCode.branch_code;
         InputLabelProps={{ style: { fontSize: '14px'} }}
         required
        className="dashboard-autocomplete"
-        />)}/> 
+        />)}/>
       </Grid>
       <Grid item xs={3}>
           <TextField
@@ -391,7 +274,7 @@ const branchCode=selectedBranchCode.branch_code;
            
           />
 </Grid>
-
+ 
       </Grid>
       <Table stickyHeader aria-label="sticky table" className='custom-table'>
         <TableHead className='custom-table-head' >
@@ -406,13 +289,16 @@ const branchCode=selectedBranchCode.branch_code;
                 {renderRows(group[0], index, group)}
               </React.Fragment>
             ))
-            : data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+            : 
+            
+            data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
               <React.Fragment key={row.id}>
                 {renderRows(row, index)}
               </React.Fragment>
+              
             ))}
-               {data&&data.length<=0 &&(
-            <TableRow style={{textAlign:'center'}}><b>No Data Found</b></TableRow>
+            {data&&data.length<=0 &&(
+            <TableRow><b>No Data Found</b></TableRow>
           )}
         </TableBody>
       </Table>
@@ -428,9 +314,9 @@ const branchCode=selectedBranchCode.branch_code;
     </TableContainer>
   );
 };
-
-export default DataTable;
-
+ 
+export default DataTableFF;
+ 
 const groupByMAWB = (data) => {
   return data.reduce((acc, item) => {
     const { MAWB_BL_NO } = item;
@@ -441,7 +327,7 @@ const groupByMAWB = (data) => {
     return acc;
   }, {});
 };
-
+ 
 const groupByMAWBNo = (data) => {
   return data.reduce((acc, item) => {
     const { MAWB_NO } = item;
@@ -452,11 +338,11 @@ const groupByMAWBNo = (data) => {
     return acc;
   }, {});
 };
-
+ 
 const groupByMBL=(data)=>{
-  // console.log("coming to groupByMBL");
+  console.log("coming to groupByMBL");
 return data.reduce((acc,item)=>{
-  // console.log("Processing item:", item);
+  console.log("Processing item:", item);
 const{MBL_No}=item;
 if(!acc[MBL_No]){
 acc[MBL_No]=[];

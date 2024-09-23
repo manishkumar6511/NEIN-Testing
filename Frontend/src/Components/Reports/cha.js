@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid,GridToolbar } from '@mui/x-data-grid';
 import axios from 'axios';
+import TruckLoder from '../centralized_components/truckLoder';
 
 // import './ScrollableTable.css';
 const CHAReport = ({ props }) => {
@@ -62,7 +63,7 @@ const CHAReport = ({ props }) => {
     return (
       <div style={{ height: 400, width: '900px' }}>
         {loading ? (
-          <p>Loading...</p>
+          <TruckLoder/>
         ) : (
           <DataGrid
             rows={data}            // The rows from the API response

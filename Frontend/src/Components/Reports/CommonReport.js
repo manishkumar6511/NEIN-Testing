@@ -4,7 +4,7 @@ import axios from 'axios';
 import TruckLoder from '../centralized_components/truckLoder';
 
 // import './ScrollableTable.css';
-const AEFRegister = ({ props }) => {
+const CommonReport = ({ props }) => {
   const  [loading, setLoading] =  useState(true);
     const [data, setData] = useState([]);
     const [headers, setHeaders] = useState([]);
@@ -80,4 +80,4 @@ const AEFRegister = ({ props }) => {
     );
   };
 
-export default AEFRegister;
+export default CommonReport;

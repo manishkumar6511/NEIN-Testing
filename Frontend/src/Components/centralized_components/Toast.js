@@ -13,6 +13,7 @@ export const useToast = () => useContext(ToastContext);
 export const ToastProvider = ({ children }) => {
   // Function to show a toast notification
   const showToast = (message, type, options) => {
+    console.log("Toast........",options);
     const toastOptions = {
       position: options?.position || "top-center",
       autoClose: options?.autoClose || 5000,

@@ -67,7 +67,7 @@ exports.getMasterData = (req, res) => {
             return res.status(404).send("No records found for the provided MAWB_NO");
         }
 
-      let checkFlagQuery = "SELECT * FROM `airexport_ff_ftp` INNER JOIN newins_iata_codes on DSCODE=DESTINATION_CITY  WHERE `MAWB_BL_NO` = ? AND flag = 0 ";
+      let checkFlagQuery = "SELECT * FROM `airexport_ff_ftp` LEFT JOIN newins_iata_codes on DSCODE=DESTINATION_CITY  WHERE `MAWB_BL_NO` = ? AND flag = 0 ";
         let checkFlagParams = [mawbNumber];
 
         ormdb.query(checkFlagQuery, checkFlagParams, (err, result) => {
@@ -231,37 +231,39 @@ exports.UpdateDataFF = (req, res) => {
 }
 
 exports.InsertAExport= (req, res) => {
-
-
-    console.log("this is insert "); 
+ 
+ 
+    console.log("this is insert ");
           const data =     req.body;
           console.log("data "+data);
-
+ 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     console.log("Current Year: " + currentYear);
     const registerBranchId = data.Register_Branch_Id;
+    const registerBranchCode=data.Register_Branch_Code;
     const mawbNumber = data.MAWB_NO;
     const HAWB_NO = data.HAWB_NO;
-
+ 
  const maxJobCountQuery = "SELECT MAX(JobCount) as count FROM `air_export_ff` WHERE `Register_Branch_Id`=? AND YEAR(Created_Date)=?";
-
+ 
     ormdb.query(maxJobCountQuery, [registerBranchId, currentYear], (err, maxCountResult) => {
         if (err) {
             console.error(err);
             res.status(500).send("An error occurred while fetching max JobCount");
             return;
         }
-    
-        const maxCount = maxCountResult[0].count || 0; // Handle case where no rows found
-        const newJobCount = maxCount + 1;
-
+   
+        const maxCount = maxCountResult[0].count !== null ? maxCountResult[0].count : 0;
+    const newJobCount = maxCount + 1;
+ 
+ 
         // Update data object with calculated values
-       data.JOB_DOCKETNO = "AEF/"+registerBranchId+"/"+currentYear+"/"+newJobCount;
+       data.JOB_DOCKETNO = "AEF/"+registerBranchCode+"/"+currentYear+"/"+newJobCount;
         data.JobCount = newJobCount;
-
+ 
     query = "INSERT INTO `air_export_ff` SET  ? ";
-
+ 
    
     ormdb.query(query, data ,(err, result,feilds) => {
            if (err) {
@@ -272,9 +274,11 @@ exports.InsertAExport= (req, res) => {
                res.json(result);
            }
        });
-    
+   
     });
 };
+ 
+
 
 
 exports.getMasterDataFromFF = (req, res) => {

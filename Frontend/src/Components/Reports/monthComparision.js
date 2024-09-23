@@ -7,25 +7,12 @@ import {
   import dayjs from 'dayjs';
   import { Modal } from '@mui/material';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import axios from "axios";
+import TruckLoder from "../centralized_components/truckLoder";
 
 
-const data = [
-  {
-    name: 'Mar-23',
-    shipments: 166,
-    weight: 164952,
-  },
-  {
-    name: 'Feb-24',
-    shipments: 244,
-    weight: 125362,
-  },
-  {
-    name: 'Mar-24',
-    shipments: 144,
-    weight: 117352,
-  },
-];
+
+
 
   
   // Modal style
@@ -43,27 +30,160 @@ const data = [
 
 
   const MonthComparision = ({ props }) => {
-console.log('props',props);
-    const data2023 = [
-        { slNo: 1, date: '1/1/2023', shipments: 1, weight: 510 },
-        { slNo: 2, date: '1/2/2023', shipments: 12, weight: 5598 },
-        { slNo: 3, date: '1/3/2023', shipments: 9, weight: 9863 },
-        // Add more rows as needed
-      ];
+    const  [loading, setLoading] =  useState(false);
+  let year=dayjs().year();
+  let previousYear=dayjs().year()-1;
+  
+  
+ 
+    const[header1,setHeader1]=useState(null);
+    const[header2,setHeader2]=useState(null);
+    const[header3,setHeader3]=useState(null);
+
+
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+const[firstData,setFirstData]=useState([]);
+const[secondData,setSecondData]=useState([]);
+const[thirdData,setThirdData]=useState([]);
+const [selectedMonth, setSelectedMonth] = useState('');
+const selectedDate1 = dayjs(props.toDate);
+
+
+
+
+
+
+const fillMissingDates = (data, yearMonth) => {
+  const totalDaysInMonth = 31; // Always assume 31 days
+  const completeData = [];
+
+  // Create a complete list of dates for the month (from 01 to 31)
+  for (let day = 1; day <= totalDaysInMonth; day++) {
+    const date = `${String(day).padStart(2, '0')}-${yearMonth}`; // Format: 'DD-MM-YYYY'
+console.log("date format",date);
+    // Find the corresponding entry in the API response
+    const existingEntry = data.find(item => item.Date === date);
+
+    if (existingEntry) {
+      // If entry exists, add it to the completeData array
+      completeData.push(existingEntry);
+    } else {
+      // If entry is missing, fill with default values
+      completeData.push({
+        Date: date,
+        Total_Entries: 0,
+        TOTAL_CHARGEABLE_WGT: 0,
+      });
+    }
+  }
+
+  return completeData;
+};
+
+
+console.log(props);
+    useEffect(()=>{
+      const comparisionDate=async()=>{
+        const currentYear = dayjs().year();
+        const selectedDate = selectedMonth ? dayjs(`${currentYear}-${selectedMonth.value}-01`) : dayjs(props.toDate);
+  
+        const firstDateHeaders = selectedDate.format('MMM-YYYY'); 
+ const secondDateHeaders = selectedDate.subtract(1, 'month').format('MMM-YYYY'); 
+ const thirdDateHeaders = selectedDate.subtract(1, 'year').format('MMM-YYYY');
+
+ setHeader3(thirdDateHeaders);
+ setHeader1(firstDateHeaders);
+ setHeader2(secondDateHeaders);
+        // First: Same month and year as the props date
+        const firstDate = selectedDate.format('MM-YY'); // e.g., '09-24'
+        const firstYearMonth=selectedDate.format('MM-YYYY');
+        
+        // Second: Previous month, same year
+        const secondDate = selectedDate.subtract(1, 'month').format('MM-YY'); // e.g., '08-24'
+        const secondYearMonth=selectedDate.subtract(1, 'month').format('MM-YYYY');
+        // Third: Same month, previous year
+        const thirdDate = selectedDate.subtract(1, 'year').format('MM-YY'); // e.g., '09-23'
+        const thirdYearMonth=selectedDate.subtract(1, 'year').format('MM-YYYY');
+        setLoading(true);
+        try {
+
+          // First API call
+          const response1 = await axios.post(`${API_BASE_URL}/Reports/Comparison`,{
+            "date":firstDate,
+            "BranchId":props.subBranch,
+          });
+          const filledFirstData = fillMissingDates(response1.data, firstYearMonth);
+          setFirstData(filledFirstData);
+          console.log('First Response:', response1.data);
+          console.log('First call data:', filledFirstData);
+          
+          // Second API call
+          const response2 =  await axios.post(`${API_BASE_URL}/Reports/Comparison`,{
+            "date":secondDate,
+            "BranchId":props.subBranch,
+          });
+          const filledSecondData = fillMissingDates(response2.data, secondYearMonth);
+          setSecondData(filledSecondData);
+          console.log('Second Response:', response2.data);
+          console.log('Second call data:', filledSecondData);
+          
+          // Third API call
+          const response3 =  await axios.post(`${API_BASE_URL}/Reports/Comparison`,{
+            "date":thirdDate,
+            "BranchId":props.subBranch,
+          });
+          const filledThirdData = fillMissingDates(response3.data, thirdYearMonth);
+        setThirdData(filledThirdData);
+        console.log('Third Response:', response3.data);
+        console.log('Third call data:', filledThirdData);
+          setLoading(false);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+
+      }
+     
+      comparisionDate();
+
+    },[selectedMonth, props.toDate, props.subBranch]);
+
+   
+
+    const totalShipmentsAndWeight = (data) => {
+      return data.reduce(
+        (acc, item) => {
+          acc.totalShipments += item.Total_Entries;
+          acc.totalWeight += item.TOTAL_CHARGEABLE_WGT;
+          return acc;
+        },
+        { totalShipments: 0, totalWeight: 0 }
+      );
+    };
     
-      const data2024 = [
-        { slNo: 1, date: '1/1/2024', shipments: 5, weight: 1545 },
-        { slNo: 2, date: '1/2/2024', shipments: 4, weight: 789 },
-        { slNo: 3, date: '1/3/2024', shipments: 13, weight: 1200 },
-        // Add more rows as needed
-      ];
-    
-      const data2023Dec = [
-        { slNo: 1, date: '12/1/2023', shipments: 50, weight: 250 },
-        { slNo: 2, date: '12/2/2023', shipments: 10, weight: 34 },
-        { slNo: 3, date: '12/3/2023', shipments: 11, weight: 22},
-        // Add more rows as needed
-      ];
+    const firstDataTotals = totalShipmentsAndWeight(firstData);
+    console.log("firstDataTotals",firstDataTotals);
+    const secondDataTotals = totalShipmentsAndWeight(secondData);
+    const thirdDataTotals = totalShipmentsAndWeight(thirdData);
+
+
+    const data = [
+      {
+        name: header3,
+        shipments: thirdDataTotals.totalShipments,
+        weight: thirdDataTotals.totalWeight,
+      },
+      {
+        name: header2,
+        shipments: secondDataTotals.totalShipments,
+        weight: secondDataTotals.totalWeight,
+      },
+      {
+        name: header1,
+        shipments: firstDataTotals.totalShipments,
+        weight: firstDataTotals.totalWeight,
+      },
+    ];
 
 
       const monthOptions = [
@@ -80,7 +200,7 @@ console.log('props',props);
         { label: 'November', value: 11 },
         { label: 'December', value: 12 },
       ];
-      const [selectedMonth, setSelectedMonth] = useState(null);
+      
 
       const handleMonthChange = (event, newValue) => {
         setSelectedMonth(newValue);
@@ -96,11 +216,14 @@ console.log('props',props);
       const handleClose = () => setOpen(false);
     
       return (
+        <div>
+          {(loading ? ( <TruckLoder/> ) :"")}
+        
         <TableContainer component={Paper}>
           <Grid container spacing={2} margin={'1px 0px 0px -40px'}>
             <Grid item xs={9}>
           <Typography variant="h6" align="center" >
-            COMPARISION OF SHIPMENT DETAILS FOR 2023 vs 2024 - FEBRUARY 2024
+            Comparision Of Shipment Details For {previousYear} vs {year} - {header1}
           </Typography>
           </Grid>
             <Grid item xs={2.5} >
@@ -108,10 +231,11 @@ console.log('props',props);
             disableClearable
       options={monthOptions}
       getOptionLabel={(option) => option.label}
+      value={selectedMonth.value}
       onChange={handleMonthChange}
       
       renderInput={(params) => <TextField {...params} label="Select Month" variant="outlined" size="small"/>}
-      value={selectedMonth}
+      
     />
               
             </Grid>
@@ -162,9 +286,9 @@ console.log('props',props);
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell colSpan={4} align="center" sx={{ backgroundColor: '#9BC2E6', fontWeight: 'bold' }}>Jan-23</TableCell>
-                <TableCell colSpan={4} align="center" sx={{ backgroundColor: '#FFD966', fontWeight: 'bold' }}>Dec-23</TableCell>
-                <TableCell colSpan={4} align="center" sx={{ backgroundColor: '#A9D18E', fontWeight: 'bold' }}>Jan-24</TableCell>
+              <TableCell colSpan={4} align="center" sx={{ backgroundColor: '#A9D18E', fontWeight: 'bold' }}>{header3}</TableCell>
+                <TableCell colSpan={4} align="center" sx={{ backgroundColor: '#FFD966', fontWeight: 'bold' }}>{header2}</TableCell>
+                <TableCell colSpan={4} align="center" sx={{ backgroundColor: '#9BC2E6', fontWeight: 'bold' }}>{header1}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell align="center">SN</TableCell>
@@ -184,27 +308,28 @@ console.log('props',props);
               </TableRow>
             </TableHead>
             <TableBody>
-              {data2023.map((row, index) => (
+              {thirdData.map((row, index) => (
                 <TableRow key={index}>
-                  <TableCell align="center">{row.slNo}</TableCell>
-                  <TableCell align="center">{row.date}</TableCell>
-                  <TableCell align="center">{row.shipments}</TableCell>
-                  <TableCell align="center">{row.weight}</TableCell>
+                  <TableCell align="center">{index+1}</TableCell>
+                  <TableCell align="center">{row.Date}</TableCell>
+                  <TableCell align="center">{row.Total_Entries}</TableCell>
+                  <TableCell align="center">{row.TOTAL_CHARGEABLE_WGT}</TableCell>
     
-                  <TableCell align="center">{data2023Dec[index]?.slNo || ''}</TableCell>
-                  <TableCell align="center">{data2023Dec[index]?.date || ''}</TableCell>
-                  <TableCell align="center">{data2023Dec[index]?.shipments || ''}</TableCell>
-                  <TableCell align="center">{data2023Dec[index]?.weight || ''}</TableCell>
+                  <TableCell align="center">{index+1}</TableCell>
+                  <TableCell align="center">{secondData[index]?.Date || '0'}</TableCell>
+                  <TableCell align="center">{secondData[index]?.Total_Entries || '0'}</TableCell>
+                  <TableCell align="center">{secondData[index]?.TOTAL_CHARGEABLE_WGT || '0'}</TableCell>
     
-                  <TableCell align="center">{data2024[index]?.slNo || ''}</TableCell>
-                  <TableCell align="center">{data2024[index]?.date || ''}</TableCell>
-                  <TableCell align="center">{data2024[index]?.shipments || ''}</TableCell>
-                  <TableCell align="center">{data2024[index]?.weight || ''}</TableCell>
+                  <TableCell align="center">{index+1}</TableCell>
+                  <TableCell align="center">{firstData[index]?.Date || '0'}</TableCell>
+                  <TableCell align="center">{firstData[index]?.Total_Entries || '0'}</TableCell>
+                  <TableCell align="center">{firstData[index]?.TOTAL_CHARGEABLE_WGT || '0'}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+        </div>
         
       );
     };

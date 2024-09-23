@@ -28,31 +28,49 @@ exports.AirImportDahboard= (req, res) => {
     });
 
 }
-exports.AirExportDahboard= (req, res) => {
-
+exports.AirExportDahboard = (req, res) => {
     const FromDate = req.body.FromDate;
     const Todate = req.body.Todate;
     const BranchId = req.body.BranchId;
     let query;
-    let queryParams = [];
-    // console.log(FromDate);
-    // console.log(Todate);
-    // console.log(BranchId);
-
-
-        query = "  SELECT  * FROM airexport_ff_ftp AS f  WHERE  date(f.createdDate) BETWEEN ? AND ?  AND f.BRANCH=?  AND flag =0 ";
-       queryParams = [FromDate,Todate,BranchId];
-
- ormdb.query(query, queryParams, (err, result) => {
+ 
+    // Assuming BranchId is a string like "30,11,32,53"
+    let BranchIdArray = BranchId.split(',').map(id=>id.trim());  // Split by comma to create an array
+ 
+    // Create a dynamic placeholder for each BranchId in the array
+    let branchPlaceholders = BranchIdArray.map(() => '?').join(',');
+ 
+    // Modify the query to use the dynamic branch placeholders
+    query = `
+      SELECT *
+      FROM airexport_ff_ftp AS f
+      WHERE DATE(STR_TO_DATE(f.BL_CONSO_DATE, '%d-%m-%y'))
+        BETWEEN STR_TO_DATE( ?, '%d-%m-%Y')
+        AND STR_TO_DATE( ?, '%d-%m-%Y')
+        AND f.BRANCH IN (${branchPlaceholders})
+        AND flag = 0
+    `;
+ 
+    // Combine the query parameters (FromDate, ToDate, and all the branch IDs)
+    let queryParams = [FromDate, Todate, ...BranchIdArray];
+ 
+    // Log query and parameters for debugging
+    console.log("SQL Query: ", query);
+    console.log("Query Parameters: ", queryParams);
+ 
+    ormdb.query(query, queryParams, (err, result) => {
         if (err) {
-            console.error(err);
+            console.error("SQL Error: ", err);
             res.status(500).send("An error occurred while fetching data");
         } else {
-            //console.log(result.length);
-            res.json(result);
+            if (result.length === 0) {
+                res.status(404).send("No data found");
+            } else {
+                console.log(result.length);
+                res.json(result);
+            }
         }
     });
-
 }
 exports.OceanImportDahboard= (req, res) => {
 

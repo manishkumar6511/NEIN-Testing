@@ -1,19 +1,15 @@
 import React,{useEffect, useState} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
-
 import {FormControl, Grid } from '@mui/material';
 import {TextField } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
 import Autocomplete from '@mui/material/Autocomplete';
-
-
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs'  
-
 import axios from "axios";
 import {  useToast } from '../centralized_components/Toast';
 
@@ -76,14 +72,36 @@ const[optionalFields,setOptionalFields]=useState({
 
 })
 const[initiatorDetails,setInitiatorDetails]=useState({
-  initiator_id:'2849',
-  initiator_name:'Gowthami B',
-  register_branch:'10',
-  register_sub_branch:'10',
+  initiator_id:'',
+  initiator_name:'',
+  register_branch:'',
+  Register_Branch_Code:'',
   
   
 })
 
+useEffect(()=>{
+  let SessionDetails = {};
+  const storedUser = localStorage.getItem('userDetails');
+  if (storedUser) {
+    const userDetails = JSON.parse(storedUser);
+  
+   if(userDetails){
+    setInitiatorDetails((prevState) => ({
+      ...prevState,
+      initiator_id:userDetails.empid ,
+      initiator_name:userDetails.empname,
+      register_branch:userDetails.branchid,
+      Register_Branch_Code:userDetails.branchCode,
+
+    }));
+   }
+    
+  } else {
+    console.log("No menu details found in localStorage.");
+  }
+
+},[])
 
 
 const handleDateChange = (date, key) => {
@@ -185,7 +203,7 @@ const handleSubmit=async(e)=>{
   
    try {
     const response = await axios.post(`${API_BASE_URL}/removals/oe_jobinsert`, TotaData);
-    showToast("Ocean Export Data Inserted Successfully", "success");
+    showToast("Submitted Successfully", "success");
     setTimeout(() => {
      resetFields();
     }, 3000);
@@ -314,7 +332,9 @@ return(
     name="INDUSTRY"
     label="Industry" required
     size='small'
-   disabled
+    InputProps={{
+      readOnly: true,
+    }}
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     error={validationErrors.INDUSTRY && (MandatoryFields.INDUSTRY === '')}
     />
@@ -393,6 +413,8 @@ return(
        <TextField
         value={MandatoryFields.NO_OF_PACKAGES}
         onChange={handleManualDataChange}
+        onWheel={(e) => e.target.blur()} 
+        type="number" 
       className="custom-textfield"
         name="NO_OF_PACKAGES"
         label="No Of Packages" required
@@ -407,6 +429,8 @@ return(
   <TextField
    value={MandatoryFields.GROSS_WEIGHT}
    onChange={handleManualDataChange}
+   onWheel={(e) => e.target.blur()} 
+   type="number" 
  className="custom-textfield"
     name="GROSS_WEIGHT"
     label="Gross Weight" required
@@ -420,6 +444,8 @@ return(
       <TextField
        value={MandatoryFields.CHARGEABLE_WEIGHT}
        onChange={handleManualDataChange}
+       onWheel={(e) => e.target.blur()} 
+       type="number" 
       className="custom-textfield"
        name="CHARGEABLE_WEIGHT"
        label="Chargeable Weight" required
@@ -444,6 +470,8 @@ return(
        <TextField
         value={MandatoryFields.OCEAN_FREIGHT}
         onChange={handleManualDataChange}
+        onWheel={(e) => e.target.blur()} 
+        type="number" 
        className="custom-textfield"
         name="OCEAN_FREIGHT"
         label="Ocean Freight" required
@@ -465,6 +493,16 @@ return(
       slotProps={{
         textField: {
           error: validationErrors.SHPT_CLEARED_ON && !dates.SHPT_CLEARED_ON, 
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
         },
       }}
       />
@@ -491,7 +529,7 @@ return(
 <CardContent>
 <Typography variant="h5" component="div">
    <Grid container spacing={2}>
-       <Grid item xs={2}>
+       {/* <Grid item xs={2}>
   <FormControl fullWidth>
   <TextField
    className="custom-textfield"
@@ -501,7 +539,7 @@ return(
     InputLabelProps={{ style: { fontSize: '14px'  } }}
     />
 </FormControl>
-</Grid>
+</Grid> */}
 <Grid item xs={2}>
             <TextField
               value={optionalFields.HBL}
@@ -545,7 +583,24 @@ return(
       onChange={(date) => handleDateChange(date, 'ETD')}
       className="custom-Datepicker"
       inputFormat="DD/MM/YYYY"
-      label='ETD' />
+      label='ETD'
+      
+      slotProps={{
+        textField: {
+          
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
+        },
+      }}
+      />
 
     </LocalizationProvider>
       </Grid>
@@ -555,6 +610,8 @@ return(
        <TextField
         value={optionalFields.IHC_BL_OTHERS_CHARGES}
         onChange={handleOptionalDataChange}
+        onWheel={(e) => e.target.blur()} 
+        type="number" 
         className="custom-textfield"
         name="IHC_BL_OTHERS_CHARGES"
         label="IHC_BL_OTHERS_CHARGES "
@@ -569,6 +626,8 @@ return(
        <TextField
         value={optionalFields.GROSS_MARGIN}
         onChange={handleOptionalDataChange}
+        onWheel={(e) => e.target.blur()} 
+        type="number" 
         className="custom-textfield"
         name="GROSS_MARGIN"
         label="Gross Margin"
@@ -581,6 +640,8 @@ return(
             <TextField
               value={optionalFields.TRANSPORTATION_ESTIMATE}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="TRANSPORTATION_ESTIMATE"
           label="Transportation Estimate"
@@ -592,6 +653,8 @@ return(
             <TextField
               value={optionalFields.TRANSPORTATION_COST}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="TRANSPORTATION_COST"
           label="Transportation Cost"
@@ -603,6 +666,8 @@ return(
             <TextField
               value={optionalFields.TRANSPORTATION_MARGIN}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="TRANSPORTATION_MARGIN"
           label="Transportation Margin"
@@ -625,7 +690,8 @@ return(
             <TextField  
             value={optionalFields.PACKING_LIST_TOTAL_AMOUNT}
           onChange={handleOptionalDataChange}
-
+          onWheel={(e) => e.target.blur()} 
+          type="number" 
           className="custom-textfield"
           name="PACKING_LIST_TOTAL_AMOUNT"
           label="Packing List(Total Amount)"
@@ -660,6 +726,8 @@ return(
             <TextField
               value={optionalFields.INSURANCE_AMOUNT}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="INSURANCE_AMOUNT"
           label="Insurance Amount"
@@ -676,7 +744,22 @@ return(
       onChange={(date) => handleDateChange(date, 'EXCHANGE_RATES_BILLING_DATE')}
       className="custom-Datepicker"
       inputFormat="DD/MM/YYYY"
-      label='Exchange Rates(Billing Date)' />
+      label='Exchange Rates(Billing Date)' 
+      slotProps={{
+        textField: {
+        
+          sx: {
+            '& .MuiInputBase-input': {
+              padding: '6.5px',
+            },
+            '& .MuiInputLabel-root': {
+              top: '-2px', 
+              fontSize:'14px',
+              color:'#1a005d',
+            },
+          },
+        },
+      }}/>
 
     </LocalizationProvider>
       </Grid>
@@ -687,6 +770,8 @@ return(
             <TextField
               value={optionalFields.INSURANCE_AMOUNT_INR}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="INSURANCE_AMOUNT_INR"
           label="Insurance Amount(INR)"
@@ -701,6 +786,8 @@ return(
             <TextField
               value={optionalFields.PREMIUM_AMOUNT_USD}
               onChange={handleOptionalDataChange}
+              onWheel={(e) => e.target.blur()} 
+              type="number" 
           className="custom-textfield"
           name="PREMIUM_AMOUNT_USD"
           label="Premium Amount(USD)"

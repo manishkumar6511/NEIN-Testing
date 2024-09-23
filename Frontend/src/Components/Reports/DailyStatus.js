@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid,GridToolbar } from '@mui/x-data-grid';
 import axios from 'axios';
-
+import TruckLoder from '../centralized_components/truckLoder';
 // import './ScrollableTable.css';
 const DailyStatus = ({ props }) => {
 
@@ -25,6 +25,11 @@ const DailyStatus = ({ props }) => {
   
           // Transform data according to headers
           const transformedData = response.data.map((item) => {
+
+            let margin=(item.TOTAL_MARGIN*100)/(item.SELL_RATE);
+            console.log("total margin",item.TOTAL_MARGIN);
+            console.log("sell Rate",item.SELL_RATE);
+            console.log("margin percentage",margin);
             // Initialize an empty object for the transformed row
             const transformedRow = {};
   
@@ -32,7 +37,12 @@ const DailyStatus = ({ props }) => {
             headers.forEach((header) => {
               const field = header.field; // Get field name from header
               transformedRow[field] = item[field] !== undefined ? item[field] : ''; // Default to empty string if field is missing
+              if(field==='Margin'){
+                transformedRow[field] = margin; 
+              }
+              
             });
+
   
             // Ensure Register_id is set correctly as unique id
             transformedRow.id = item.Register_id;
@@ -62,7 +72,7 @@ const DailyStatus = ({ props }) => {
     return (
       <div style={{ height: 400, width: '900px' }}>
         {loading ? (
-          <p>Loading...</p>
+          <TruckLoder/>
         ) : (
           <DataGrid
             rows={data}            // The rows from the API response

@@ -150,6 +150,7 @@ const currentDate = new Date();
 const currentYear = currentDate.getFullYear();
 console.log("Current Year: " + currentYear);
 const registerBranchId = data.Register_Branch_Id;
+const registerBranchCode=data.Register_Branch_Code;
 const mawbNumber = data.MAWB_NO;
 const HAWB_NO = data.HAWB_NO;
 
@@ -166,7 +167,7 @@ ormdb.query(maxJobCountQuery, [registerBranchId, currentYear], (err, maxCountRes
     const newJobCount = maxCount + 1;
 
     // Update data object with calculated values
-   data.JOB_DOCKETNO = "AIF/"+registerBranchId+"/"+currentYear+"/"+newJobCount;
+   data.JOB_DOCKETNO = "AIF/"+registerBranchCode+"/"+currentYear+"/"+newJobCount;
     data.JobCount = newJobCount;
 
 query = "INSERT INTO `air_import_ff` SET  ? ";

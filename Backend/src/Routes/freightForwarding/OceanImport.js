@@ -109,8 +109,9 @@ const currentDate = new Date();
 const currentYear = currentDate.getFullYear();
 console.log("Current Year: " + currentYear);
 const registerBranchId = data.Register_Branch_Id;
-const mawbNumber = data.MAWB_NO;
-const HAWB_NO = data.HAWB_NO;
+const registerBranchCode=data.Register_Branch_Code;
+const mawbNumber = data.MBL_NO;
+const HAWB_NO = data.HBL_NO;
 
 const maxJobCountQuery = "SELECT MAX(JobCount) as count FROM `ocean_import_ff` WHERE `Register_Branch_Id`=? AND YEAR(Created_Date)=?";
 
@@ -125,7 +126,7 @@ ormdb.query(maxJobCountQuery, [registerBranchId, currentYear], (err, maxCountRes
     const newJobCount = maxCount + 1;
 
     // Update data object with calculated values
-   data.JOB_DOCKETNO = "OIF/"+registerBranchId+"/"+currentYear+"/"+newJobCount;
+   data.JOB_DOCKETNO = "OIF/"+registerBranchCode+"/"+currentYear+"/"+newJobCount;
     data.JobCount = newJobCount;
 
 query = "INSERT INTO `ocean_import_ff` SET  ? ";
