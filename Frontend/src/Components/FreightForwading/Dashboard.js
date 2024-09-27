@@ -1,102 +1,117 @@
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
+import React, { useEffect, useState } from 'react';
+import { BarChart } from '@mui/x-charts/BarChart';
+import axios from 'axios';
+import Modal from '@mui/material/Modal';
 import { useNavigate } from 'react-router-dom';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import Tooltip from '@mui/material/Tooltip'; // Import Tooltip
 
-// Register the required components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-const BranchChart = () => {
+export default function StackBars() {
+  const [data, setData] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const navigate = useNavigate();
 
-  // Static data
-  const branchData = [
-    { branchName: 'Branch 1', totalEntries: 100, pendingEntries: 30, completedEntries: 70 },
-    { branchName: 'Branch 2', totalEntries: 120, pendingEntries: 20, completedEntries: 100 },
-    { branchName: 'Branch 3', totalEntries: 90, pendingEntries: 40, completedEntries: 50 },
-    { branchName: 'Branch 4', totalEntries: 80, pendingEntries: 25, completedEntries: 55 },
-    { branchName: 'Branch 5', totalEntries: 110, pendingEntries: 10, completedEntries: 100 },
-    { branchName: 'Branch 6', totalEntries: 130, pendingEntries: 60, completedEntries: 70 },
-    { branchName: 'Branch 7', totalEntries: 95, pendingEntries: 15, completedEntries: 80 },
-    { branchName: 'Branch 8', totalEntries: 105, pendingEntries: 35, completedEntries: 70 },
-  ];
+  // Fetch data from API
+  useEffect(()  => {
+    const fetchData=async()=>{
+    const response = await axios.post(`${API_BASE_URL}/Dashboard/AirImporttFF`);
+    console.log(response.data);
+        setData(response.data);
 
-  // Prepare chart data
-  const labels = branchData.map(item => item.branchName);
-  const totalEntries = branchData.map(item => item.totalEntries);
-  const pendingEntries = branchData.map(item => item.pendingEntries);
-  const completedEntries = branchData.map(item => item.completedEntries);
+    }
 
-  const chartData = {
-    labels,
-    datasets: [
-      {
-        label: 'Total Transactions',
-        data: totalEntries,
-        backgroundColor: '#8EC400',
-      },
-      {
-        label: 'Pending OR',
-        data: pendingEntries,
-        backgroundColor: 'rgba(255, 206, 86, 0.6)',
-      },
-      {
-        label: 'Completed OR',
-        data: completedEntries,
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      },
-    ],
+   
+  
+    
+    fetchData();
+
+  }, []);
+
+  // Handle bar click
+  const handleBarClick = (branch, category) => {
+
+    console.log('Branch:', branch, 'Category:', category);
+    setSelectedBranch(branch);
+    setSelectedCategory(category);
+    setOpen(true);
   };
 
-  const handleBarClick = (elems) => {
-    if (elems.length > 0) {
-      const datasetIndex = elems[0].datasetIndex;
-      const index = elems[0].index;
-      const branchName = labels[index];
+  // Close modal
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-      if (datasetIndex === 1) { // Clicked on Pending Entries
-        navigate(`/Operation/Pending`, { state: { type: 'Air Export' } });
-      } else if (datasetIndex === 2) { // Clicked on Completed Entries
-        navigate(`/ViewEdit`);
-      }
-    }
+  const handleModalRedirect = () => {
+    // Navigate to a specific route with branch and category data
+    navigate(`/details/${selectedBranch}/${selectedCategory}`);
+    handleClose(); // Close modal after navigation
   };
 
   return (
-    <div style={{ width: '1106px', height: '500px' }}>
-      <Bar
-        data={chartData}
-        options={{
-          onClick: (evt, elems) => handleBarClick(elems),
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-            title: {
-              display: true,
-              text: 'NX-OPERATION REGISTER',
+    <>
+      <BarChart
+        dataset={data}
+        series={[
+          { dataKey: 'completed_count', stack: 'tasks',color: '#8EC300',label:'Completed' , 
+            onClick: (e) => {
+              console.log('Event:', e); // Check the entire event object
+  console.log('Row Data:', e.row); // Check the row data
+              handleBarClick(e.row.branch_code, 'completed_count');
             },
           },
-        }}
-      />
-    </div>
-  );
-};
+          { dataKey: 'incomplete_count', stack: 'tasks',color: 'red',label:'Incomplete',
+            onClick: (e) => {
+              console.log('Incomplete Bar Clicked:', e); // Log event data
+              handleBarClick(e.row.branch_code, 'incomplete_count');
+            },
 
-export default BranchChart;
+          },
+          { dataKey: 'fiancecapture_complete_count', stack: 'finance', color: '#2196f3',label:'Finance Complete', onClick: (e) => handleBarClick(e.row.branch, 'fiancecapture_complete_count') },
+          { dataKey: 'fianceincomplete', stack: 'finance',  color: '#ff9800', label:'Finance Incomplete',onClick: (e) => handleBarClick(e.row.branch, 'fianceincomplete') },
+        ]}
+        xAxis={[{ scaleType: 'band', dataKey: 'branch_code' }]}
+        slotProps={{
+          legend: { hidden: true }, // Hides legend if needed
+          tooltip: { // Customizing the tooltip
+            renderTooltip: (params) => {
+              return (
+                <div>
+                  <strong>{params.row.branch_code}</strong>
+                  <ul style={{ listStyle: 'none', padding: 0 }}>
+                    {params.series.map((seriesItem, idx) => (
+                      <li key={idx} style={{ display: 'flex', alignItems: 'center' }}>
+                        <span
+                          style={{
+                            width: 10,
+                            height: 10,
+                            backgroundColor: seriesItem.color,
+                            display: 'inline-block',
+                            marginRight: 5,
+                          }}
+                        />
+                        <span>{seriesItem.label}: {params.row[seriesItem.dataKey]}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            }
+          }
+        }}
+        width={1100}
+        height={500}
+      />
+       
+
+      <Modal open={open} onClose={handleClose}>
+        <div style={{ padding: 20 }}>
+          <h2>{`Details for ${selectedBranch} - ${selectedCategory}`}</h2>
+          <p>Show the respective data here</p>
+          <button onClick={handleModalRedirect}>Go to Full Details</button>
+        </div>
+      </Modal>
+    </>
+  );
+}

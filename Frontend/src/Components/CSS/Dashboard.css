@@ -1,13 +1,13 @@
 /* Use stable parent classes to scope styles */
 .custom-table .MuiTableCell-root {
     padding: 2px 0px 0px 0px;
+    
 }
 
 .custom-table .MuiTableCell-root.border-style {
     border-bottom: 1px solid rgba(224, 224, 224, 1);
     margin-left: 10px;
-    color: rgb(249 238 238 / 87%);
-    background-color: #1a005d;
+    
 }
 
 .custom-table-container .MuiPaper-root {
@@ -38,8 +38,11 @@
     background-color: #ffffff;
 }
 
-.custom-table-head .MuiTableHead-root {
+.custom-table-head .MuiTableCell-root  {
     background-color: rgba(25, 118, 210, 0.2);
+    color: #fff;
+   
+    
 }
 
 .custom-autocomplete .MuiOutlinedInput-root .MuiAutocomplete-input {
@@ -62,3 +65,11 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+
+.custom-textfield .MuiFormLabel-root.Mui-disabled {
+    color: #1A005D;
+}
+
+.custom-scroll .css-1rtad1{
+    width: 50%;
+}

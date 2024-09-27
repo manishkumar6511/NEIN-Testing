@@ -62,7 +62,18 @@ export default function VerticalTabs({ tabs }) {
         sx={{ borderRight: 1, borderColor: 'divider' }}
 >
         {tabs.map((tab, index) => (
-<Tab key={index} label={tab.label} {...a11yProps(index)} />
+<Tab key={index} label={tab.label} 
+{...a11yProps(index)} 
+sx={{
+  '&.Mui-selected': {
+    color: '#8EC400', // Color when selected
+    fontWeight: '700', // Font weight when selected
+  },
+  color: '#1A005D', // Default color when not selected
+  fontWeight: '700', // Default font weight when not selected
+}}
+
+/>
         ))}
 </Tabs>
       {tabs.map((tab, index) => (

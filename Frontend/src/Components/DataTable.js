@@ -18,7 +18,7 @@ const DataTable = ({
 }) => {
   const[selectedMawbNo,setSelectedMawbNo]=useState('');
   const navigate = useNavigate();
- console.log("Selected sub branch options......", subBranchOptions);
+//  console.log("Selected sub branch options......", subBranchOptions);
   let groupedData;
 
 if (selectedTab === 0 && selectedType === "Air Export") {

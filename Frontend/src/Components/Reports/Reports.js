@@ -19,11 +19,16 @@ import Top15 from "./Top15";
 import TopCarrier from "./TopCarrier";
 import Pic from "./Pic";
 import CommonReport from "./CommonReport";
-function Report() {
+import axios from "axios";
+import Reports from "./Report";
 
+function Report() {
+const[subBranchOptions,setSubBranchOptions]=useState([]);
 const [validationErrors, setValidationErrors] = useState({});
 const [selectedComponent, setSelectedComponent] = useState(null);
 const[subDivisions,setSubDivision]=useState([]);
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 //****Centralize State **** */
 //********************************************************************************************************************************** */
@@ -113,20 +118,13 @@ const moduleConfig = {
         ],
         apiEndpoint: 'http://localhost:5000/Reports/aefRegister'
       },
-      report2: {
-        headers: [
-          { field: 'id', headerName: 'ID', width: 90 },
-          { field: 'description', headerName: 'Description', width: 150 },
-        ],
-        apiEndpoint: '/api/ff/air-import/report2'
-      },
-      // Add up to 10 reports here
+     
     },
     AirExport: {
       report1: {
         headers: [
           { field: 'Register_id', headerName: 'SL NO', width: 80 },
-          { field: 'JOB_DOCKETNO', headerName: 'DKT No', width: 150 },
+          { field: 'Orignal_Docket_No', headerName: 'DKT No', width: 150 },
           { field: 'NEWINS_REFERENCE_NO', headerName: 'REF NO', width: 150 },
           { field: 'MAWB_NO', headerName: 'MAWB NO', width: 150 },
           { field: 'MAWB_DATE', headerName: 'MAWB DT', width: 150 },
@@ -134,65 +132,66 @@ const moduleConfig = {
           { field: 'MAWB_CHARGEABLE_WEIGHT_KG', headerName: 'MAWB C.WEIGHT', width: 150 },
           { field: 'HAWB_NO', headerName: 'HAWB', width: 150 },
           { field: 'HAWB_DATE', headerName: 'HAWB DT', width: 150 },
-          { field: 'mawb_hawb_pices', headerName: 'MAWB/HAWB PICES', width: 150 },
+         
           { field: 'HAWB_GROSS_WEIGHT', headerName: 'HAWB G.WEIGHT', width: 150 },
           { field: 'HAWB_CHARGEABLE_WEIGHT_KG', headerName: 'HAWB C.WEIGHT', width: 150 },
-          { field: 'exporter', headerName: 'Exporter', width: 150 },
-          { field: 'COMMODITY_CODE', headerName: 'Commodity', width: 150 },
+          { field: 'SHIPPER', headerName: 'Exporter', width: 150 },
+          { field: 'MainProduct', headerName: 'Commodity', width: 150 },
           { field: 'CONSIGNEE', headerName: 'Consignee', width: 150 },
           { field: 'DESTINATION', headerName: 'Dest', width: 100 },
           { field: 'COUNTRY', headerName: 'Dest-Country', width: 150 },
-          { field: 'area', headerName: 'Area', width: 100 },
+          { field: 'Area', headerName: 'Area', width: 100 },
           { field: 'AIR_LINE_NAME', headerName: 'AIRLINE', width: 150 },
-          { field: 'inv_no_dt', headerName: 'INV NO DT', width: 150 },
+        //  { field: 'inv_no_dt', headerName: 'INV NO DT', width: 150 },
           { field: 'DESCRIPTION_OF_GOODS', headerName: 'DESCRIPTION', width: 150 },
-          { field: 'pick_up_date', headerName: 'PICK UP DATE', width: 150 },
-          { field: 'CUSTOMS_CLEARANCE_DATE', headerName: 'CUSTOMS CLR DT-', width: 150 },
+         // { field: 'pick_up_date', headerName: 'PICK UP DATE', width: 150 },
+          { field: 'customClearanceDate', headerName: 'CUSTOMS CLR DT-', width: 150 },
           { field: 'FLIGHT_NO', headerName: 'Flight Details', width: 150 },
-          { field: 'first_flight', headerName: '1ST FLIGHT', width: 150 },
-          { field: 'second_flight', headerName: '2ND FLIGHT', width: 150 },
-          { field: 'mawb_pp_cc', headerName: 'MAWB pp/cc', width: 150 },
+        //  { field: 'first_flight', headerName: '1ST FLIGHT', width: 150 },
+         // { field: 'second_flight', headerName: '2ND FLIGHT', width: 150 },
+          { field: 'SHIPMENT_TYPE', headerName: 'MAWB pp/cc', width: 150 },
           { field: 'MAWB_TOTAL_FREIGHT_AMOUNT', headerName: 'MAWB Net Ft Amt', width: 150 },
-          { field: 'mawb_total_pp_amt', headerName: 'MAWB Total PP AMT', width: 150 },
-          { field: 'surcharges', headerName: 'Surcharges', width: 150 },
-          { field: 'hawb_pp_cc', headerName: 'HAWB pp/cc', width: 150 },
-          { field: 'hawb_currency', headerName: 'HAWB CURRENCY', width: 150 },
-          { field: 'hawb_amount', headerName: 'HAWB AMOUNT', width: 150 },
-          { field: 'sb_no_date', headerName: 'SB NO & DATE', width: 150 },
-          { field: 'fob_amt', headerName: 'FOB Amt', width: 150 },
-          { field: 'sb_copy_dispatch_dt', headerName: 'SB COPY DISPATCH DT', width: 150 },
-          { field: 'documents_waybill_no', headerName: 'DOCUMENTS COURIER WAYBILL NO', width: 150 },
+         // { field: 'mawb_total_pp_amt', headerName: 'MAWB Total PP AMT', width: 150 },
+          //{ field: 'surcharges', headerName: 'Surcharges', width: 150 },
+          //{ field: 'hawb_pp_cc', headerName: 'HAWB pp/cc', width: 150 },
+        //  { field: 'hawb_currency', headerName: 'HAWB CURRENCY', width: 150 },
+          //{ field: 'hawb_amount', headerName: 'HAWB AMOUNT', width: 150 },
+         // { field: 'sb_no_date', headerName: 'SB NO & DATE', width: 150 },
+          { field: 'FOB_VALUE_INR', headerName: 'FOB Amt', width: 150 },
+         // { field: 'sb_copy_dispatch_dt', headerName: 'SB COPY DISPATCH DT', width: 150 },
+        //  { field: 'documents_waybill_no', headerName: 'DOCUMENTS COURIER WAYBILL NO', width: 150 },
           { field: 'handling_amt', headerName: 'HANDLING AMOUNT', width: 150 },
-          { field: 'nippon_inv_dt', headerName: 'NIPPON INV # / DT', width: 150 },
-          { field: 'bills_dispatch_dt', headerName: 'BILLS DISPATCH DT', width: 150 },
-          { field: 'bills_courier_waybill_no', headerName: 'BILLS COURIER WAYBILL NO', width: 150 },
-          { field: 'ddu_ddp_inv_dt', headerName: 'DDU & DDP INV # & DT', width: 150 },
-          { field: 'ddu_ddp_inv_dispatch_dt', headerName: 'DDU / DDP INV DISPATCH DT', width: 150 },
-          { field: 'incoterm', headerName: 'INCOTERM', width: 100 },
-          { field: 'remark', headerName: 'REMARK', width: 150 },
-          { field: 'publish_rates', headerName: 'Publish Rates', width: 150 },
-          { field: 'buying_net_net_rates', headerName: 'Buying net net rates', width: 150 },
-          { field: 'fsc', headerName: 'FSC', width: 100 },
-          { field: 'scc', headerName: 'SCC', width: 100 },
-          { field: 'other_surcharges', headerName: 'OTHER SURCHARGES', width: 150 },
-          { field: 'service_type', headerName: 'Type of Service ( DG / Temp )', width: 150 },
-          { field: 'selling_net_net_rates', headerName: 'Selling net net rates', width: 150 },
-          { field: 'difference', headerName: 'Difference', width: 100 },
-          { field: 'profit_loss', headerName: 'Profit / Loss', width: 150 },
-          { field: 'total_all_freight_carrier', headerName: 'Total All in Freight need to pay to carrier', width: 150 },
-          { field: 'total_all_freight_customer', headerName: 'Total All in Freight billing to customer', width: 150 },
-          { field: 'prepared_by', headerName: 'Prepared by/reg/name', width: 150 },
-          { field: 'executive_name', headerName: 'EXECUTIVE/NAME', width: 150 },
-          { field: 'nomination', headerName: 'Nomination', width: 150 },
+         // { field: 'nippon_inv_dt', headerName: 'NIPPON INV # / DT', width: 150 },
+        //  { field: 'bills_dispatch_dt', headerName: 'BILLS DISPATCH DT', width: 150 },
+         //  { field: 'bills_courier_waybill_no', headerName: 'BILLS COURIER WAYBILL NO', width: 150 },
+        //  { field: 'ddu_ddp_inv_dt', headerName: 'DDU & DDP INV # & DT', width: 150 },
+        //  { field: 'ddu_ddp_inv_dispatch_dt', headerName: 'DDU / DDP INV DISPATCH DT', width: 150 },
+          { field: 'DDU_DDP', headerName: 'INCOTERM', width: 100 },
+          { field: 'REMARKS', headerName: 'REMARK', width: 150 },
+         // { field: 'publish_rates', headerName: 'Publish Rates', width: 150 },
+          { field: 'BUYING_RATE', headerName: 'Buying  net rates', width: 150 },
+        //  { field: 'fsc', headerName: 'FSC', width: 100 },
+         // { field: 'scc', headerName: 'SCC', width: 100 },
+        //  { field: 'other_surcharges', headerName: 'OTHER SURCHARGES', width: 150 },
+         // { field: 'service_type', headerName: 'Type of Service ( DG / Temp )', width: 150 },
+          { field: 'SELL_RATE', headerName: 'Selling  net rates', width: 150 },
+          { field: 'MARGIN_KG', headerName: 'Difference', width: 100 },
+          { field: 'TOTAL_MARGIN', headerName: 'Profit / Loss', width: 150 },
+          { field: 'DUE_CARRIER', headerName: 'Total All in Freight need to pay to carrier', width: 150 },
+          { field: 'FREIGHT_AMOUNT', headerName: 'Total All in Freight billing to customer', width: 150 },
+         // { field: 'prepared_by', headerName: 'Prepared by/reg/name', width: 150 },
+          { field: 'Initiator_Name', headerName: 'EXECUTIVE/NAME', width: 150 },
+         // { field: 'nomination', headerName: 'Nomination', width: 150 },
           { field: 'cha', headerName: 'CHA', width: 100 },
-          { field: 'pick_up', headerName: 'Pick up', width: 100 },
-          { field: 'negative_margin', headerName: 'Negative Margin', width: 150 },
-          { field: 'molex_negative', headerName: 'Molex Negative', width: 150 },
-          { field: 'shahi_negative', headerName: 'Shahi Negative', width: 150 },
-          { field: 'month', headerName: 'Month', width: 100 },
-          { field: 'date_hand_finance', headerName: 'Date of Hand over to Finance', width: 150 },
+         // { field: 'pick_up', headerName: 'Pick up', width: 100 },
+          //{ field: 'negative_margin', headerName: 'Negative Margin', width: 150 },
+         // { field: 'molex_negative', headerName: 'Molex Negative', width: 150 },
+          //{ field: 'shahi_negative', headerName: 'Shahi Negative', width: 150 },
+          //{ field: 'month', headerName: 'Month', width: 100 },
+          //{ field: 'date_hand_finance', headerName: 'Date of Hand over to Finance', width: 150 },
         ],
-        apiEndpoint: 'http://localhost:5000/Reports/aefRegister'
+        apiEndpoint: 'http://localhost:5000/Reports/aefRegister',
+        config:{configState}
       },
       report2: {
         headers: [
@@ -200,26 +199,29 @@ const moduleConfig = {
           { field: 'SHIPPER', headerName: 'Exporter', width: 150 },
           { field: 'MAWB_NO', headerName: 'MAWB No', width: 150 },
           { field: 'DESTINATION', headerName: 'DEST', width: 150 },
-          { field: 'Nomination', headerName: 'Nomination', width: 150 },
+         // { field: 'Nomination', headerName: 'Nomination', width: 150 },
           { field: 'cha', headerName: 'CHA', width: 150 },
-          { field: 'PickUp', headerName: 'Pick Up', width: 150 },
+         // { field: 'PickUp', headerName: 'Pick Up', width: 150 },
           { field: 'MAWB_CHARGEABLE_WEIGHT_KG', headerName: 'MAWB C.Weight', width: 150 },
           { field: 'BUYING_RATE', headerName: 'Buy Rates', width: 150 },
           { field: 'SELL_RATE', headerName: 'Sell Rates', width: 150 },
           { field: 'MARGIN_KG', headerName: 'Diff/KG', width: 150 },
           { field: 'TOTAL_MARGIN', headerName: 'Profit/Loss', width: 150 },
-          { field: 'NegativeMargin', headerName: 'Negative Margin', width: 150 },
-          { field: 'MolexMargin', headerName: 'Molex Margin', width: 150 },
-          { field: 'ShahiNegative', headerName: 'Shahi Negative', width: 150 },
-          { field: 'Margin', headerName: 'Margin %', width: 150 },
+          //{ field: 'NegativeMargin', headerName: 'Negative Margin', width: 150 },
+          //{ field: 'MolexMargin', headerName: 'Molex Margin', width: 150 },
+          //{ field: 'ShahiNegative', headerName: 'Shahi Negative', width: 150 },
+          { field: 'MARGIN', headerName: 'Margin %', width: 150 },
          
         ],
-       apiEndpoint: 'http://localhost:5000/Reports/aefRegister'
+       apiEndpoint: 'http://localhost:5000/Reports/aefRegister',
+       config:{configState}
       },
       report3: {
+
+
         headers: [
           { field: 'Register_id', headerName: 'SL NO', width: 80 },
-          { field: 'JOB_DOCKETNO', headerName: 'DKT No', width: 150 },
+          { field: 'Orignal_Docket_No', headerName: 'DKT No', width: 150 },
           { field: 'NEWINS_REFERENCE_NO', headerName: 'REF NO', width: 150 },
           { field: 'MAWB_NO', headerName: 'MAWB NO', width: 150 },
           { field: 'MAWB_DATE', headerName: 'MAWB DT', width: 150 },
@@ -227,58 +229,59 @@ const moduleConfig = {
           { field: 'MAWB_CHARGEABLE_WEIGHT_KG', headerName: 'MAWB C.WEIGHT', width: 150 },
           { field: 'HAWB_NO', headerName: 'HAWB', width: 150 },
           { field: 'HAWB_DATE', headerName: 'HAWB DT', width: 150 },
-          { field: 'mawb_hawb_pices', headerName: 'MAWB/HAWB PICES', width: 150 },
+         // { field: 'mawb_hawb_pices', headerName: 'MAWB/HAWB PICES', width: 150 },
           { field: 'HAWB_GROSS_WEIGHT', headerName: 'HAWB G.WEIGHT', width: 150 },
           { field: 'HAWB_CHARGEABLE_WEIGHT_KG', headerName: 'HAWB C.WEIGHT', width: 150 },
-          { field: 'exporter', headerName: 'Exporter', width: 150 },
-          { field: 'COMMODITY_CODE', headerName: 'Commodity', width: 150 },
+          { field: 'SHIPPER', headerName: 'Exporter', width: 150 },
+          { field: 'MainProduct', headerName: 'Commodity', width: 150 },
           { field: 'CONSIGNEE', headerName: 'Consignee', width: 150 },
           { field: 'DESTINATION', headerName: 'Dest', width: 100 },
           { field: 'COUNTRY', headerName: 'Dest-Country', width: 150 },
-          { field: 'area', headerName: 'Area', width: 100 },
+          { field: 'Area', headerName: 'Area', width: 100 },
           { field: 'AIR_LINE_NAME', headerName: 'AIRLINE', width: 150 },
-          { field: 'inv_no_dt', headerName: 'INV NO DT', width: 150 },
+         // { field: 'inv_no_dt', headerName: 'INV NO DT', width: 150 },
           { field: 'DESCRIPTION_OF_GOODS', headerName: 'DESCRIPTION', width: 150 },
-          { field: 'pick_up_date', headerName: 'PICK UP DATE', width: 150 },
-          { field: 'CUSTOMS_CLEARANCE_DATE', headerName: 'CUSTOMS CLR DT-', width: 150 },
+         // { field: 'pick_up_date', headerName: 'PICK UP DATE', width: 150 },
+          { field: 'customClearanceDate', headerName: 'CUSTOMS CLR DT-', width: 150 },
           { field: 'FLIGHT_NO', headerName: 'Flight Details', width: 150 },
-          { field: 'first_flight', headerName: '1ST FLIGHT', width: 150 },
-          { field: 'second_flight', headerName: '2ND FLIGHT', width: 150 },
-          { field: 'mawb_pp_cc', headerName: 'MAWB pp/cc', width: 150 },
+          //{ field: 'first_flight', headerName: '1ST FLIGHT', width: 150 },
+          //{ field: 'second_flight', headerName: '2ND FLIGHT', width: 150 },
+        //  { field: 'mawb_pp_cc', headerName: 'MAWB pp/cc', width: 150 },
           { field: 'MAWB_TOTAL_FREIGHT_AMOUNT', headerName: 'MAWB Net Ft Amt', width: 150 },
-          { field: 'mawb_total_pp_amt', headerName: 'MAWB Total PP AMT', width: 150 },
-          { field: 'surcharges', headerName: 'Surcharges', width: 150 },
-          { field: 'hawb_pp_cc', headerName: 'HAWB pp/cc', width: 150 },
-          { field: 'hawb_currency', headerName: 'HAWB CURRENCY', width: 150 },
-          { field: 'hawb_amount', headerName: 'HAWB AMOUNT', width: 150 },
-          { field: 'sb_no_date', headerName: 'SB NO & DATE', width: 150 },
-          { field: 'fob_amt', headerName: 'FOB Amt', width: 150 },
-          { field: 'sb_copy_dispatch_dt', headerName: 'SB COPY DISPATCH DT', width: 150 },
-          { field: 'documents_waybill_no', headerName: 'DOCUMENTS COURIER WAYBILL NO', width: 150 },
-          { field: 'handling_amt', headerName: 'HANDLING AMOUNT', width: 150 },
-          { field: 'nippon_inv_dt', headerName: 'NIPPON INV # / DT', width: 150 },
-          { field: 'bills_dispatch_dt', headerName: 'BILLS DISPATCH DT', width: 150 },
-          { field: 'bills_courier_waybill_no', headerName: 'BILLS COURIER WAYBILL NO', width: 150 },
-          { field: 'ddu_ddp_inv_dt', headerName: 'DDU & DDP INV # & DT', width: 150 },
-          { field: 'ddu_ddp_inv_dispatch_dt', headerName: 'DDU / DDP INV DISPATCH DT', width: 150 },
-          { field: 'incoterm', headerName: 'INCOTERM', width: 100 },
-          { field: 'remark', headerName: 'REMARK', width: 150 },
-          { field: 'publish_rates', headerName: 'Publish Rates', width: 150 },
-          { field: 'buying_net_net_rates', headerName: 'Buying net net rates', width: 150 },
-          { field: 'fsc', headerName: 'FSC', width: 100 },
-          { field: 'scc', headerName: 'SCC', width: 100 },
-          { field: 'other_surcharges', headerName: 'OTHER SURCHARGES', width: 150 },
-          { field: 'service_type', headerName: 'Type of Service ( DG / Temp )', width: 150 },
-          { field: 'selling_net_net_rates', headerName: 'Selling net net rates', width: 150 },
-          { field: 'difference', headerName: 'Difference', width: 100 },
-          { field: 'profit_loss', headerName: 'Profit / Loss', width: 150 },
-          { field: 'total_all_freight_carrier', headerName: 'Total All in Freight need to pay to carrier', width: 150 },
-          { field: 'total_all_freight_customer', headerName: 'Total All in Freight billing to customer', width: 150 },
-          { field: 'prepared_by', headerName: 'Prepared by/reg/name', width: 150 },
-          { field: 'executive_name', headerName: 'EXECUTIVE/NAME', width: 150 },
+         // { field: 'mawb_total_pp_amt', headerName: 'MAWB Total PP AMT', width: 150 },
+          //{ field: 'surcharges', headerName: 'Surcharges', width: 150 },
+          //{ field: 'hawb_pp_cc', headerName: 'HAWB pp/cc', width: 150 },
+         // { field: 'hawb_currency', headerName: 'HAWB CURRENCY', width: 150 },
+         // { field: 'hawb_amount', headerName: 'HAWB AMOUNT', width: 150 },
+         // { field: 'sb_no_date', headerName: 'SB NO & DATE', width: 150 },
+         // { field: 'fob_amt', headerName: 'FOB Amt', width: 150 },
+         // { field: 'sb_copy_dispatch_dt', headerName: 'SB COPY DISPATCH DT', width: 150 },
+         // { field: 'documents_waybill_no', headerName: 'DOCUMENTS COURIER WAYBILL NO', width: 150 },
+         // { field: 'handling_amt', headerName: 'HANDLING AMOUNT', width: 150 },
+          //{ field: 'nippon_inv_dt', headerName: 'NIPPON INV # / DT', width: 150 },
+          //{ field: 'bills_dispatch_dt', headerName: 'BILLS DISPATCH DT', width: 150 },
+         // { field: 'bills_courier_waybill_no', headerName: 'BILLS COURIER WAYBILL NO', width: 150 },
+          //{ field: 'ddu_ddp_inv_dt', headerName: 'DDU & DDP INV # & DT', width: 150 },
+         // { field: 'ddu_ddp_inv_dispatch_dt', headerName: 'DDU / DDP INV DISPATCH DT', width: 150 },
+          { field: 'DDU_DDP', headerName: 'INCOTERM', width: 100 },
+          { field: 'REMARKS', headerName: 'REMARK', width: 150 },
+         // { field: 'publish_rates', headerName: 'Publish Rates', width: 150 },
+          { field: 'BUYING_RATE', headerName: 'Buying net net rates', width: 150 },
+          //{ field: 'fsc', headerName: 'FSC', width: 100 },
+          //{ field: 'scc', headerName: 'SCC', width: 100 },
+          //{ field: 'other_surcharges', headerName: 'OTHER SURCHARGES', width: 150 },
+          //{ field: 'service_type', headerName: 'Type of Service ( DG / Temp )', width: 150 },
+          { field: 'SELL_RATE', headerName: 'Selling net rates', width: 150 },
+          { field: 'MARGIN_KG', headerName: 'Difference', width: 100 },
+          { field: 'TOTAL_MARGIN', headerName: 'Profit / Loss', width: 150 },
+          { field: 'DUE_CARRIER', headerName: 'Total All in Freight need to pay to carrier', width: 150 },
+          { field: 'FREIGHT_AMOUNT', headerName: 'Total All in Freight billing to customer', width: 150 },
+        //  { field: 'prepared_by', headerName: 'Prepared by/reg/name', width: 150 },
+          { field: 'Initiator_Name', headerName: 'EXECUTIVE/NAME', width: 150 },
          
         ],
-       apiEndpoint: 'http://localhost:5000/Reports/aefRegister'
+       apiEndpoint: 'http://localhost:5000/Reports/aefRegister',
+       config:{configState}
       },
       report3: {
         apiEndpoint: 'http://localhost:5000/Reports/Comparison'
@@ -1005,11 +1008,12 @@ function updatetabs(){
       {label:'DAILY STATUS', component: configState.currentConfig&&<DailyStatus props={configState.currentConfig['report2']}/>},
       {label:'2023 v 2024',component:<MonthComparision props={configState}/>},
       {label:'CHA',component: configState.currentConfig&&<CHAReport props={configState.currentConfig['report1']}/>},
-      {label:'AWR',component:<AWR props={configState.toDate}/>},
+      {label:'AWR',component:<AWR props={configState}/>},
       {label:'CWR',component:<CWRData props={configState}/>},
-      {label:'TOP 15',component:<Top15 props={configState.toDate}/>},
-      {label:'TOP CARRIER',component:<TopCarrier props={configState.toDate}/>},
-      {label:'PIC',component:<Pic props={configState.toDate}/>},
+      {label:'TOP 15',component:<Top15 props={configState}/>},
+      {label:'TOP CARRIER',component:<TopCarrier props={configState}/>},
+      {label:'PIC',component:<Pic props={configState}/>},
+      {label:'CUSTOM REPORT',component:<Reports />},
       // {label:'CUSTOM REPORT',component:<h1>CUSTOM REPORT</h1>},
     ],
     OceanImport: [
@@ -1069,26 +1073,13 @@ function updatetabs(){
 }
  
 
-const subBranchOptions = [
-  { label: 'Bangalore', value: '10' },
-  { label: 'Chennai', value: '40' },
-  { label: 'Mumbai', value: '30' }
-];
-
-// const moduleOptions = [
-//   { label: 'Freight Forwarding', value: 'ff' },
-//   { label: 'Custom Brokerage', value: 'cha' },
-//   { label: 'Removals', value: 'removals' }
+// const subBranchOptions = [
+//   { label: 'Bangalore', value: '10' },
+//   { label: 'Chennai', value: '40' },
+//   { label: 'Mumbai', value: '30' }
 // ];
 
-// Define submodules for each module
-// const subDivisions = [
 
-//   { label: 'Air Export', value: 'AirExport' },
-//   { label: 'Air Import', value: 'AirImport' },
-//   { label: 'Ocean Export', value: 'OceanExport' },
-//   { label: 'Ocean Import', value: 'OceanImport' }
-// ];
 
 //** centrlize Sate update  *********************************************************************************************************/
 const handleConfigChange = (field, value) => {
@@ -1132,7 +1123,7 @@ const handleSubmit=()=>{
   const errors = {}; // Object to store validation errors
 
   // Validate `subBranch` field
-  if (!configState.subBranch || (configState.subBranch).trim() === "") {
+  if (!configState.subBranch || (configState.subBranch) === "") {
     errors.subBranch = true; // Mark as an error if empty
   }
   if (!configState.selectedModule || (configState.selectedModule).trim() === "") {
@@ -1192,7 +1183,36 @@ useEffect(()=>{
   console.log(configState.currentConfig);
 },[configState.currentConfig])
 
+useEffect(() => {
+  const fetchSubBranches=async()=>{
+   let reportingBranch="";
+   const storedUser = localStorage.getItem('userDetails');
+   if (storedUser) {
+     const userDetails = JSON.parse(storedUser);
+    
+     reportingBranch=userDetails.reportingBranch;
+     setConfigState((prevState) => ({
+      ...prevState,
+      subBranch: userDetails.branchid || '',  // Update the appropriate field dynamically
+    }));
+    
+   }
+   try {
+     const response = await axios.post(`${API_BASE_URL}/User/subBranch`, {
+       reportingBranch:reportingBranch,
+      
+     });
+setSubBranchOptions(response.data);
 
+   }  catch (error) {
+     console.error('There was an error logging in!', error);
+   }
+ }
+ const debounceFetch = setTimeout(fetchSubBranches, 300);
+
+ return () => clearTimeout(debounceFetch);
+
+}, []); // Effect runs when HA
 
 //************************* *****************************************************************************************************/
 
@@ -1203,28 +1223,41 @@ useEffect(()=>{
         <Grid container spacing={2} style={{ marginTop: '10px' }}  >
           <Grid item xs={2}>
             <FormControl fullWidth>
-              <Autocomplete
-                size="small"
-                freeSolo
-                disableClearable
-                options={subBranchOptions}
-             //   onChange={handleSubBranch}
-             onChange={(event, newValue) => handleConfigChange('subBranch', newValue)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Branch"
-                    InputProps={{
-                      ...params.InputProps,
-                      type: 'search',
-                    }}
-                    required
-                    // error={!!validationErrors?.configState.subBranch && (configState.subBranch === '')}
-                    error={!!validationErrors?.subBranch && (configState.subBranch==='')}
-
-                  />
-                )}
-              />
+            <Autocomplete size="small"  freeSolo id="free-solo-2-demo" disableClearable 
+      options={subBranchOptions}
+      getOptionLabel={(option) => {
+        // If option is an object with branch_name, return that
+        if (typeof option === 'object' && option.branch_name) {
+          return option.branch_name;
+        }
+        // If selectedSubBranch is a branch_type_code, find the matching option
+        const selectedBranch = subBranchOptions.find(subBranch => subBranch.branch_type_code === configState.subBranch);
+       
+        if (typeof selectedBranch === 'object' && selectedBranch.branch_name) {
+          console.log("selectedBranch",selectedBranch.branch_name);
+        return selectedBranch.branch_name ;
+        }
+        return '';
+      }}
+      onChange={(event, newValue) => handleConfigChange('subBranch', newValue)}
+    
+      value={subBranchOptions.find(option => option.branch_type_code === configState.subBranch) || null}
+       renderInput={(params) => (
+       <TextField 
+        {...params}
+        label="Sub Branch"
+        InputProps={{
+        ...params.InputProps,
+        type: 'search',
+        }}
+        
+        InputLabelProps={{ style: { fontSize: '14px'} }}
+        required
+       className="dashboard-autocomplete"
+       
+       
+        />)}/> 
+             
             </FormControl>
           </Grid>
  

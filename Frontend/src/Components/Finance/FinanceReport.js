@@ -241,7 +241,7 @@ const searchBy=[
   // {label:'Select',value:''},
   {label:'Invoice No',value:'Invoice'},
   {label:'AWB No',value:'HAWB'},
-  // {label:'MAWB No',value:'MAWB'},
+   {label:'MAWB No',value:'MAWB'},
 ]
 
 const operations=[

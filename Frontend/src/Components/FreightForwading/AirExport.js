@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from "react";
 import { Card, CardContent, Typography } from '@mui/material';
 import { FormControl, Grid } from '@mui/material';
-import {TextField } from '@mui/material';
+import {TextField,InputAdornment } from '@mui/material';
 import {Button } from '@mui/material';
 import './../CSS/OperationStyles.css';
 import Divider from '@mui/material/Divider';
@@ -19,6 +19,9 @@ import { useNavigate } from 'react-router-dom';
 import TruckLoder from "../centralized_components/truckLoder"; 
 
 function AirExport(){
+
+let errors = {};
+
   const  [loading, setLoading] =  useState(false);
   const navigate = useNavigate();
 // console.log("dataReceived",dataReceived.mawbNo);
@@ -34,12 +37,45 @@ function AirExport(){
 // setMawbNo(dataReceived.mawbNo);
 //   }
 
+const Inco=[
+  {label:'CIF',value:'CIF'},
+  {label:'C&F',value:'C&F'},
+  {label:'DDP',value:'DDP'},
+  {label:'DDU',value:'DDU'},
+  {label:'DAP',value:'DAP'},
+  {label:'FOB/FCA',value:'FOB/FCA'},
+  {label:'Ex-Works',value:'Ex-Works'},
+
+]
+
+
+const[docketPrefix,setDocketPrefix]=useState('');
+const [userInput, setUserInput] = useState(''); // For the editable part
+
+// Handle user input
+const handleUserInputChange = (event) => {
+  const value = event.target.value;
+  const original=docketPrefix+value;
+  setManualData(prevFields => ({
+    ...prevFields,
+    
+    Orignal_Docket_No:original,
+}));
+  console.log("docket valaue",original);
+  setUserInput(value);
+};
+
   useEffect(() => {
   
     if (dataReceived) {
       setMawbNo(dataReceived.mawbNo);
       const newValue=dataReceived.mawbNo;
       console.log("new value in useeffetc",dataReceived);
+      const year=dayjs().year();
+      const docket=`NEIN/${dataReceived.branchCode}/${year}/`;
+      console.log("docket format",docket);
+      setDocketPrefix(docket);
+     
       handleOptionChange('',newValue);
     }else{
       setMawbNo('');
@@ -131,6 +167,10 @@ const[autoFields,setAutoFields]=useState({
   TARIFF_RATE:'',
   DDU_DDP:'',
   DESCRIPTION_OF_GOODS:'',
+  FREIGHT_AMOUNT:'',
+  DUE_CARRIER:'',
+  NETDUE:'',
+  Area:'',
 })
 
 
@@ -141,9 +181,7 @@ const[autoFields,setAutoFields]=useState({
     SELL_RATE:'',
     MARGIN_KG:'',
     TOTAL_MARGIN:'',
-    FREIGHT_AMOUNT:'',
-    DUE_CARRIER:'',
-    NETDUE:'',
+    Orignal_Docket_No:'',
     SHIPPER_INVOICE_NO:'',
     SHIPPING_BILL_NO:'',
     SHIPPING_BILL_DATE:'',
@@ -208,6 +246,8 @@ const[autoFields,setAutoFields]=useState({
         const DUE_CARRIERAmount = parseFloat(newData.DUE_CARRIER) || 0;
         newData.NETDUE = (FREIGHT_AMOUNT + DUE_CARRIERAmount);
       }
+
+
 
       return newData;
     });
@@ -379,19 +419,45 @@ const[autoFields,setAutoFields]=useState({
 
 
   const updateAutoFields = (hawbData) => {
+    const FREIGHT_AMOUNT = (hawbData&&hawbData.FREIGHT_PC_SIGN==='C')?parseFloat(hawbData&&hawbData.FREIGHT_CC).toFixed(2):parseFloat(hawbData&&hawbData.FREIGHT_PP).toFixed(2);
+      const DUE_CARRIERAmount = parseFloat(hawbData.DUE_CARR) || 0;
+      console.log("Freight Amount", parseInt(FREIGHT_AMOUNT));
+      console.log("Due Amount",DUE_CARRIERAmount);
+      console.log("net Due Amount",FREIGHT_AMOUNT+DUE_CARRIERAmount);
+      const NETDUE = (parseInt(FREIGHT_AMOUNT) + parseInt(DUE_CARRIERAmount));
+
+      const dueAgent = hawbData.DUE_AGENT || '';
+const freightAmount = dueAgent ? parseFloat(dueAgent).toString() : '';
+const duecarrier = hawbData.DUE_CARR || '';
+const carrier = duecarrier ? parseFloat(duecarrier).toString() : '';
+const freight = hawbData.FREIGHT_RATE || '';
+const tariff = freight ? parseFloat(freight).toString() : '';
+
+// const area=(hawbData.IATACODE)==="Tc1"
+let area="";
+if(hawbData.IATACODE==='TC1' ||hawbData.IATACODE==='TC-1'){
+  area="1";
+}else if(hawbData.IATACODE==='TC2'){
+  area="2";
+}else if(hawbData.IATACODE==='TC3'){
+  area="3";
+}else{
+  area="JAPAN";
+}
+
     setAutoFields({
       MAWB_NO: hawbData.MAWB_BL_NO || '',
       MAWB_DATE: hawbData.BL_CONSO_DATE ? dayjs(hawbData.BL_CONSO_DATE, 'DD-MM-YY').format('YYYY-MM-DD') : null,// Default to current date if not set
-      MAWB_NOOF_PKGS: hawbData.TOTAL_NO_OF_PKGS || '',
-      MAWB_CHARGEABLE_WEIGHT_KG: hawbData.TOTAL_CHARGEABLE_WGT || '',
-      MAWB_TOTAL_FREIGHT_AMOUNT:(hawbData&&hawbData.FREIGHT_PC_SIGN==='C')?(hawbData&&hawbData.CHARGE_TOTAL_CC):(hawbData&&hawbData.CHARGE_TOTAL_PP),
+      MAWB_NOOF_PKGS: parseFloat(hawbData.TOTAL_NO_OF_PKGS).toFixed(2) || '',
+      MAWB_CHARGEABLE_WEIGHT_KG: parseFloat(hawbData.TOTAL_CHARGEABLE_WGT).toFixed(2) || '',
+      MAWB_TOTAL_FREIGHT_AMOUNT:(hawbData&&hawbData.FREIGHT_PC_SIGN==='C')?parseFloat(hawbData&&hawbData.CHARGE_TOTAL_CC).toFixed(2):parseFloat(hawbData&&hawbData.CHARGE_TOTAL_PP).toFixed(2),
       SHIPMENT_TYPE:(hawbData&&hawbData.FREIGHT_PC_SIGN==='P')?'PP':'CC' || '',
 	    HAWB_NO: hawbData.MASTER_HOUSE_BL || '',
       HAWB_DATE:(hawbData.MASTER_HOUSE_BL && hawbData.BL_CONSO_DATE) ? dayjs(hawbData.BL_CONSO_DATE, 'DD-MM-YY').format('YYYY-MM-DD') : null,
-      HAWB_TOTAL_AMOUNT:(hawbData.MASTER_HOUSE_BL)? hawbData.CHARGE_TOTAL_CC : '',
-      HAWB_GROSS_WEIGHT: (hawbData.MASTER_HOUSE_BL)?hawbData.TOTAL_ACTUAL_WEIGHT : '',
-      HAWB_CHARGEABLE_WEIGHT_KG: (hawbData.MASTER_HOUSE_BL)?hawbData.TOTAL_CHARGEABLE_WGT : '',
-      HAWB_NOOF_PKGS:(hawbData.MASTER_HOUSE_BL)? hawbData.TOTAL_NO_OF_PKGS : '',
+      HAWB_TOTAL_AMOUNT:(hawbData.MASTER_HOUSE_BL)? parseFloat(hawbData.CHARGE_TOTAL_CC).toFixed(2) : '',
+      HAWB_GROSS_WEIGHT: (hawbData.MASTER_HOUSE_BL)?parseFloat(hawbData.TOTAL_ACTUAL_WEIGHT).toFixed(2) : '',
+      HAWB_CHARGEABLE_WEIGHT_KG: (hawbData.MASTER_HOUSE_BL)?parseFloat(hawbData.TOTAL_CHARGEABLE_WGT).toFixed(2) : '',
+      HAWB_NOOF_PKGS:(hawbData.MASTER_HOUSE_BL)?parseFloat( hawbData.TOTAL_NO_OF_PKGS).toFixed(2) : '',
       NEWINS_REFERENCE_NO: hawbData.REF_NO_BR_DV_OR_REF_NO_SEQ || '',
       SHIPPER: hawbData.SHIPPER_NAME || '',
       CONSIGNEE: hawbData.CONSIGNEE_NAME || '',
@@ -402,9 +468,13 @@ const[autoFields,setAutoFields]=useState({
       REGION_CODE: hawbData.IATACODE || '',
       AIR_LINE_NAME: hawbData.FLIGHT_CARRIER_CODE || '',
       FLIGHT_NO: hawbData.FLIGHT_NO1 || '',
-      TARIFF_RATE:hawbData.CURRENCY_OF_FREIGHT+'-'+hawbData.FREIGHT_RATE || '',
+      TARIFF_RATE:hawbData.CURRENCY_OF_FREIGHT+'-'+tariff || '',
       DDU_DDP: ((hawbData&&hawbData.FREE_HOUSE_SIGN==='I')?'DDP':'')||((hawbData&&hawbData.FREE_HOUSE_SIGN==='E')?'DDU':''),
       DESCRIPTION_OF_GOODS: hawbData.DESCRITION_OF_GODD || '',
+      FREIGHT_AMOUNT:(hawbData&&hawbData.FREIGHT_PC_SIGN==='C')?parseFloat(hawbData&&hawbData.FREIGHT_CC).toFixed(2):parseFloat(hawbData&&hawbData.FREIGHT_PP).toFixed(2),
+      DUE_CARRIER:carrier || '',
+      NETDUE:NETDUE||0,
+      Area:area||'',
     });
   };
 
@@ -495,14 +565,14 @@ const handleClearanceChange=(event,value)=>{
 
 const handleSubmit = async (e) => {
   e.preventDefault(); // Prevent default form submission behavior
-  let errors = {};
+  const newErrors = { ...errors };
   for (const [fieldName, fieldValue] of Object.entries(manualData)) {
     if (typeof fieldValue === 'string') {
       if (fieldValue.trim() === '') {
-        errors[fieldName] = true; // Mark field as having an error
+        newErrors[fieldName] = true; // Mark field as having an error
       }
     } else if (fieldValue === null || fieldValue === undefined) {
-      errors[fieldName] = true; // Mark field as having an error
+      newErrors[fieldName] = true; // Mark field as having an error
     }
   }
   console.log("DDU_DDP value:", autoFields.DDU_DDP);
@@ -512,11 +582,15 @@ const DDU=autoFields.DDU_DDP;
   if (DDU.trim() === "") {
     console.log("empty Inco Terms");
    const fieldName="DDU_DDP";
-    errors[fieldName] = true;
+   newErrors[fieldName] = true;
+  }
+
+  if (validationErrors.Orignal_Docket_No) {
+    newErrors["Orignal_Docket_No"] = true; // Ensure that Docket No error persists
   }
 
   // If there are any errors, do not proceed with form submission
-  if (Object.keys(errors).length > 0) {
+  if (Object.keys(newErrors).length > 0) {
     setValidationErrors(errors); // Set the validation errors state
     showToast("Please fill in all required fields", "error");
     return;
@@ -579,6 +653,9 @@ const resetFields = () => {
     TARIFF_RATE: '',
     DDU_DDP: '',
     DESCRIPTION_OF_GOODS: '',
+    FREIGHT_AMOUNT: '',
+    DUE_CARRIER: '',
+    NETDUE: '',
   });
 
   setManualData({
@@ -588,9 +665,7 @@ const resetFields = () => {
     SELL_RATE: '',
     MARGIN_KG: '',
     TOTAL_MARGIN: '',
-    FREIGHT_AMOUNT: '',
-    DUE_CARRIER: '',
-    NETDUE: '',
+    
     SHIPPER_INVOICE_NO: '',
     SHIPPING_BILL_NO: '',
     SHIPPING_BILL_DATE: '',
@@ -626,7 +701,32 @@ const handleIncoTerms=async(e)=>{
 }
 
 
-
+const handleBlur = async () => {
+  if (manualData.Orignal_Docket_No) {
+    try {
+      const response = await axios.post('http://localhost:5000/ff/ae_Docket', {
+        Dokcet: manualData.Orignal_Docket_No,
+      });
+console.log("Blur",response.data);
+      if (response.data.exists) {
+        // errors['Orignal_Docket_No'] = true;
+        setValidationErrors((prevErrors) => ({
+          ...prevErrors,
+          Orignal_Docket_No: 'Docket No already exists',
+        }));
+        showToast(`Docket Number Exists`,"error")
+      } else {
+        setValidationErrors((prevErrors) => ({
+          ...prevErrors,
+          Orignal_Docket_No: '',
+        }));
+      }
+    } catch (error) {
+      console.error('Error checking Docket No:', error);
+      // Optionally, handle the error and show a validation message
+    }
+  }
+};
 
 
 return(
@@ -1058,7 +1158,7 @@ return(
        />
       </Grid>
       <Grid item xs={2}>
-        
+        {autoFields.DDU_DDP?(
       <TextField
       value={autoFields.DDU_DDP|| ''}
      className={HAWBData.FREE_HOUSE_SIGN===""?"custom-textfield":"disabled-textfield"}
@@ -1073,10 +1173,80 @@ return(
       InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
       error={validationErrors.DDU_DDP && (autoFields.DDU_DDP === '')}
        />
-
+      ): (
+        <Autocomplete
+          options={Inco}
+          getOptionLabel={(option) => option.label} // Adjust based on your data structure
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="INCO Terms"
+              variant="outlined"
+              size='small'
+              InputLabelProps={{ style: { fontSize: '14px', shrink: 'true' } }}
+              error={validationErrors.DDU_DDP}
+            />
+          )}
+          onChange={(event, newValue) => {
+            // Handle the change event here
+            if (newValue) {
+              // Set the selected value to autoFields.DDU_DDP
+              setAutoFields((prevFields) => ({
+                ...prevFields,
+                DDU_DDP: newValue.value, // Adjust based on your data structure
+              }));
+            }
+          }}
+        />
+      )}
      
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={2}>
+  <FormControl fullWidth>
+  <TextField
+           value={(autoFields.FREIGHT_AMOUNT)||''}
+          className="disabled-textfield"
+          name="FREIGHT_AMOUNT"
+          label="Freight Amount"
+          required
+          size='small'
+         InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+         InputProps={{
+          readOnly: true,
+        }}
+           />
+ 
+</FormControl>
+</Grid>
+<Grid item xs={2}>
+<TextField
+           value={(autoFields.DUE_CARRIER)||''}
+          className="disabled-textfield"
+          name="DUE_CARRIER"
+          label="Due Carrier"
+          required
+          size='small'
+         InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+         InputProps={{
+          readOnly: true,
+        }}
+           />
+      </Grid>
+      <Grid item xs={2}>
+      <TextField
+           value={(autoFields.NETDUE)||''}
+          className="disabled-textfield"
+          name="NETDUE"
+          label="Net Due"
+          required
+          size='small'
+         InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
+         InputProps={{
+          readOnly: true,
+        }}
+           />
+        </Grid>
+        <Grid item xs={6}>
           <FormControl fullWidth>
        <TextField
        value={autoFields.DESCRIPTION_OF_GOODS}
@@ -1125,6 +1295,22 @@ return(
 <CardContent>
 <Typography variant="h5" component="div">
    <Grid container spacing={2}>
+   <Grid item xs={2}>
+   <TextField
+      value={manualData.Orignal_Docket_No}
+      onChange={handleManualDataChange}
+      onBlur={handleBlur}
+      className="custom-textfield"
+      name="Orignal_Docket_No"
+      autoComplete="off"
+      label="Docket No"
+      required
+      size="small"
+    
+      InputLabelProps={{ style: { fontSize: '14px', shrink: 'true' } }}
+      error={validationErrors.Orignal_Docket_No && (manualData.Orignal_Docket_No === ''||manualData.Orignal_Docket_No!=='')}
+    />
+          </Grid>
        <Grid item xs={2}>
   <FormControl fullWidth>
   <Autocomplete size='small'  freeSolo id="free-solo-2-demo" disableClearable 
@@ -1248,57 +1434,7 @@ return(
         />
         </Grid>
 
-        <Grid item xs={2}>
-  <FormControl fullWidth>
-  <TextField
-   value={manualData.FREIGHT_AMOUNT}
-   onChange={handleManualDataChange}
-   onWheel={(e) => e.target.blur()} 
-  className="custom-textfield"
-    name="FREIGHT_AMOUNT"
-    autoComplete="off"
-    label="Freight Amount"
-    required
-    type="number" 
-    size='small'
-   InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
-   error={validationErrors.FREIGHT_AMOUNT && (manualData.FREIGHT_AMOUNT === '')}
-    />
-</FormControl>
-</Grid>
-<Grid item xs={2}>
-      <TextField
-       value={manualData.DUE_CARRIER}
-       onChange={handleManualDataChange}
-       onWheel={(e) => e.target.blur()} 
-      className="custom-textfield"
-       name="DUE_CARRIER"
-       label="Due_Carrier"
-       autoComplete="off"
-       required
-       type="number" 
-       size='small'
-      InputLabelProps={{ style: { fontSize: '14px' ,shrink:'true' } }}
-      error={validationErrors.DUE_CARRIER && (manualData.DUE_CARRIER === '')}
-       />
-      </Grid>
-      <Grid item xs={2}>
-       <TextField
-        value={manualData.NETDUE}
-        onChange={handleManualDataChange}
-       className="disabled-textfield-default"
-        name="NETDUE"
-        label="Net Due"
-        autoComplete="off"
-        required
-        size='small'
-        InputLabelProps={{ style: { fontSize: '14px'} }}
-        InputProps={{
-          readOnly: true,
-        }}
-        error={validationErrors.NETDUE && (manualData.NETDUE === '')}
-        />
-        </Grid>
+        
         <Grid item xs={2}>
         <Autocomplete size='small'  freeSolo id="free-solo-2-demo" disableClearable 
         options={userData&&userData.map(user => `${user.user_name} (${user.emp_id})`)} // Format options

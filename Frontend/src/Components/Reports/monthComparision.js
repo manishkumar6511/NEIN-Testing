@@ -9,8 +9,8 @@ import {
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from "axios";
 import TruckLoder from "../centralized_components/truckLoder";
-
-
+import * as XLSX from 'xlsx'; // Import the XLSX library
+import DownloadIcon from '@mui/icons-material/Download';
 
 
 
@@ -21,11 +21,13 @@ import TruckLoder from "../centralized_components/truckLoder";
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 500,
+    width: 400,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    
+    justifyContent: 'space-between',
   };
 
 
@@ -214,6 +216,25 @@ console.log(props);
       const [open, setOpen] = useState(false);
       const handleOpen = () => setOpen(true);
       const handleClose = () => setOpen(false);
+
+
+      const handleDownloadExcel = () => {
+        const worksheetData = firstData.map((item, index) => ({
+          SN: index + 1,
+          Date: item.Date,
+          [`Shipments (${header1})`]: item.Total_Entries,
+          [`Weight (${header1})`]: item.TOTAL_CHARGEABLE_WGT,
+          [`Shipments (${header2})`]: secondData[index]?.Total_Entries || 0,
+          [`Weight (${header2})`]: secondData[index]?.TOTAL_CHARGEABLE_WGT || 0,
+          [`Shipments (${header3})`]: thirdData[index]?.Total_Entries || 0,
+          [`Weight (${header3})`]: thirdData[index]?.TOTAL_CHARGEABLE_WGT || 0,
+        }));
+    
+        const ws = XLSX.utils.json_to_sheet(worksheetData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Comparison Data');
+        XLSX.writeFile(wb, `comparison_data_${header1}.xlsx`);
+      };
     
       return (
         <div>
@@ -226,7 +247,7 @@ console.log(props);
             Comparision Of Shipment Details For {previousYear} vs {year} - {header1}
           </Typography>
           </Grid>
-            <Grid item xs={2.5} >
+            {/* <Grid item xs={2.5} >
             <Autocomplete
             disableClearable
       options={monthOptions}
@@ -238,13 +259,18 @@ console.log(props);
       
     />
               
-            </Grid>
+            </Grid> */}
             <Grid item xs={0.5}>
               <IconButton onClick={handleOpen}>
                 <BarChartIcon/>
               </IconButton>
 
             </Grid>
+            <Grid item xs={0.5}>
+            <IconButton onClick={handleDownloadExcel}>
+             <DownloadIcon/>
+            </IconButton>
+          </Grid>
 
 
           </Grid>
@@ -273,7 +299,7 @@ console.log(props);
           <h3>Weight</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid strokeDasharray="2 2" />
               <XAxis dataKey="name" />
               <YAxis label={{ value: 'Weight (kg)', angle: -90, position: 'insideLeft' }} />
               <Tooltip />

@@ -22,7 +22,7 @@ const modules = [
   },
   {
     moduleName: 'Other Modules',
-    submodules: ['Dashboard', 'Finance', 'View/Edit', 'Masters', 'Reports'],
+    submodules: ['Dashboard', 'Finance', 'View/Edit', 'Masters', 'Reports','Authority To Edit'],
   },
 ];
 

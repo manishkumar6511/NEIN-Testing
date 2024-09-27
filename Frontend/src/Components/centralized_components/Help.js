@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Fab, Modal, Box, TextField, Button, Typography, List, ListItem, ListItemText ,IconButton} from '@mui/material';
 import { AttachFile, HelpOutline } from '@mui/icons-material';
 import { useDropzone } from 'react-dropzone';
@@ -15,7 +15,7 @@ const HelpButton = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [files, setFiles] = useState([]);
-
+const[sessionData,setSessionData]=useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -28,27 +28,55 @@ const HelpButton = () => {
   };
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
+useEffect(()=>{
+  const storedUser = localStorage.getItem('userDetails');
+  if (storedUser) {
+    const userDetails = JSON.parse(storedUser);
+    setSessionData(userDetails);
+    
+    
+  } 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+},[])
+ 
 
-    const formData = new FormData();
-    formData.append('query', query);
-    files.forEach(file => formData.append('attachments', file));
+  
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData();
+  
+  // Append the session data (you can adjust the keys based on your API structure)
+  Object.keys(sessionData).forEach((key) => {
+    formData.append(key, sessionData[key]);
+  });
+  
+  // Append the query
+  formData.append('query', query);
 
-    try {
-      await axios.post('http://localhost:5000/api/support', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      alert('Your query has been submitted!');
-      handleClose();
-    } catch (error) {
-      console.error('Error submitting the form:', error);
-      alert('Failed to submit your query.');
-    }
-  };
+  // Append the files
+  files.forEach((file) => {
+    formData.append('files', file);
+  });
+  console.log("FormData contents:");
+for (let pair of formData.entries()) {
+  console.log(pair[0] + ': ' + pair[1]);
+}
+
+  try {
+    await axios.post('http://localhost:5000/Help/send', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    alert('Your query has been submitted!');
+    handleClose();
+  } catch (error) {
+    console.error('Error submitting the form:', error);
+    alert('Failed to submit your query.');
+  }
+};
+
 
   return (
     <>

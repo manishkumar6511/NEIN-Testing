@@ -174,12 +174,33 @@ const handleShippingDate=(newDate)=>{
 
 }
 
+let menu = {};
+const storedUser = localStorage.getItem('userDetails');
+if (storedUser) {
+  const userDetails = JSON.parse(storedUser);
+ const menus = userDetails.menus;
+ if(menus){
+   menu = typeof menus === 'string' ? JSON.parse(menus) : menus;
+ }
+  // console.log("Menu object:", menu); 
+  // console.log("Type od Menu object:", typeof menu); 
+} else {
+  console.log("No menu details found in localStorage.");
+}
+
 useEffect(()=>{
-  if(userDetails.empid==='1665'){
+console.log("menus for edit or not",menu['Other Modules-Authority To Edit']);
+  if(menu&&menu['Other Modules-Authority To Edit']){
     setDisable(false);
+  }else{
+    setDisable(true);
+    showToast(`Contact HOD For Edit`, "error");
   }
   
-  },[userDetails.empid])
+  },[])
+
+
+
 useEffect(() => {
   const fetchIndustrys = async () => {
     try {
@@ -790,7 +811,7 @@ if("response data mawb",responseData.MAWB_NO);
         setFields(updatedFields);
         const updatedData = Object.keys(manualData).reduce((acc, key) => {
           // Check if the key exists in the API response data
-          if (responseData.hasOwnProperty(key)) {
+          if (responseData&&responseData.hasOwnProperty(key)) {
             acc[key] = responseData[key]; // Update with API value
           } else {
             acc[key] = manualData[key]; // Keep the existing value (empty string in this case)
@@ -802,7 +823,7 @@ if("response data mawb",responseData.MAWB_NO);
         setManualData(updatedData);
         const updatedOptionalData = Object.keys(optionalData).reduce((acc, key) => {
           // Check if the key exists in the API response data
-          if (responseData.hasOwnProperty(key)) {
+          if (responseData&&responseData.hasOwnProperty(key)) {
             acc[key] = responseData[key]; // Update with API value
           } else {
             acc[key] = optionalData[key]; // Keep the existing value (empty string in this case)
@@ -813,7 +834,7 @@ if("response data mawb",responseData.MAWB_NO);
         setoptionalData(updatedOptionalData);
         const isFinanceValid = (finance) => {
           // Check if there is at least one item with a non-null InvoiceNo
-          return finance.some(item => item.InvoiceNo !== null && item.InvoiceNo !== '');
+          return Array.isArray(finance) && finance.some(item => item.InvoiceNo !== null && item.InvoiceNo !== '');
         };
         
         // Conditionally set the finance data
@@ -875,7 +896,7 @@ console.log("options",MAWBHAWBoptions);
 
           const updatedData = Object.keys(manualData).reduce((acc, key) => {
             // Check if the key exists in the API response data
-            if (selectedHAWBDetails.hasOwnProperty(key)) {
+            if (selectedHAWBDetails&&selectedHAWBDetails.hasOwnProperty(key)) {
               acc[key] = selectedHAWBDetails[key]; // Update with API value
             } else {
               acc[key] = manualData[key]; // Keep the existing value (empty string in this case)
@@ -887,7 +908,7 @@ console.log("options",MAWBHAWBoptions);
           setManualData(updatedData);
           const updatedOptionalData = Object.keys(optionalData).reduce((acc, key) => {
             // Check if the key exists in the API response data
-            if (selectedHAWBDetails.hasOwnProperty(key)) {
+            if (selectedHAWBDetails&&selectedHAWBDetails.hasOwnProperty(key)) {
               acc[key] = selectedHAWBDetails[key]; // Update with API value
             } else {
               acc[key] = optionalData[key]; // Keep the existing value (empty string in this case)
@@ -994,6 +1015,7 @@ return(
         ...params.InputProps,
         type: 'search',
         }}
+        className="custom-textfield"
         InputLabelProps={{ style: { fontSize: '14px'} }}
         required
          
@@ -1014,6 +1036,7 @@ return(
         ...params.InputProps,
         type: 'search',
         }}
+        className="custom-textfield"
         InputLabelProps={{ style: { fontSize: '14px'} }}
         required
          
@@ -1586,6 +1609,7 @@ return(
   <TextField
      className={optionalData.IATA_AGENT==='' ? 'custom-textfield' : 'disabled-textfield-default'}
   value={optionalData.IATA_AGENT}
+  style={{fontSize:'smaller'}}
   onChange={handleOptional}
     name="IATA_AGENT"
     label="IATA Agent"
@@ -1755,7 +1779,7 @@ return(
 </CardContent>
 </Card>
 )}
-{selectedOperation &&(
+{!disable&&selectedOperation &&(
 <Button variant="contained" color="primary" onClick={handleEditClick}>Update</Button>
 )}
 

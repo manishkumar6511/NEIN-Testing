@@ -151,20 +151,26 @@ border-radius
   .disabled-textfield-default{
     background-color: #efefef;
     color: #1A005D !important;
-    font-size: '14px';
-    font: -webkit-control !important;
+   
    
   }
 
-
+  .disabled-textfield-default .Mui-disabled {
+    opacity: 1 !important; /* Ensure opacity is set to 1 */
+  }
+  
+  .disabled-textfield-default .Mui-disabled .MuiInputBase-input {
+    -webkit-text-fill-color: #000 !important; /* For WebKit browsers */
+    color: #000 !important; /* Standard color property */
+  }
   
   .disabled-textfield .MuiInputBase-input {
     cursor: not-allowed; 
     font-size: smaller;
   }
-  .custom-textfield .MuiInputBase-input {
+  /* .custom-textfield .MuiInputBase-input {
   font-size: smaller;
-  }
+  } */
   .auto-card-title{
     position: absolute;   
 top
@@ -202,16 +208,18 @@ border-radius
 
 
   /* Apply black text color to disabled fields */
-.Mui-disabled {
+.custom-textfield .Mui-disabled {
   opacity: 1 !important; /* Ensure opacity is set to 1 */
 }
 
-.Mui-disabled .MuiInputBase-input {
+.custom-textfield .Mui-disabled .MuiInputBase-input {
   -webkit-text-fill-color: #000 !important; /* For WebKit browsers */
   color: #000 !important; /* Standard color property */
 }
 
 /* Ensure high specificity */
+
+
 
 
 
