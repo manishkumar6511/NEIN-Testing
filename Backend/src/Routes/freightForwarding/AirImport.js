@@ -29,7 +29,7 @@ exports.getAllUser= (req, res) => {
 
         query = "SELECT u.`user_name`,u.`emp_id`,u.`branch_id`,b.branch_name FROM leavemanagement.`user` u  "+
 				 " inner join leavemanagement.branchmaster b on b.branch_id=u.branch_id  "+
-				 " WHERE  u.`employee_status`='yes' ";
+				 " WHERE  u.`employee_status`='yes' AND u.`emp_id` NOT IN ('1', '77','7095') ";
     
  leavemanagement.query(query, (err, result) => {
         if (err) {

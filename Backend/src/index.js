@@ -52,7 +52,7 @@ const removals = require('./controllers/removalsController');
 const finance = require('./Listners/FinaceDataToDb');
 const Reports=require('./controllers/Reports');
 const login= require('./controllers/Login');
- 
+ const Help=require('./controllers/Help');
 // Create an Express application
 const app = express();
 
@@ -68,7 +68,7 @@ app.use('/removals', removals);
 app.use('/finance', finance);
 app.use('/Reports',Reports);
 app.use('/User',login);
-
+app.use('/Help',Help);
 
 // Cron job (adjust as needed)
 cron.schedule('27 16 * * *', () => {

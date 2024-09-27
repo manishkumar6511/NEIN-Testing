@@ -98,6 +98,7 @@ exports.OceanImportDahboard= (req, res) => {
     });
 
 }
+
 exports.OceanExportDahboard= (req, res) => {
 
     const FromDate = req.body.FromDate;
@@ -124,4 +125,43 @@ exports.OceanExportDahboard= (req, res) => {
     });
 
 }
+
+
+exports.AirImporttFF= (req, res) => {
+
+    const FromDate = req.body.FromDate;
+    const Todate = req.body.Todate;
+    const BranchId = req.body.BranchId;
+    let query;
+    let queryParams = [];
+ 
+
+        query = "SELECT  "+
+ " a.BRANCH,s.branch_code , "+
+  " COUNT(*) AS total_count, "+
+  " SUM(CASE WHEN Flag = 1 THEN 1 ELSE 0 END) AS completed_count, "+
+  " SUM(CASE WHEN Flag = 0 THEN 1 ELSE 0 END) AS incomplete_count, "+
+  " SUM(CASE WHEN fiancecapture = 1 and Flag=1  THEN 1 ELSE 0 END) AS fiancecapture_complete_count , "+
+  " SUM(CASE WHEN fiancecapture = 0 and Flag=1  THEN 1 ELSE 0 END) AS fianceincomplete "+
+" FROM  "+
+ "  airexport_ff_ftp a "+
+   " INNER JOIN subbranchwise s ON a.BRANCH = s.branch_type_code  "+
+" WHERE  "+
+  " STR_TO_DATE(BL_CONSO_DATE, '%d-%m-%Y') BETWEEN '2024-07-01' AND '2024-10-01' "+
+" GROUP BY  "+
+  " BRANCH;";
+       queryParams = [FromDate,Todate,BranchId];
+
+ ormdb.query(query, queryParams, (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send("An error occurred while fetching data");
+        } else {
+            //console.log(result.length);
+            res.json(result);
+        }
+    });
+
+}
+
 

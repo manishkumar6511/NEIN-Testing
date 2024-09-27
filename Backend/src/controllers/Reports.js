@@ -19,7 +19,8 @@ app.post('/CWR', report.getCWR);
 app.post('/getTop15', report.getTop15);
 app.post('/getTopCarrier', report.getTopCarrier);
 app.post('/PIC', report.getPIC);
- 
+app.post('/getSalesPIC', report.getSalesPIC);
+app.post('/getAreaReport',report.getAreaReport) ;
  
 //  Ocean import
  

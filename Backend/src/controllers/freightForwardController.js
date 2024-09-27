@@ -20,7 +20,7 @@ app.post('/ai_insert',Airimport.InsertAExport);
 app.post('/ai_AllHawb', Airimport.getAllHawb);
 app.post('/ai_Hawb',Airimport.getHawbData);
 
-
+app.post('/ae_Docket',AirExport.ae_Docket);
 // //  air Export
 
 app.post('/ae_AllMaster', AirExport.getAllMaster);

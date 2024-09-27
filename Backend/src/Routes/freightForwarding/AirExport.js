@@ -310,3 +310,29 @@ exports.getMasterDataFromFF = (req, res) => {
        
      });
  }
+
+
+  
+ exports.ae_Docket = (req, res) => {
+    const mawbNumber = req.body.Dokcet;  // Assuming the key is 'Dokcet', should this be 'Docket'?
+    let query = "SELECT Orignal_Docket_No FROM `air_export_ff` WHERE `Orignal_Docket_No`= ?";
+   
+    console.log("Docket Number: ", mawbNumber);
+ 
+    // Execute query to check if the docket number exists
+    ormdb.query(query, [mawbNumber], (err, result) => {
+        if (err) {
+            console.error("Error occurred while fetching data:", err);
+            return res.status(500).send("An error occurred while fetching data");
+        }
+ 
+        // Check if the docket number was found
+        if (result.length === 0) {
+            return res.json({ exists: false, message: "Docket number not found" });
+        } else {
+            return res.json({ exists: true, message: "Docket number exists", data: result });
+        }
+    });
+};
+ 
+ 

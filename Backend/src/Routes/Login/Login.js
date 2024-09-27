@@ -160,27 +160,34 @@ exports.updateData = (req, res) => {
 };
 
 
-
-exports.subranch= (req, res) => {
+exports.subranch = (req, res) => {
     console.log("Get Sub branch ");
     console.log(req.body);
  
-    // SQL query to validate user credentials
-    const query = "SELECT * FROM `branchmaster` WHERE `reporting_branch_lta` =? ";
-   
-    leavemanagement.query(query, [req.body.reportingBranch], (err, result) => {
+    let query;
+    let queryParams = [];
+ 
+    // Check if reportingBranch is 1
+    if (req.body.reportingBranch === '1') {
+        // Fetch all data when reportingBranch is 1
+        query = "SELECT * FROM `branchmaster`";
+    } else {
+        // Fetch data for the specific reportingBranch
+        query = "SELECT * FROM `branchmaster` WHERE `reporting_branch_lta` = ?";
+        queryParams = [req.body.reportingBranch];
+    }
+ 
+    leavemanagement.query(query, queryParams, (err, result) => {
         if (err) {
             console.error(err);
             return res.status(500).send("An error occurred while fetching data");
         }
-       
+ 
         console.log(result);
         if (result.length === 0) {
             return res.json("No data found");
         }
  
         res.json(result);
-     
-        });
- 
+    });
 };

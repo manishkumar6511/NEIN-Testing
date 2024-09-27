@@ -9,6 +9,7 @@ router.post('/AirImport', AirExportDahboard.AirImportDahboard);
 router.post('/AirExport', AirExportDahboard.AirExportDahboard);
 router.post('/OceanImport', AirExportDahboard.OceanImportDahboard);
 router.post('/OceanExport', AirExportDahboard.OceanExportDahboard);
+router.post('/AirImporttFF', AirExportDahboard.AirImporttFF);
 
 
 module.exports = router;

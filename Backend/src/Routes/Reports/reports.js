@@ -30,11 +30,12 @@ exports.ffAimportALL= (req, res) => {
  
 exports.getAllData= (req, res) => {
   console.log("this si reports air export");
+  console.log(req.body);
  
  
-        query = "SELECT * FROM `air_export_ff` WHERE STR_TO_DATE(`MAWB_DATE`, '%d-%m-%Y') BETWEEN '2024-07-01' AND '2024-07-14';";
+        query = "SELECT * FROM `air_export_ff` WHERE Register_Branch_Id=?  AND STR_TO_DATE(`MAWB_DATE`, '%d-%m-%Y') BETWEEN ? AND  ? ;";
    
- ormdb.query(query,  (err, result) => {
+ ormdb.query(query,[req.body.subBranch,req.body.fromDate,req.body.toDate] , (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).send("An error occurred while fetching data");
@@ -81,14 +82,14 @@ exports.getCWR= (req, res) => {
   "   air_export_ff air_expff  "+
 " JOIN  "+
   "   industry ind ON air_expff.Industry = ind.main_product  "+
-" WHERE   STR_TO_DATE(air_expff.MAWB_DATE, '%d-%m-%Y') BETWEEN '2024-03-01' AND '2024-03-31' AND Register_Branch_Id=?  "+
+" WHERE   STR_TO_DATE(air_expff.MAWB_DATE, '%d-%m-%Y') BETWEEN ? AND ? AND Register_Branch_Id=?  "+
 " GROUP BY  "+
  "    ind.main_product, ind.industry_code "+
 " ORDER BY  "+
   "   ind.main_product ";
    
-         
- ormdb.query(query,[ req.body.BranchId] , (err, result) => {
+    console.log(req.body);     
+ ormdb.query(query,[req.body.fromDate,req.body.toDate,req.body.subBranch] , (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).send("An error occurred while fetching data");
@@ -112,8 +113,8 @@ exports.getTop15= (req, res) => {
  "  FROM " +
     "  `air_export_ff` " +
 "  WHERE " +
-   "   STR_TO_DATE(`MAWB_DATE`, '%d-%m-%Y') BETWEEN '2024-03-01' AND '2024-03-31'  " +
-    "  AND `Register_Branch_Id` = '10' " +
+   "   STR_TO_DATE(`MAWB_DATE`, '%d-%m-%Y') BETWEEN ? AND ?  " +
+    "  AND `Register_Branch_Id` = ? " +
 "  GROUP BY  " +
   "    `SHIPPER` " +
 "  HAVING  " +
@@ -122,8 +123,8 @@ exports.getTop15= (req, res) => {
    "   TotalChargeableWeightKG DESC " +
 "  LIMIT 15; ";
    
-         
- ormdb.query(query,[ req.body.BranchId] , (err, result) => {
+    console.log(req.body);     
+ ormdb.query(query,[req.body.fromDate,req.body.toDate,req.body.subBranch] , (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).send("An error occurred while fetching data");
@@ -146,8 +147,8 @@ query = "SELECT  "+
     "  FROM   "+
       "    `air_export_ff`  "+
    "   WHERE   "+
-     "     STR_TO_DATE(`MAWB_DATE`, '%d-%m-%Y') BETWEEN '2024-03-01' AND '2024-03-31'  "+
-       "   AND `Register_Branch_Id` = '10'  "+
+     "     STR_TO_DATE(`MAWB_DATE`, '%d-%m-%Y') BETWEEN ? AND ?  "+
+       "   AND `Register_Branch_Id` = ?  "+
     "  GROUP BY   "+
       "    `AIR_LINE_NAME`  "+
     "  HAVING   "+
@@ -155,8 +156,8 @@ query = "SELECT  "+
     "  ORDER BY   "+
        "   TotalChargeableWeightKG DESC; ";
    
-         
- ormdb.query(query,[ req.body.BranchId] , (err, result) => {
+         console.log(req.body);
+ ormdb.query(query,[req.body.fromDate,req.body.toDate,req.body.subBranch] , (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).send("An error occurred while fetching data");
@@ -167,7 +168,7 @@ query = "SELECT  "+
 };
  
  
-//getTopCarrier
+//getOperationPic
 exports.getPIC= (req, res) => {
   console.log("this is getPIC air export");
      
@@ -180,8 +181,8 @@ query = "SELECT  "+
  "  FROM  "+
      "  `air_export_ff` "+
  "  WHERE  "+
-    "  STR_TO_DATE(`MAWB_DATE`, '%d-%m-%Y') BETWEEN '2024-03-01' AND '2024-03-31' "+
-     "  AND `Register_Branch_Id` = '10' "+
+    "  STR_TO_DATE(`MAWB_DATE`, '%d-%m-%Y') BETWEEN ? AND ? "+
+     "  AND `Register_Branch_Id` = ? "+
  "  GROUP BY  "+
     "  `OperationPic` "+
  "  HAVING  "+
@@ -190,7 +191,7 @@ query = "SELECT  "+
     "  TotalChargeableWeightKG DESC ";
    
          
- ormdb.query(query,[ req.body.BranchId] , (err, result) => {
+ ormdb.query(query,[ req.body.fromDate,req.body.toDate,req.body.subBranch] , (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).send("An error occurred while fetching data");
@@ -200,6 +201,70 @@ query = "SELECT  "+
     });
 };
  
+
+//get Sales  pIC
+exports.getSalesPIC= (req, res) => {
+    console.log("this is getSalesPIC air export");
+       
+   
+   
+  query = "SELECT  "+
+     " `SalesPic` AS SalesPic ,  "+
+       " COUNT(*) AS NumberOfEntries,  "+
+       "  SUM (`MAWB_CHARGEABLE_WEIGHT_KG`) AS TotalChargeableWeightKG "+
+   "  FROM  "+
+       "  `air_export_ff` "+
+   "  WHERE  "+
+      "  STR_TO_DATE(`MAWB_DATE`, '%d-%m-%Y') BETWEEN ? AND ? "+
+       "  AND `Register_Branch_Id` = ? "+
+   "  GROUP BY  "+
+      "  `SalesPic` "+
+   "  HAVING  "+
+       " SUM(`MAWB_CHARGEABLE_WEIGHT_KG`) > 0 "+
+   "  ORDER BY  "+
+      "  TotalChargeableWeightKG DESC ";
+     
+           
+   ormdb.query(query,[ req.body.fromDate,req.body.toDate,req.body.subBranch] , (err, result) => {
+          if (err) {
+              console.error(err);
+              res.status(500).send("An error occurred while fetching data");
+          } else {
+              res.json(result);
+          }
+      });
+  };
+
+  //Area wise Report
+
+
+  exports.getAreaReport= (req, res) => {
+    console.log("this is getAreaReport air export");
+       
+   
+   
+  query = "SELECT" +
+ " `Area`, "+
+  "SUM(`MAWB_CHARGEABLE_WEIGHT_KG`) AS `Total_Chargeable_Weight` "+
+"FROM "+
+  "`air_export_ff` "+
+
+  "WHERE STR_TO_DATE(`MAWB_DATE`, '%y-%m-%d') BETWEEN  '2020-01-01' AND '2024-09-01' "+
+  "AND `Register_Branch_Id` = ?" +
+  " AND `Area` IN (1, 2, 3, 'JAPAN') "+
+"GROUP BY "+
+ " `Area`";
+     
+           
+   ormdb.query(query,[ req.body.subBranch] , (err, result) => {
+          if (err) {
+              console.error(err);
+              res.status(500).send("An error occurred while fetching data");
+          } else {
+              res.json(result);
+          }
+      });
+  };
  
 //Ocean Import
 exports.ffOimportALL= (req, res) => {
