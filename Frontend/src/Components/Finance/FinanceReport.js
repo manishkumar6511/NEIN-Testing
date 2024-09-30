@@ -240,7 +240,7 @@ function FinanceReport(){
 const searchBy=[
   // {label:'Select',value:''},
   {label:'Invoice No',value:'Invoice'},
-  {label:'AWB No',value:'HAWB'},
+  {label:'HAWB No',value:'HAWB'},
    {label:'MAWB No',value:'MAWB'},
 ]
 

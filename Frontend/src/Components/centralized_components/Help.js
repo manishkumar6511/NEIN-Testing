@@ -136,9 +136,13 @@ for (let pair of formData.entries()) {
             variant="outlined"
             fullWidth
             margin="normal"
-            value={query}
+           // value={query}
             onChange={(e) => setQuery(e.target.value)}
+            value='Coming Soon(Under Development...)'
             required
+            InputProps={{
+              readOnly: true,
+            }}
           />
              {/* <Stack spacing={3} sx={{ width: 500 }}>
       

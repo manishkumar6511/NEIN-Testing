@@ -129,7 +129,7 @@ const ReportsWrapper = styled.div`
       <ReportsWrapper>
       <div>
       <div style={{ display: 'flex', justifyContent: 'space-between',marginTop:'10px',marginBottom:'-25px' }}>
-        <p><b>Reports</b></p>
+        <p><b>Reports(Under Development....)</b></p>
         
         </div>
        

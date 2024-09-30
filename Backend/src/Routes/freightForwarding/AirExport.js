@@ -162,7 +162,7 @@ exports.UpdateDataFF = (req, res) => {
     const hawb = req.body.HAWB_NO;  
 
     // Prepare the query and data
-    const query = `
+    let query = `
         UPDATE air_export_ff SET 
             BUYING_RATE = ?, 
             CUSTOMS_CLEARANCE_DATE = ?, 

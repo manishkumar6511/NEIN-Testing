@@ -24,7 +24,7 @@ export default function StackBars() {
   // Fetch data from API
   useEffect(()  => {
     const currentDate = dayjs().format('YYYY-MM-DD'); // Get current date in YYYY-MM-DD format
-  const thirtyDaysAgo = dayjs().subtract(30, 'day').format('YYYY-MM-DD'); // Subtract 30 days
+  const thirtyDaysAgo = dayjs().subtract(90, 'day').format('YYYY-MM-DD'); // Subtract 30 days
 
   // Fetch data with the current date and 30 days ago
   fetchData(thirtyDaysAgo, currentDate);
@@ -219,28 +219,28 @@ console.log("To Date (user selected):", toDates);
             dataKey: 'completed_count', 
             stack: 'tasks', 
             color: '#8EC300', 
-            label: 'Completed', 
+            label: 'NX-OR Updated', 
             onClick: (e) => handleBarClick(e.row.branch_code, 'completed_count'),
           },
           { 
             dataKey: 'incomplete_count', 
             stack: 'tasks', 
             color: 'red', 
-            label: 'Incomplete', 
+            label: 'NX-OR Pending', 
             onClick: (e) => handleBarClick(e.row.branch_code, 'incomplete_count'),
           },
           { 
             dataKey: 'fiancecapture_complete_count', 
             stack: 'finance', 
             color: '#2196f3', 
-            label: 'Finance Complete', 
+            label: 'Invoicing Updated', 
             onClick: (e) => handleBarClick(e.row.branch_code, 'fiancecapture_complete_count'),
           },
           { 
             dataKey: 'fianceincomplete', 
             stack: 'finance', 
             color: '#ff9800', 
-            label: 'Finance Incomplete', 
+            label: 'Invoicing Pending', 
             onClick: (e) => handleBarClick(e.row.branch_code, 'fianceincomplete'),
           },
         ]}

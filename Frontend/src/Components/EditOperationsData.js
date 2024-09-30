@@ -194,7 +194,7 @@ console.log("menus for edit or not",menu['Other Modules-Authority To Edit']);
     setDisable(false);
   }else{
     setDisable(true);
-    showToast(`Contact HOD For Edit`, "error");
+    showToast(`Only HOD's having access to edit...`, "error");
   }
   
   },[])
@@ -259,11 +259,11 @@ const handleManualDataChange = (e) => {
       }
      
     }
-    if (name === 'FREIGHT_AMOUNT' || name === 'DUE_CARRIER') {
-      const FREIGHT_AMOUNT = parseFloat(newData.FREIGHT_AMOUNT) || 0;
-      const DUE_CARRIERAmount = parseFloat(newData.DUE_CARRIER) || 0;
-      newData.NETDUE = (FREIGHT_AMOUNT + DUE_CARRIERAmount);
-    }
+    // if (name === 'FREIGHT_AMOUNT' || name === 'DUE_CARRIER') {
+    //   const FREIGHT_AMOUNT = parseFloat(newData.FREIGHT_AMOUNT) || 0;
+    //   const DUE_CARRIERAmount = parseFloat(newData.DUE_CARRIER) || 0;
+    //   newData.NETDUE = (FREIGHT_AMOUNT + DUE_CARRIERAmount);
+    // }
 
     return newData;
   });
@@ -448,7 +448,7 @@ const handleClearanceChange=(event,value)=>{
         SELL_RATE:'',
         MARGIN_KG:'',
         TOTAL_MARGIN:'',
-       
+        Orignal_Docket_No:'',
         SHIPPER_INVOICE_NO:'',
         SHIPPING_BILL_NO:'',
         SHIPPING_BILL_DATE:'',
@@ -590,6 +590,10 @@ const handleOperations=async(event, newValue)=>{
 }
 
 const handleSearch = (event, newValue) => {
+  console.log("search value",newValue.value);
+  if(newValue.value!=='MAWB'){
+    setMAWBHAWBOptions([]);
+  }
   setSelectedSearch(newValue.value);
   console.log("search value", newValue.value);
   setFields(DynamicFields[selectedOperation] || []);
@@ -1146,7 +1150,7 @@ return(
         </Grid>
         )}
 
-{MAWBHAWBoptions.length>=1 && (
+{MAWBHAWBoptions.length>0 && (
         <Grid item xs={3}>
         <FormControl fullWidth>
         <Autocomplete size='small'  freeSolo id="free-solo-2-demo" disableClearable 
@@ -1241,6 +1245,22 @@ return(
 <CardContent>
 <Typography variant="h5" component="div">
    <Grid container spacing={2}>
+   <Grid item xs={2}>
+   <TextField
+      value={manualData.Orignal_Docket_No}
+      onChange={handleManualDataChange}
+      //onBlur={handleBlur}
+      className="custom-textfield"
+      name="Orignal_Docket_No"
+      autoComplete="off"
+      label="Docket No"
+      required
+      size="small"
+    
+      InputLabelProps={{ style: { fontSize: '14px', shrink: 'true' } }}
+     // error={validationErrors.Orignal_Docket_No && (manualData.Orignal_Docket_No === ''||manualData.Orignal_Docket_No!=='')}
+    />
+          </Grid>
        <Grid item xs={2}>
   <FormControl fullWidth>
   <Autocomplete size='small'  freeSolo id="free-solo-2-demo" disableClearable 
