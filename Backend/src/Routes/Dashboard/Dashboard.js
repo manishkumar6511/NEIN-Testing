@@ -132,6 +132,9 @@ exports.AirImporttFF= (req, res) => {
     const FromDate = req.body.FromDate;
     const Todate = req.body.Todate;
     const BranchId = req.body.BranchId;
+    console.log("from Date user selected",FromDate);
+    console.log("to Date user selected",Todate);
+
     let query;
     let queryParams = [];
  
@@ -147,10 +150,10 @@ exports.AirImporttFF= (req, res) => {
  "  airexport_ff_ftp a "+
    " INNER JOIN subbranchwise s ON a.BRANCH = s.branch_type_code  "+
 " WHERE  "+
-  " STR_TO_DATE(BL_CONSO_DATE, '%d-%m-%Y') BETWEEN '2024-07-01' AND '2024-10-01' "+
+  " STR_TO_DATE(BL_CONSO_DATE, '%d-%m-%Y') BETWEEN ? AND ? "+
 " GROUP BY  "+
   " BRANCH;";
-       queryParams = [FromDate,Todate,BranchId];
+       queryParams = [FromDate,Todate];
 
  ormdb.query(query, queryParams, (err, result) => {
         if (err) {

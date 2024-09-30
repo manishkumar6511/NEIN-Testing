@@ -39,7 +39,7 @@ function App() {
           
           <div>
           <Routes>
-              <Route path="/login"  element={userDetails?.isAuthenticated  ? <Navigate to="/" /> : <Login  />}/>
+              <Route path="/login"  element={userDetails?.isAuthenticated  ? <Navigate to="/Dashboard" /> : <Login  />}/>
             
             
               <Route 
