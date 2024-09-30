@@ -133,10 +133,12 @@ console.log("To Date (user selected):", toDates);
 
   return (
     <>
-    <h3>Air Export</h3>
+    
 
     <Grid container spacing={2} style={{marginTop:'10px'}}>
-  
+  <Grid item xs={5} style={{margin: '0px 0px 0px -200px'}}>
+  <h3>Air Export</h3>
+  </Grid>
 <Grid item xs={3}>
 <FormControl fullWidth>
 <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -206,7 +208,7 @@ console.log("To Date (user selected):", toDates);
         </FormControl>
         </Grid>
         <Grid item xs={1}>
-          <Button variant="contained" style={{backgroundColor:'#1a005d',color:'white',height:'40px'}} onClick={handleSubmit}>Submit</Button>
+          <Button variant="contained" style={{backgroundColor:'#1a005d',color:'white',height:'40px'}} onClick={handleSubmit}>Search</Button>
         </Grid>
         </Grid>
 

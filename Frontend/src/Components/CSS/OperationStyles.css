@@ -151,6 +151,7 @@ border-radius
   .disabled-textfield-default{
     background-color: #efefef;
     color: #1A005D !important;
+    font-size: small;
    
    
   }
@@ -215,6 +216,7 @@ border-radius
 .custom-textfield .Mui-disabled .MuiInputBase-input {
   -webkit-text-fill-color: #000 !important; /* For WebKit browsers */
   color: #000 !important; /* Standard color property */
+  font-size: small;
 }
 
 /* Ensure high specificity */

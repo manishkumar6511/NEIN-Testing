@@ -350,7 +350,10 @@ const handleClearanceChange=(event,value)=>{
       { label: 'Tariff Rate', name: 'TARIFF_RATE' },
       { label: 'INCO Terms', name: 'DDU_DDP' },
       { label: 'Description of Goods', name: 'DESCRIPTION_OF_GOODS' },
-     
+      {label:'Freight Amount',name:'FREIGHT_AMOUNT'},
+      {label:'Due Carrier',name:'DUE_CARRIER'},
+      {label:'Net Due',name:'NETDUE'},
+    
     ],
     OceanImport: [
       { label: 'MBL No', name: 'MBL_NO' },
@@ -445,9 +448,7 @@ const handleClearanceChange=(event,value)=>{
         SELL_RATE:'',
         MARGIN_KG:'',
         TOTAL_MARGIN:'',
-        FREIGHT_AMOUNT:'',
-        DUE_CARRIER:'',
-        NETDUE:'',
+       
         SHIPPER_INVOICE_NO:'',
         SHIPPING_BILL_NO:'',
         SHIPPING_BILL_DATE:'',
@@ -688,7 +689,7 @@ setFinanceData([]);
         let responseData = null;
        let finance=null;
         if(selectedSearch==="HAWB"){
-          console.log("if");
+          console.log("HAWB with");
         const  response = await axios.post(`${API_BASE_URL}/finance/getHAWB_NOData`, {
             HAWB_NO: newValue
           });
@@ -752,7 +753,7 @@ setFinanceData([]);
 
 
         }else{
-          console.log("MAWB data");
+          console.log("MAWB data...........");
           const response2 = await axios.post(`${API_BASE_URL}/finance/getHAWB_NOData`, {
             HAWB_NO: newValue
           });
@@ -884,9 +885,11 @@ if("response data mawb",responseData.MAWB_NO);
             
           }));
 console.log("options",MAWBHAWBoptions);
+let mawb="";
           const APIData = MAWBHAWBoptions.map(item => {
 
             setMAWBAPI(item.MAWB_NO);
+            mawb=item.MAWB_NO;
                 
           })
           setHAWBAPI(newValue);
@@ -919,7 +922,9 @@ console.log("options",MAWBHAWBoptions);
           setoptionalData(updatedOptionalData);
          
 //getting finance data
-const  response = await axios.post(`${API_BASE_URL}/finance/getHAWB_NOData`, {
+console.log("MWAB API in HAWB Change",mawb);
+const  response = await axios.post(`${API_BASE_URL}/finance/getMAWB_NODataForFinance`, {
+  MAWB_NO:mawb,
   HAWB_NO: newValue
 });
 
@@ -943,6 +948,7 @@ if (Array.isArray(TotalResponse)) {
   }).filter(item => item !== null); // Filter out any null entries
 
 }
+setFinanceData(finance);
 console.log("finance Data",finance);
 
 
@@ -1340,7 +1346,7 @@ return(
         />
         </Grid>
 
-        <Grid item xs={2}>
+        {/* <Grid item xs={2}>
   <FormControl fullWidth>
   <TextField
    value={manualData.FREIGHT_AMOUNT}
@@ -1389,7 +1395,7 @@ return(
        
        // //  error={validationErrors.NETDUE && (manualData.NETDUE === '')}
         />
-        </Grid>
+        </Grid> */}
         <Grid item xs={2}>
         <Autocomplete size='small'  freeSolo id="free-solo-2-demo" disableClearable 
         options={userData&&userData.map(user => `${user.user_name} (${user.emp_id})`)} // Format options

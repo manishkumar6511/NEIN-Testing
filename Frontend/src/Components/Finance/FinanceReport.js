@@ -464,7 +464,7 @@ if(len.length<=1){
 
 
 
-  const handleHAWBChange = (event, newValue) => {
+  const handleHAWBChange = async(event, newValue) => {
     setSelectedHawb(newValue);
     
     if (newValue) {
@@ -477,8 +477,42 @@ if(len.length<=1){
             value: (selectedHAWBDetails&&selectedHAWBDetails[field.name]) || ''
             
           }));
-         
+          let mawb="";
+          const APIData = MAWBHAWBoptions.map(item => {
+
+           
+            mawb=item.MAWB_NO;
+                
+          })
           setFields(updatedFields);
+
+          const  response = await axios.post(`${API_BASE_URL}/finance/getMAWB_NODataForFinance`, {
+            MAWB_NO:mawb,
+            HAWB_NO: newValue
+          });
+          
+          const TotalResponse=response.data;
+          let finance=null;
+          if (Array.isArray(TotalResponse)) {
+            finance = TotalResponse.map(item => {
+                // Ensure the item has an InvoiceNo before extracting fields
+                
+                    return {
+                        InvoiceNo: item.InvoiceNo,
+                        IssueDate: item.IssueDate,
+                        Amount: item.Amount,
+                        Revenue: item.Revenue,
+                        Reimbursement: item.Reimbursement,
+                        GST: item.GST,
+                        Status: item.Status
+                    };
+                
+                return null; // Or you could filter out items with no InvoiceNo
+            }).filter(item => item !== null); // Filter out any null entries
+          
+          }
+          setFinanceData(finance);
+          console.log("finance Data",finance);
          
          
         } else {
