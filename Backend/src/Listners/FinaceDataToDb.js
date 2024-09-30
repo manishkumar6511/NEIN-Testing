@@ -320,6 +320,7 @@ app.post('/getInvoice',  (req, res) => {
  
  
 app.post('/getHAWB_NOData',  (req, res) => {
+    console.log("coming HAWB with Finance");
     const mawbNumber = req.body.HAWB_NO;
     let query;
     let queryParams = [];
@@ -343,6 +344,48 @@ app.post('/getHAWB_NOData',  (req, res) => {
         }
     });
 });
+
+
+//if we have MAWB AND HAWB and For Direct Shipment also
+
+
+app.post('/getMAWB_NODataForFinance',  (req, res) => {
+    console.log("coming MAB with Finance");
+    const hawbNumber = req.body.HAWB_NO;
+    const mawbNumber=req.body.MAWB_NO;
+    let query;
+    let queryParams = [];
+    console.log(mawbNumber,hawbNumber);
+    if (!mawbNumber) {
+        console.log("No MAWB");
+        return res.status(400).send("MAWB_NO  required");
+    }
+   if(mawbNumber&&hawbNumber){
+    console.log("Both");
+        query = " SELECT ae.*, fm.* FROM air_export_ff ae INNER JOIN finance_master_data fm ON ae.MAWB_NO = fm.AirwayBillNo WHERE ae.MAWB_NO = ? " +
+      "  UNION "+
+"  SELECT ae.*, fm.* FROM air_export_ff ae INNER JOIN finance_master_data fm ON ae.HAWB_NO = fm.AirwayBillNo WHERE ae.HAWB_NO = ? ";
+   
+        queryParams = [mawbNumber,hawbNumber];
+   }else{
+    console.log("Single");
+    query = " SELECT ae.*, fm.* FROM air_export_ff ae INNER JOIN finance_master_data fm ON ae.MAWB_NO = fm.AirwayBillNo WHERE ae.MAWB_NO = ? " ;
+ 
+      queryParams = [mawbNumber];
+   }
+ 
+ ormdb.query(query, queryParams, (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send("An error occurred while fetching data");
+        } else {
+            res.json(result);
+        }
+    });
+});
+
+
+
  
 app.post('/getHAWB_NODataFromInvoice',  (req, res) => {
     const mawbNumber = req.body.Invoice_No;
