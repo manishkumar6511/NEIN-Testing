@@ -120,7 +120,7 @@ const[HAWBDate,setHAWBDate]=useState('');
   })
 useEffect(()=>{
   let SessionDetails = {};
-  const storedUser = localStorage.getItem('userDetails');
+  const storedUser = sessionStorage.getItem('userDetails');
   if (storedUser) {
     const userDetails = JSON.parse(storedUser);
   
@@ -352,7 +352,7 @@ const[autoFields,setAutoFields]=useState({
         });
         console.log('Response data:', response.data);
         const details = response.data;
-        setLoading(false);
+       
         console.log("1st response",details);
         if(details&&details[0].Initiator_Name){
           console.log("MAWB Details Already Entered By");
@@ -390,6 +390,8 @@ const[autoFields,setAutoFields]=useState({
               console.error('Unexpected error:', error);
               showToast('An unexpected error occurred', "error");
           }
+        }finally{
+          setLoading(false);
         }
       
     }else{
@@ -1184,7 +1186,7 @@ return(
               variant="outlined"
               size='small'
               InputLabelProps={{ style: { fontSize: '14px', shrink: 'true' } }}
-              error={validationErrors.DDU_DDP}
+              error={validationErrors.DDU_DDP && (autoFields.DDU_DDP === '')}
             />
           )}
           onChange={(event, newValue) => {

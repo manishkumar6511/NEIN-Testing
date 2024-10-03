@@ -139,9 +139,12 @@ console.log(props);
         setThirdData(filledThirdData);
         console.log('Third Response:', response3.data);
         console.log('Third call data:', filledThirdData);
-          setLoading(false);
+
+          
         } catch (error) {
           console.error('Error fetching data:', error);
+        }finally{
+          setLoading(false);
         }
 
       }

@@ -29,7 +29,7 @@ const[sessionData,setSessionData]=useState([]);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 useEffect(()=>{
-  const storedUser = localStorage.getItem('userDetails');
+  const storedUser = sessionStorage.getItem('userDetails');
   if (storedUser) {
     const userDetails = JSON.parse(storedUser);
     setSessionData(userDetails);

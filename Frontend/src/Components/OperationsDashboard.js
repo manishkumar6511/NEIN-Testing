@@ -28,7 +28,7 @@ function OperationsDashboard() {
   };
 
   let menu = {};
-  const storedUser = localStorage.getItem('userDetails');
+  const storedUser = sessionStorage.getItem('userDetails');
   if (storedUser) {
     const userDetails = JSON.parse(storedUser);
    const menus = userDetails.menus;

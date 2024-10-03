@@ -8,26 +8,25 @@ export const UserProvider = ({ children }) => {
     branchName: '',
     email: '',
     empid: '',
-      empname:'',
-      branchid: '',
-      reportingBranch:'',
-      branchCode:'',
-      menus: '',
+    empname: '',
+    branchid: '',
+    reportingBranch: '',
+    branchCode: '',
+    menus: '',
   });
 
   useEffect(() => {
-    const storedUserDetails = localStorage.getItem('userDetails');
-    console.log("storedUserDetails",storedUserDetails);
+    const storedUserDetails = sessionStorage.getItem('userDetails');
+    console.log("storedUserDetails", storedUserDetails);
     if (storedUserDetails) {
       const parsedDetails = JSON.parse(storedUserDetails);
       const currentTime = new Date().getTime();
   
       if (parsedDetails.expirationTime && currentTime > parsedDetails.expirationTime) {
         // Session has expired
-        localStorage.removeItem('userDetails');
+        sessionStorage.removeItem('userDetails');
         setUserDetails(null);
         alert('Session has expired. Please log in again.');
-       
         window.location.href = '/login';
       } else {
         setUserDetails(parsedDetails);
@@ -35,11 +34,27 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (details) => {
+  // Automatically log out the user when the session expires
+  useEffect(() => {
+    if (userDetails.isAuthenticated) {
+      const sessionTimeout = userDetails.expirationTime - new Date().getTime();
+  
+      if (sessionTimeout > 0) {
+        const timer = setTimeout(() => {
+          alert('Your session has expired. Please log in again.');
+          logout();
+          window.location.href = '/login';  // Redirect to login after session expiration
+        }, sessionTimeout);
 
+        return () => clearTimeout(timer);  // Clear timeout on component unmount
+      }
+    }
+  }, [userDetails]);
+
+  const login = (details) => {
     const sessionDuration = 30 * 60 * 1000; // 30 minutes in milliseconds
-  const expirationTime = new Date().getTime() + sessionDuration;
-  console.log("expirationTime",expirationTime);
+    const expirationTime = new Date().getTime() + sessionDuration;
+    console.log("expirationTime", expirationTime);
     const newDetails = {
       isAuthenticated: true,
       branchName: details.branchName,
@@ -47,14 +62,14 @@ export const UserProvider = ({ children }) => {
       empid: details.empid,
       empname: details.empname,
       branchid: details.branchid,
-      branchCode:details.branchCode,
-      reportingBranch:details.reportingBranch,
-      menus:details.menus,
+      branchCode: details.branchCode,
+      reportingBranch: details.reportingBranch,
+      menus: details.menus,
       expirationTime,
     };
-    console.log("new",newDetails);
+    console.log("new", newDetails);
     setUserDetails(newDetails);
-    localStorage.setItem('userDetails', JSON.stringify(newDetails));
+    sessionStorage.setItem('userDetails', JSON.stringify(newDetails));  // Use sessionStorage
   };
 
   const logout = () => {
@@ -63,7 +78,7 @@ export const UserProvider = ({ children }) => {
       branchName: '',
       email: '',
       empid: '',
-      empname:'',
+      empname: '',
       branchid: '',
       user_right: '',
       job_role: '',
@@ -71,7 +86,7 @@ export const UserProvider = ({ children }) => {
       menus: '',
     };
     setUserDetails(newDetails);
-    localStorage.removeItem('userDetails');
+    sessionStorage.removeItem('userDetails');  // Use sessionStorage
   };
 
   return (

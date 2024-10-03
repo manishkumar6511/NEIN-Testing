@@ -61,7 +61,7 @@ function Header() {
   };
   let name = {};
   let initial="";
-  const storedUser = localStorage.getItem('userDetails');
+  const storedUser = sessionStorage.getItem('userDetails');
   if (storedUser) {
     const userDetails = JSON.parse(storedUser);
    name=userDetails.empname;

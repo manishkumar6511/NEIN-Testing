@@ -56,9 +56,11 @@ const AEFRegister = ({ props }) => {
   
           // Set the transformed data
           setData(transformedData);
-          setLoading(false);
+         
         } catch (error) {
           console.error('Error fetching data:', error);
+         
+        }finally{
           setLoading(false);
         }
       };

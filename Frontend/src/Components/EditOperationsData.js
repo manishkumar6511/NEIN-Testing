@@ -175,7 +175,7 @@ const handleShippingDate=(newDate)=>{
 }
 
 let menu = {};
-const storedUser = localStorage.getItem('userDetails');
+const storedUser = sessionStorage.getItem('userDetails');
 if (storedUser) {
   const userDetails = JSON.parse(storedUser);
  const menus = userDetails.menus;
@@ -1806,7 +1806,7 @@ return(
 </Card>
 )}
 {!disable&&selectedOperation &&(
-<Button variant="contained" color="primary" onClick={handleEditClick}>Update</Button>
+<Button variant="contained" style={{ backgroundColor: '#1A005D', color: 'white' }} onClick={handleEditClick}>Update</Button>
 )}
 
         

@@ -269,7 +269,7 @@ if(selectedType==='AirExport'){
     const selectedMawbNo = row.MAWB_BL_NO || row.MAWB_NO || row.MBL_No;
 
   setSelectedMawbNo(selectedMawbNo);
-  localStorage.setItem('mawbNo', selectedMawbNo);
+  sessionStorage.setItem('mawbNo', selectedMawbNo);
 
   };
 

@@ -38,13 +38,15 @@ const Top15 = ({ props }) => {
             
             
             setTop15Data(response1.data);
-            setLoading(false);
+           
             console.log('First Response:', response1.data);
            
             
           
           } catch (error) {
             console.error('Error fetching data:', error);
+          }finally{
+            setLoading(false);
           }
     
         }

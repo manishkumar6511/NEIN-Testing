@@ -71,7 +71,7 @@ function AirExport(){
 
   useEffect(()=>{
     let SessionDetails = {};
-    const storedUser = localStorage.getItem('userDetails');
+    const storedUser = sessionStorage.getItem('userDetails');
     if (storedUser) {
       const userDetails = JSON.parse(storedUser);
     

@@ -262,6 +262,9 @@ const handleOperations=async(event, newValue)=>{
 }
 
 const handleSearch = (event, newValue) => {
+  if(newValue.value!=='MAWB'){
+    setMAWBHAWBOptions([]);
+  }
   setSelectedSearch(newValue.value);
   console.log("search value", newValue.value);
   setFields(DynamicFields[selectedOperation] || []);
@@ -691,7 +694,7 @@ return(
         </Grid>
         )}
 
-{MAWBHAWBoptions.length>=1 && (
+{MAWBHAWBoptions.length>0 && (
         <Grid item xs={3}>
         <FormControl fullWidth>
         <Autocomplete size='small'  freeSolo id="free-solo-2-demo" disableClearable 
@@ -889,7 +892,7 @@ return(
            
      </div>         
    {selectedOperation &&(      
-<Button  variant="contained" color="primary" onClick={handleDownloadPDF} >Download</Button>  
+<Button  variant="contained" style={{ backgroundColor: '#1A005D', color: 'white' }} onClick={handleDownloadPDF} >Download</Button>  
    )} 
     </div>
     

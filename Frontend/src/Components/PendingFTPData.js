@@ -77,7 +77,7 @@ const[DateFilter,setDateFilter]=useState([
   useEffect(() => {
    const fetchSubBranches=async()=>{
     let reportingBranch="";
-    const storedUser = localStorage.getItem('userDetails');
+    const storedUser = sessionStorage.getItem('userDetails');
     if (storedUser) {
       const userDetails = JSON.parse(storedUser);
       setSessionData(userDetails);
@@ -211,7 +211,7 @@ if(selectedType==='AirExport'){
     const selectedMawbNo = row.MAWB_BL_NO || row.MAWB_NO || row.MBL_No;
 
   setSelectedMawbNo(selectedMawbNo);
-  localStorage.setItem('mawbNo', selectedMawbNo);
+  sessionStorage.setItem('mawbNo', selectedMawbNo);
 
   };
 

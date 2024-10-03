@@ -249,14 +249,14 @@ exports.getSalesPIC= (req, res) => {
 "FROM "+
   "`air_export_ff` "+
 
-  "WHERE STR_TO_DATE(`MAWB_DATE`, '%y-%m-%d') BETWEEN  '2020-01-01' AND '2024-09-01' "+
-  "AND `Register_Branch_Id` = ?" +
+  "WHERE STR_TO_DATE(`MAWB_DATE`, '%y-%m-%d') BETWEEN  ? AND ?  AND "+
+  "  `Register_Branch_Id` = ?" +
   " AND `Area` IN (1, 2, 3, 'JAPAN') "+
 "GROUP BY "+
  " `Area`";
      
            
-   ormdb.query(query,[ req.body.subBranch] , (err, result) => {
+   ormdb.query(query,[req.body.fromDate,req.body.toDate,req.body.subBranch] , (err, result) => {
           if (err) {
               console.error(err);
               res.status(500).send("An error occurred while fetching data");

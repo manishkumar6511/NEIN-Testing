@@ -88,9 +88,11 @@ console.log("selected date from props or ranch",selectedDate);
         setSecondData(response2.data);
         console.log('Second Response:', response2.data);
       
-        setLoading(false);
+       
       } catch (error) {
         console.error('Error fetching data:', error);
+      }finally{
+        setLoading(false);
       }
 
     }

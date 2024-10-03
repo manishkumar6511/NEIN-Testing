@@ -33,7 +33,7 @@ const[Userbranch,setUserBranch]=useState('');
 const[UserName,setUserName]=useState('');
 
 let empid="";
-  const storedUser = localStorage.getItem('userDetails');
+  const storedUser = sessionStorage.getItem('userDetails');
   if (storedUser) {
     // Parse the JSON string into an object
     const userDetails = JSON.parse(storedUser);
@@ -225,7 +225,7 @@ setSwitchState({});
 
       <Button
         variant="contained"
-        style={{ color: 'white' }}
+        style={{ backgroundColor: '#1A005D', color: 'white' }}
         onClick={handleSave}
         
       >
