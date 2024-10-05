@@ -1013,7 +1013,7 @@ function updatetabs(){
       {label:'TOP 15',component:<Top15 props={configState}/>},
       {label:'TOP CARRIER',component:<TopCarrier props={configState}/>},
       {label:'PIC',component:<Pic props={configState}/>},
-      {label:'CUSTOM REPORT',component:<Reports />},
+     // {label:'CUSTOM REPORT',component:<Reports />},
       // {label:'CUSTOM REPORT',component:<h1>CUSTOM REPORT</h1>},
     ],
     OceanImport: [

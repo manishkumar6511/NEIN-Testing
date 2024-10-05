@@ -21,8 +21,8 @@ import PreviewIcon from '@mui/icons-material/Preview';
 import HelpIcon from '@mui/icons-material/Help';
 
 import DashboardIcon from '@mui/icons-material/Dashboard';
-
-
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
 
@@ -30,10 +30,11 @@ import './../Components/CSS/muiSlider.css';
 import TmsRouting from '../Tms-Routes/tmsRouting';
 
 import {Link} from 'react-router-dom';
-
+import Collapse from '@mui/material/Collapse'; 
 import BarChartIcon from '@mui/icons-material/BarChart';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
-
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import CardTravelIcon from '@mui/icons-material/CardTravel';
 
 
@@ -116,8 +117,8 @@ export default function MiniDrawer() {
     const [chnageiconmodule, updatechnageiconmodule] = useState('');
     const [openUserSubMenu, setOpenUserSubMenu] = useState(false);
     const [openSubmenu, setSubmenu] = useState(false);
-
-    // Function to toggle the state of the submenu for "User" ListItem
+    const[openReportsSubmenu,setOpenReportSubmenu]=useState(false);
+        // Function to toggle the state of the submenu for "User" ListItem
     
 
     let menu = {};
@@ -152,25 +153,23 @@ export default function MiniDrawer() {
 
     const handleDrawerClose = () => {
         setOpen(!open);
+        setOpenReportSubmenu(false);
         setOpenOperationSubMenu(false);
         setOpenBillingSubMenu(false);
         setOpenMasterSubMenu(false);
+        setOpenUserSubMenu(false);
     };
 
-    // const handleOperationSubMenuToggle = () => {
-    //     setOpenOperationSubMenu(!openOperationSubMenu);
-    //     setOpenBillingSubMenu(false);
-    //     setOpenMasterSubMenu(false);
+    const handleUserSubMenuToggle = (text) => {
+        setOpenUserSubMenu(!openUserSubMenu);
+        setSubmenu(text);
+    };
 
-    // };
+    const handleReportsSubMenuToggle = () => {
+       setOpenReportSubmenu(!openReportsSubmenu);
+    };
 
-   
-    // const handleMasterSubMenuToggle = () => {
-    //     setOpenMasterSubMenu(!openMasterSubMenu);
-    //     setOpenOperationSubMenu(false);
-    //     setOpenBillingSubMenu(false);
-
-    // };
+  
 
     return (
         <>
@@ -325,7 +324,80 @@ export default function MiniDrawer() {
 
                {/* Reports Start */}
 
-               <Link to="/Reports" style={{ textDecoration: 'none', color: 'inherit' }}>
+
+
+               <ListItem disablePadding sx={{ display: 'block' }}>
+                
+               
+                            <ListItemButton onClick={() => {
+                                handleReportsSubMenuToggle();
+                                // handleIconColur('Reports');
+                                // handleIcon('Reports');
+
+                            }}
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <BarChartIcon style={{ color: iconcolor === 'Reports' ? '#8DC300' : '#1A005D' }} />
+                                </ListItemIcon>
+                                <ListItemText style={{ color: iconcolor === 'Reports' ? '#8DC300' : '#1A005D' }} primary="Reports" sx={{ opacity: open ? 1 : 0 }} />
+                                {/* {open ? < AddIcon  fontSize="small" /> : ""} */}
+                                {open && chnageiconmodule === 'Reports' && chnageicon ? < RemoveIcon fontSize="small" /> : open ? < AddIcon fontSize="small" /> : ""}
+
+                            </ListItemButton>
+                            <Collapse in={openReportsSubmenu} timeout="auto" unmountOnExit>
+                            
+                                <List component="div" disablePadding>
+                                
+                        <Link to="/Reports" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ListItem disablePadding
+                                onClick={() => {
+                                    handleMenuItemClick('AEReports');
+                                    handleIconColur('AEReports');
+
+                                }}
+                                sx={{ display: 'block', backgroundColor: activeMenuItem === 'AEReports' ? '#1A005D' : 'transparent' }}>
+                                <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
+                                    {/* <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }} >
+                                        <AddBusinessIcon style={{ color: iconcolor === 'AEReports' ? '#8DC300' : '#1A005D' }} />
+                                    </ListItemIcon > */}
+
+                                    <ListItemText style={{ color: iconcolor === 'AEReports' ? '#8DC300' : '#1A005D' }} primary="Standard Reports" sx={{ opacity: open ? 1 : 0 }} />
+                                </ListItemButton>
+                            </ListItem>
+                        </Link>
+                        <Link to="/Reports/CustomReport" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ListItem disablePadding
+                                onClick={() => {
+                                    handleMenuItemClick('CustomReports');
+                                    handleIconColur('CustomReports');
+
+                                }}
+                                sx={{ display: 'block', backgroundColor: activeMenuItem === 'CustomReports' ? '#1A005D' : 'transparent' }}>
+                                <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
+                                    {/* <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }} >
+                                        <AddBusinessIcon style={{ color: iconcolor === 'AEReports' ? '#8DC300' : '#1A005D' }} />
+                                    </ListItemIcon > */}
+
+                                    <ListItemText style={{ color: iconcolor === 'CustomReports' ? '#8DC300' : '#1A005D' }} primary="Custom Reports" sx={{ opacity: open ? 1 : 0 }} />
+                                </ListItemButton>
+                            </ListItem>
+                        </Link>
+                                </List>
+                            </Collapse>
+                        </ListItem>
+
+               {/* <Link to="/Reports" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ListItem disablePadding
                                 onClick={() => {
                                     handleMenuItemClick('Reports');
@@ -341,7 +413,7 @@ export default function MiniDrawer() {
                                     <ListItemText style={{ color: iconcolor === 'Reports' ? '#8DC300' : '#1A005D' }} primary="Reports" sx={{ opacity: open ? 1 : 0 }} />
                                 </ListItemButton>
                             </ListItem>
-                        </Link>
+                        </Link> */}
                       
             {/* Reports end */}
 

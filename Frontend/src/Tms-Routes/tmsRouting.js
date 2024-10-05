@@ -26,6 +26,7 @@ import PendingFTP from "../Components/PendingFTPData";
 import BranchChart from "../Components/FreightForwading/Dashboard";
 import UserAccessManagement from "../Components/Masters/Accesscontrol";
 import Login  from "../Login"
+import CustomReport from "../Components/Reports/Report"
 // import HelpButton from "../Components/centralized_components/Help";
 function tmsRouting(){
 
@@ -58,6 +59,7 @@ function tmsRouting(){
        <Route path="/FinanceReport" element={<FinanceReport />} />
        <Route path="/ViewEdit" element={<EditOperations />} />
        <Route path="Operation/Pending" element={<PendingFTP />} />
+       <Route path="Reports/CustomReport" element={<CustomReport />} />
        
       </Routes> 
       </DndProvider>

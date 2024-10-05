@@ -1,6 +1,16 @@
 const { json } = require('express');
 const { ormdb, leavemanagement } = require('../../../configuration/db');
 
+
+
+exports.external=(req, res) => {
+    const { userId, password } = req.body; // Extract userId and password from request body
+    console.log('Received POST data:', userId, password);
+  
+    // Redirect to the React app with userId and password in the query string
+    res.redirect(`http://localhost:3000/login?userId=${userId}&password=${encodeURIComponent(password)}`);
+  };
+
 exports.getAllData = (req, res) => {
     console.log("Processing user login mdnsf dj sfgherj g");
     console.log(req.body);
